@@ -3,7 +3,7 @@
 ## Project Details
 
 * This application is used to track activity at the Veteran Military Center at the University of Nevada, Reno.
-* Tracking attendance allows the center to demonstrate its utility on campus.
+* Tracking attendance allows the center to demonstrate its utility on campus and may help the center receive greater funding by providing quantitative data about the facility.
 
 ### Institution
 
