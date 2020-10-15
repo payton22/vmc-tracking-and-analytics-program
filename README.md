@@ -13,11 +13,11 @@
 * **Instructors:** Dr. Sergiu Dascalu [Faculty Webpage](https://www.cse.unr.edu/~dascalus/) and Devrin Lee
 * **Courses:** CS 425 - Software Engineering and CS 426 - Senior Projects in Computer Science
 
-<!-- ### Project Goals
+### Project Goals
 
-        These sections will be filled out after the team charter is created and roles are established.
-
- -->
+* Build a parser which adds Excel data from a scanner to the database.
+* Create a web application for the end-user.
+* Develop data analytics features for the end-user.
 
 ### Team Members
 
