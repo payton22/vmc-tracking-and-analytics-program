@@ -9,3 +9,6 @@ def homePageView(request):
 
 def importPageView(request):
     return render(request, 'pages/importPage.html')
+
+def vmcAdminPageView(request):
+    return render(request, "pages/vmcAdminPage.html")
