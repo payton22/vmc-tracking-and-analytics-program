@@ -5,5 +5,6 @@ from .views import *
 urlpatterns = [
     path('', landingPageView, name='landingPage'),
     path('import/', importPageView, name='importPage'),
-    path('home/', homePageView, name="homePage")
+    path('home/', homePageView, name="homePage"),
+    path('visualizations/', visPageView, name='visPage'),
 ]

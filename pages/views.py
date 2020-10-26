@@ -9,3 +9,6 @@ def homePageView(request):
 
 def importPageView(request):
     return render(request, 'pages/importPage.html')
+
+def visPageView(request):
+    return render(request, 'pages/visualizationsPage.html')
