@@ -30,8 +30,7 @@ barcode_index   = 2
 def format_time(raw_data):
     return list(map(lambda x: [(x[0] + ' ' + x[1]),x[2],x[3]],raw_data))
 
-def parse_scanner_data(filename):
-    csvfile = open(filename)
+def parse_scanner_data(csvfile):
     csvreader = csv.reader(csvfile,delimiter=',')
     raw_data = []
     for row in csvreader:
@@ -56,7 +55,6 @@ def parse_scan(data,scan_index,visits):
         #if it is a sign out, search the visits list for the sign in of this barcode and add
         #a departure time to it
         if data[scan_index-1][barcode_index] == 'VMCStudentSignOut':
-10/15/20,18:12:00,02,a21233007549444a
             departure_time = scan[time_index]
             index = search_visits(visits,scan[barcode_index])
             visits[index].add_departure(departure_time)
