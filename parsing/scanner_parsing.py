@@ -15,7 +15,9 @@ class Visit:
         self.barcode        = barcode
         self.event          = event
         self.is_appointment = is_appointment
-    
+    def no_departure(self):
+        self.departure_time = 'NO DEPARTURE'
+        self.duration = 0
     def add_departure(self, departure_time):
         self.departure_time = departure_time
         self.duration       = (datetime.strptime(departure_time, time_format) - datetime.strptime(self.arrival_time, time_format)).total_seconds() / 60
@@ -30,8 +32,7 @@ barcode_index   = 2
 def format_time(raw_data):
     return list(map(lambda x: [(x[0] + ' ' + x[1]),x[2],x[3]],raw_data))
 
-def parse_scanner_data(filename):
-    csvfile = open(filename)
+def parse_scanner_data(csvfile):
     csvreader = csv.reader(csvfile,delimiter=',')
     raw_data = []
     for row in csvreader:
@@ -56,12 +57,16 @@ def parse_scan(data,scan_index,visits):
         #if it is a sign out, search the visits list for the sign in of this barcode and add
         #a departure time to it
         if data[scan_index-1][barcode_index] == 'VMCStudentSignOut':
-10/15/20,18:12:00,02,a21233007549444a
             departure_time = scan[time_index]
             index = search_visits(visits,scan[barcode_index])
             visits[index].add_departure(departure_time)
     
-    #if the scan is not a wolfcard, ignore it for now
+    #if the scan is not a wolfcard, check if the code is a NoIDSignIn
+    if scan[barcode_index] == 'VMCNoIDSignIn':
+        new_visit = Visit(scan[time_index],'NOID',Event.fitzgerald,False)
+        new_visit.no_departure()
+        visits.append(new_visit)
+
 
 #search for the most recent visit with the associated barcode
 def search_visits(visits,barcode):
