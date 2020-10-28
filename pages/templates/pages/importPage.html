@@ -9,8 +9,8 @@
     <body class="bg-dark text-white">
         
         <!-- Below the action attribute needs to have a URL to post data to (i.e. data parser) -->
-        <form class="border w-25 container" style="" method="post" action="">
-
+        <form class="border w-25 container" style=""  enctype="multipart/form-data" method="post" action="/parse/">
+	    {% csrf_token %}
             <div class="col text-center pb-2">
                 <h5>Import</h5>
             </div>
@@ -23,7 +23,7 @@
                         <option value="Demo Graphics">Demographics</option>
                         <option value="Google Forms">Google Forms Survey</option>
                     </select>
-                    <input type="file" class="col-sm">
+                    <input type="file" class="col-sm" name="datafile">
             </div>
 
             <!-- Radio buttons for selecting the locations that the associated document was taken-->

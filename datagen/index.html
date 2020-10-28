@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<h1>Scanner Dummy Data Generator </h1>
+		<form action = "/datagen/" method = "post">
+			{% csrf_token %}
+			{{ form }}
+			<input type="submit" value="OK">
+		</form>
+		<p>Clicking the "OK" button will generate a set of dummy data from the scanner for the given date.</p>
+	</body>
+</html>
+
