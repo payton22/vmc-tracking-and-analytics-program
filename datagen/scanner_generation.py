@@ -3,11 +3,12 @@ import random
 
 #class for a visit
 class Visit:
-    def __init__(self, date, arrival_time, departure_time, barcode):
+    def __init__(self, date, arrival_time, departure_time, barcode, is_appointment):
         self.date = date
         self.arrival_time = arrival_time
         self.departure_time = departure_time
         self.barcode = barcode
+        self.is_appointment = is_appointment
 
 #class for a scan
 class Scan:
@@ -30,15 +31,19 @@ def gen_visit(date, start_time):
     arrival_time = start_time
     duration = gen_duration()
     departure_time = add_time(arrival_time,duration)
+    is_appointment = False
     #20% of visitors have no barcode and therefore no departure time
     #a departure time of 99:99 is used to indicate it is invalid
     if random.random() < 0.2:
         barcode = ''
         departure_time = 9999
     else:
+        #30% of wolf card visits are appointments
+        if random.random() < 0.3:
+            is_appointment = True
         barcode = gen_barcode()
 
-    return Visit(date,arrival_time,departure_time, barcode)
+    return Visit(date,arrival_time,departure_time, barcode, is_appointment)
 
 #adds n minutes to a given time
 def add_time(time,minutes):
@@ -79,8 +84,14 @@ def gen_visits(date):
 def gen_scan_list(visits):
     scans = []
     for visit in visits:
-        scans.append(Scan(visit.date, visit.arrival_time, visit.barcode, 'arrival'))
-        scans.append(Scan(visit.date, visit.departure_time, visit.barcode, 'departure'))
+        if visit.is_appointment:
+            arrival_event = 'app_arrival'
+            departure_event = 'app_departure'
+        else:
+            arrival_event = 'arrival'
+            departure_event = 'departure'
+        scans.append(Scan(visit.date, visit.arrival_time, visit.barcode, arrival_event))
+        scans.append(Scan(visit.date, visit.departure_time, visit.barcode, departure_event))
     scans.sort(key = lambda x: int(x.time))
     return list(filter(lambda x: x.time < 2400,scans))
 
@@ -88,8 +99,12 @@ def gen_scan_list(visits):
 def scan_str(scan):
     if scan.event_type == 'arrival':
         temp_str = 'VMCStudentSignIn'
-    else:
+    elif scan.event_type == 'app_arrival':
+        temp_str = 'VMCAppointmentSignIn'
+    elif scan.event_type == 'departure':
         temp_str = 'VMCStudentSignOut'
+    else:
+        temp_str = 'VMCAppointmentSignOut'
     if scan.barcode == '':
         temp_str = 'VMCNoIDSignIn'
         return scan.date + ',' + time_str(scan.time) + ',03,' + temp_str + '\n'
