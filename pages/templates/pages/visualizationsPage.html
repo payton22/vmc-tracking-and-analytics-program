@@ -15,7 +15,7 @@
                 <div class="row my-3 form-group">
                     <div class="col-12 center">
                         <select name="GraphType" id="GraphType" class="col-sm text-center">
-                            <option disabled selected value>--Select Graph Type--</option>
+                            <option value="disabled" disabled selected value>--Select Graph Type--</option>
                             <option value="Histogram">Histogram</option>
                             <option value="X and Y Plot">X and Y Plot</option>
                             <option value="3D (X, Y, Z) Plot">3D (X, Y, Z) Plot</option>
@@ -24,15 +24,17 @@
                             <option value="Bar Graph"> Bar Graph </option>
                             <option value="Individual Statistic"> Individual Statistic </option>
                         </select>
-                        <button onClick="DropDownSelect('GraphType');">Get Selected Item</button>
                     </div>
-
+                </div>
+                <div id="GraphContainer">
                 </div>
 
                 <!-- Radio buttons for selecting the locations that the associated document was taken-->
 
             </form>
         </div>
+
+
 
 
 
