@@ -6,7 +6,8 @@
         <div class="container border w-50 bg-dark">
         
             <!-- Below the action attribute needs to have a URL to post data to (i.e. data parser) -->
-            <form method="" action="">
+        <form class="" style=""  enctype="multipart/form-data" method="post" action="/parse/">
+	    {% csrf_token %}
                 <div class="row">
                     <h5 class="col text-center">Import</h5>
                 </div>
@@ -46,7 +47,6 @@
                 </div>
             </form>
         </div>
-    
 
 
  {% endblock content %}
