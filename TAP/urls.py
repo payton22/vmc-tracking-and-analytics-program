@@ -18,6 +18,8 @@ from django.urls import path, include
 
 # Links the overall django application to different apps that the team developes 
 urlpatterns = [
+    path('datagen/', include('datagen.urls')),
     path('admin/', admin.site.urls),
+    path('parse/', include('parsing.urls')),
     path('', include('pages.urls')),
 ]
