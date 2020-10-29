@@ -14,9 +14,10 @@ def parse(request):
            return_string += str(visit) + '<br>'
            total_duration += visit.duration
         return_string += 'Number of Visits: ' + str(len(visits)) + '.<br>'
-        avg_duration = total_duration/len(visits)
+        return_string += 'Number of Appointments: ' + str(len(list(filter(lambda x: x.is_appointment,visits)))) + '<br>'
+        avg_duration = total_duration/len(list(filter(lambda x: x.duration > 0, visits)))
         return_string += 'Average visit Duration: ' + str(avg_duration)[:5] + 'mins. <br>'
         return HttpResponse(return_string)
     else:
-        return HttpResponse("ERROR\n")
+        return HttpResponse("ERROR, please go to the import page and upload a file.")
 
