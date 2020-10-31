@@ -10,25 +10,32 @@
 
 
 </head>
-<body class="row text-white px-2" style="height: 100vh;">
-	<div class="col-auto border bg-dark">
-        <!-- col flex-column for nav-->
-         <h1 class="mx-auto font-weight-bold text-white text-center"> VMC-TAP </h1>
-		<nav class="nav flex-column rounded" id="main_navbar">
-			<a href="{% url 'homePage' %}" class="nav-link l1 active text-dark bg-success">Home</a>
-			<a href="{% url 'visPage' %}" class="nav-link l1 text-dark bg-success">Visualizations</a>
-			<a href="{% url 'importPage' %}" class="nav-link l1 text-dark bg-success">Upload Files</a>
-			<a href="" class="nav-link l2 text-dark bg-success">Administrative</a>
-		</nav>
-	</div>
+<body>
+    <div class="row text-white px-2" style="height: 100vh;">
+	    <div class="col-2 border bg-dark">
+            <!-- col flex-column for nav-->
+            <h1 class="mx-auto font-weight-bold text-white text-center"> VMC-TAP </h1>
+		    <nav class="nav flex-column rounded" id="main_navbar">
+			    <a href="{% url 'homePage' %}" class="nav-link l1 active text-dark bg-success">Home</a>
+			    <a href="{% url 'visPage' %}" class="nav-link l1 text-dark bg-success">Visualizations</a>
+			    <a href="{% url 'importPage' %}" class="nav-link l1 text-dark bg-success">Upload Files</a>
+			    <a href="" class="nav-link l2 text-dark bg-success">Administrative</a>
+		    </nav>
+            <br>
+            <br>
+            <br>
+            <h2>[Profile Name]</h2>
+
+            <img src="{% static 'pages/images/rounded_img.jpg' %}" class="img-fluid rounded-circle" id="profileImg" alt="Rounded Image">
+	    </div>
 	
-    <div class="col border bg-secondary">
+        <div class="col border bg-secondary">
 		<div class="row h-100 justify-content-center align-items-center">
 		<!-- The below is filled in by html files that extend this base.html -->
 		{% block content %}{% endblock %}
 		</div>
     </div>
-
+</div>
     <script src="{% static 'pages/JS/jquery.slim.min.js' %}" type="text/javascript"> </script>
     <script src="{% static 'pages/JS/scripts.js' %}" type="text/javascript"> </script>
 </body>
