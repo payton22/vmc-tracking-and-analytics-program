@@ -17,6 +17,20 @@
     border-radius:8px;
 }
 
+#AdminTitleContainer{
+   padding-left:500px;
+    justify-content:center;
+    align-items:center;
+
+}
+
+.BGroup{
+    border-radius:12px;
+    width:200px;
+    background-color:#AAAFAA;
+    color:black;
+}
+
 /*#profileImg{
     width:10%;
     height:auto;

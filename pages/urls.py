@@ -8,5 +8,9 @@ urlpatterns = [
     path('import/', importPageView, name='importPage'),
     path('home/', homePageView, name="homePage"),
     path('visualizations/', visPageView, name='visPage'),
-    path('vmcadmin/', vmcAdminPageView, name='vmcAdminPage')
+    path('vmcadmin/', vmcAdminPageView, name='vmcAdminPage'),
+    path('vmcadmin/changePassword', changePassView, name='changePassPage'),
+    path('vmcadmin/changeEmail', changeEmailView, name='changeEmailPage'),
+    path('vmcadmin/changeProfileInfo', changeProfileView, name='changeProfilePage')
+
 ]

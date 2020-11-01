@@ -3,5 +3,30 @@
 {% block title %}VMC-TAP Admin{% endblock title %}
 
 {% block content %}
-<h1>Admin Page Placeholder</h1>
+<div class="container fixed-top" id="AdminTitleContainer">
+    <div class="row">
+        <h1 class="d-flex justify-content-center">Administrative Options</h1>
+    </div>
+</div>
+
+<div class=id="AdminButtonSection">
+    <div class="row ">
+        <a type="button" href="{% url 'changePassPage' %}" class="btn btn-primary btn-lg BGroup">Change Password</a>
+    </div>
+    <br>
+    <br>
+    <div class="row flex-column">
+        <button type="button" class="btn btn-primary btn-lg BGroup">Change Profile Image</button>
+    </div>
+    <br>
+    <br>
+    <div class="row flex-column>">
+        <a type="button" class="btn btn-primary btn-lg BGroup" href="{% url 'changeEmailPage' %}">Change email address</a>
+    </div>
+    <br>
+    <br>
+    <div class="row flex-column>">
+        <a type="button" class="btn btn-primary btn-lg BGroup" href="{% url 'changeProfilePage'%}">Change Profile Info</a>
+    </div>
+</div>
 {% endblock content %}

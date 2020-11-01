@@ -17,3 +17,12 @@ def vmcAdminPageView(request):
 
 def visPageView(request):
     return render(request, 'pages/visualizationsPage.html')
+
+def changePassView(request):
+    return render(request, 'pages/changePassPage.html')
+
+def changeEmailView(request):
+    return render(request, 'pages/changeEmailPage.html')
+
+def changeProfileView(request):
+    return render(request, 'pages/changeProfilePage.html')
