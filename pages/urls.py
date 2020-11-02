@@ -11,6 +11,7 @@ urlpatterns = [
     path('vmcadmin/', vmcAdminPageView, name='vmcAdminPage'),
     path('vmcadmin/changePassword', changePassView, name='changePassPage'),
     path('vmcadmin/changeEmail', changeEmailView, name='changeEmailPage'),
-    path('vmcadmin/changeProfileInfo', changeProfileView, name='changeProfilePage')
+    path('vmcadmin/changeProfileInfo', changeProfileView, name='changeProfilePage'),
+    path('vmcadmin/ViewAccountsList', viewAccountsList, name='viewAccountsList')
 
 ]

@@ -26,3 +26,6 @@ def changeEmailView(request):
 
 def changeProfileView(request):
     return render(request, 'pages/changeProfilePage.html')
+
+def viewAccountsList(request):
+    return render(request, 'pages/viewAccountsList.html')
