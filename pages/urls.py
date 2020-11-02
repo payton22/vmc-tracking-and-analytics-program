@@ -6,7 +6,6 @@ urlpatterns = [
     path('', landingPageView, name='landingPage'),
     path('home/', homePageView, name="homePage"),
     path('import/', importPageView, name='importPage'),
-    path('home/', homePageView, name="homePage"),
     path('visualizations/', visPageView, name='visPage'),
     path('vmcadmin/', vmcAdminPageView, name='vmcAdminPage')
 ]
