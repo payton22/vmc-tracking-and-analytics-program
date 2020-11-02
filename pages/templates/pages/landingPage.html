@@ -1,4 +1,5 @@
 <!-- Generic webpage for a place holder to work around -->
+{% load static %}
 
 <!DOCTYPE html>
 <html>
@@ -18,11 +19,12 @@
 
         <!-- Image of the military seals -->
         <div class="container mb-5">
-            <img src="/pages/static/pages/military_seals1.pngs" alt="U.S. Military Seals" class="img-fluid" style="width: 75rem;">
+            <img src="{% static 'pages/images/military_seals1.png' %}" alt="U.S. Military Seals" class="img-fluid" style="width: 75rem;">
         </div>
      
         <!-- Container for sign in form -->
-        <form class="container border w-25 pb-2" method="post">
+        <form class="container border w-25 pb-2" method="post" action="http://127.0.0.1:8000/home/">
+            {% csrf_token %}
             <h5>Sign In</h5>
             <div class="form-group">
                 <label for="inputEmail">Username or Email</label>
