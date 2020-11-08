@@ -1,25 +1,29 @@
 {% extends "pages/base.html" %}
 
-{% block title %}Accounts List{% endblock title %}
 
+{% block title %}Accounts List{% endblock title %}
 {% block content %}
     <div class="container fixed-top" id="AdminTitleContainer">
-        <h1>VMC Accounts List</h1>
+        <div class="row">
+            <h1 class="d-flex justify-content-center">Accounts List and Options</h1>
+        </div>
+        <div class="row">
+            <h5 class="d-flex justify-content-center">Select an account for additional options</h5>
+        </div>
     </div>
 
     <div class="AdminButtonSection">
-        <div class="row ">
-            <a type="button" class="btn btn-primary btn-lg AccountButton">exampleaccount1@unr.edu</a>
-        </div>
-        <br>
-        <br>
-        <div class="row flex-column">
-            <button type="button" class="btn btn-primary btn-lg AccountButton">exampleaccount2@unr.edu</button>
-        </div>
-        <br>
-        <br>
-        <div class="row flex-column>">
-            <a type="button" class="btn btn-primary btn-lg AccountButton">exampleaccount3@unr.edu</a>
-        </div>
+        {% for account in emails %}
+            <div class="row flex-column">
+                <a type="button" class="btn btn-primary btn-large AccountButton">{{ account }}</a>
+            </div>
+            <br>
+            <br>
+        {% endfor %}
+            <br>
+            <br>
+            <div class="row flex-column">
+                <a type="button" class="btn btn-primary btn-large BGroup" href="{% url 'newAccount' %}">Create New Account</a>
+            </div>
     </div>
 {% endblock content %}
