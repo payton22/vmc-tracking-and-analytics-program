@@ -1,5 +1,8 @@
 $(document).ready(function() {
     // all custom jQuery will go here
+    /* The following adds/removes classes to <html> accordingly */
+
+
     /* When the user selects a graph type from the dropdown menu,
     clear a graph selection (if one is already selected) and call the appropriate
     function to insert the HTML code for the specific graph */

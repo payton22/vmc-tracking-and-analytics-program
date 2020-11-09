@@ -15,7 +15,7 @@
     <div class="AdminButtonSection">
         {% for account in emails %}
             <div class="row flex-column">
-                <a type="button" class="btn btn-primary btn-large AccountButton">{{ account }}</a>
+                <a type="button" href="{% url 'otherAccountOptions' account %}" class="btn btn-primary btn-large AccountButton">{{ account }}</a>
             </div>
             <br>
             <br>

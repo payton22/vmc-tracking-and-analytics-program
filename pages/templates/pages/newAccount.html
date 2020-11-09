@@ -9,19 +9,20 @@
     </div>
 </div>
 
-<div class="container">
-<form>
+<div class="container-fixed col-8">
+<form method="post">
+    {% csrf_token %}
     <div class="form-group" id="NewAccountForm">
         <label for="FirstName>">Enter First Name:</label>
-        <input type="text" class="form-control" id="FirstName" placeholder = 'Jane'>
+        <input type="text" class="form-control" id="FirstName" placeholder = 'Jane' name="firstName">
         <br>
         <label for="LastName">Enter Last Name:</label>
-        <input type="text" class="form-control" id="LastName" placeholder='Doe'>
+        <input type="text" class="form-control" id="LastName" placeholder='Doe' name="lastName">
         <br>
         <br>
         <label for="NewEmail1">Enter Email:</label>
         <div class="input-group">
-            <input type="email" class="form-control" id="NewEmail1" placeholder="email">
+            <input type="email" class="form-control" id="NewEmail1" placeholder="email" name="email">
             <div class="input-group-append">
                 <span class="input-group-text" id='UnrAppend'>@unr.edu</span>
             </div>
@@ -39,7 +40,7 @@
         <br>
         <br>
         <label for="NewPass">Enter Password:</label>
-        <input type="password" class="form-control" id="NewPass" placeholder="******">
+        <input type="password" class="form-control" id="NewPass" placeholder="******" name="password">
         <div class="invalid-feedback">
             Required password length is 5-12 characters and must contain at least one symbol or number
         </div>
@@ -50,7 +51,7 @@
             <div class="registrationFormAlert" id="divCheckPasswordMatch"> </div>
         </div>
         <br>
-        <button type="submit" class="btn btn-primary BGroup" id="SubmitNewAcct">Submit</button>
+        <button type="submit" value="OK" class="btn btn-primary BGroup" id="SubmitNewAcct">Submit</button>
         <a href="{% url 'accountsView' %}" type="back" class="btn btn-primary BGroup">Back</a>
     </div>
 </form>

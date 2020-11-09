@@ -38,6 +38,9 @@
 
 }
 
+
+
+
 /* Styles for the buttons in 'vmcAdminPage' */
 .BGroup{
     /* Rounded button at r=12px */
@@ -46,6 +49,17 @@
     width:200px;
     /* Make button field gray color */
     background-color:#AAAFAA;
+    /* Make the text black */
+    color:black;
+}
+
+#deleteButton {
+    /* Rounded button at r=12px */
+    border-radius:12px;
+    /* Make sure button is large enough to fix text */
+    width:200px;
+    /* Make button field gray color */
+    background-color:#DC143C;
     /* Make the text black */
     color:black;
 }
@@ -61,6 +75,8 @@
     /* Make the text black */
     color:black;
 }
+
+
 
 /*#profileImg{
     width:10%;
