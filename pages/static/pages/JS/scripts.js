@@ -306,6 +306,97 @@ $(document).ready(function() {
         $('#GraphContainer').append(data); // Insert it into the graph container in "VisualizationsPage.
         }
 
+
+
+
+    // JQuery event handler for checking if email addresses match
+    $("#NewEmail1, #NewEmail2").keyup(checkEmailMatch);
+    // JQuery event handler for checking if passwords match
+   $("#NewPass, #ConfirmNewPass").keyup(checkPasswordMatch);
+
+
 });
+
+       // We want to disable the "Submit" button until all forms are valid
+       var passMatch = false;
+       var emailMatch = false;
+       var everythingValid = false;
+       submitToggle();
+
+       // Used for matching email validation
+        function checkEmailMatch() {
+            var email = $("#NewEmail1").val();
+            var confirmEmail = $("#NewEmail2").val();
+
+            if(email != confirmEmail) {
+                emailMatch = false;
+                $('#divCheckEmailMatch').html(("Email does not match.").fontcolor("red"));
+            }
+            else if(email != ""){
+                emailMatch = true;
+                $('#divCheckEmailMatch').html(("Valid email.").fontcolor("green"));
+                checkIfEverythingIsValid();
+                submitToggle();
+            }
+
+
+        }
+
+        // Used for matching password validation
+        function checkPasswordMatch() {
+            var password = $("#NewPass").val();
+            var confirmPassword = $("#ConfirmNewPass").val();
+
+            if (password != confirmPassword) {
+                passMatch = false;
+                $("#divCheckPasswordMatch").html(("Passwords do not match.").fontcolor("red"));
+            }
+            else {
+                if((password.length < 5 || password.length > 12) || !(containsLowerCase(password) && containsUpperCase(password))
+                    || !(containsSymbol(password) || containsNumber(password))) {
+                   $("#divCheckPasswordMatch").html(("Password must be 5-12 characters long," +
+                       "contain at least one symbol or number, one uppercase letter, and one lowercase letter").fontcolor('red'));
+                   passMatch = false;
+                }
+                else {
+                     $("#divCheckPasswordMatch").html(("Password is valid.").fontcolor('green'));
+                    passMatch = true;
+                    checkIfEverythingIsValid();
+                    submitToggle();
+
+                }
+            }
+        }
+
+        // Check if All forms are valid.
+        function checkIfEverythingIsValid(){
+            if(passMatch && emailMatch)
+                everythingValid = true;
+        }
+
+        // Toggle the submit button. If all forms are valid, it will be enabled for clicking.
+        function submitToggle(){
+            document.getElementById('SubmitNewAcct').disabled = !everythingValid
+        }
+
+        function containsSymbol(str){
+            regExp = new RegExp("[-!$%^&*()_+|~=`{}\\[\\]:\";'<>?,.\\/]")
+            return regExp.test(str);
+        }
+
+        function containsNumber(str){
+            const regExp = new RegExp("[0-9]+");
+            return regExp.test(str);
+        }
+
+        function containsUpperCase(str){
+            const regExp = new RegExp("[A-Z]");
+            return regExp.test(str);
+        }
+
+        function containsLowerCase(str){
+            const regExp = new RegExp('[a-z]');
+            return regExp.test(str);
+        }
 
 

@@ -1,0 +1,31 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Change Password{% endblock title %}
+
+{% block content %}
+<div class="container fixed-top" id="AdminTitleContainer">
+    <div class="row">
+        <h1 class="d-flex justify-content-center">Change Password</h1>
+    </div>
+</div>
+
+<div class="container">
+<form>
+    <div class="form-group">
+        <label for="CurrentPass1">Enter Current Password:</label>
+        <input type="password" class="form-control" id="CurrentPass1" placeholder="******">
+        <br>
+        <br>
+        <label for="NewPass1">Enter New Password:</label>
+        <input type="password" class="form-control" id="NewPass1" placeholder="******">
+        <label for="NewPass2">Confirm New Password:</label>
+        <input type="password" class="form-control" id="NewPass2" placeholder="******">
+        <br>
+        <button type="submit" class="btn btn-primary BGroup">Submit</button>
+        <a href="{% url 'vmcAdminPage' %}" type="back" class="btn btn-primary BGroup">Back</a>
+    </div>
+</form>
+
+</div>
+
+{% endblock content %}

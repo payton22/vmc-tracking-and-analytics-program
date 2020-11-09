@@ -1,0 +1,61 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Create New Account{% endblock title %}
+
+{% block content %}
+    <div class="container fixed-top" id="AdminTitleContainer">
+    <div class="row">
+        <h1 class="d-flex justify-content-center">Create New Account</h1>
+    </div>
+</div>
+
+<div class="container">
+<form>
+    <div class="form-group" id="NewAccountForm">
+        <label for="FirstName>">Enter First Name:</label>
+        <input type="text" class="form-control" id="FirstName" placeholder = 'Jane'>
+        <br>
+        <label for="LastName">Enter Last Name:</label>
+        <input type="text" class="form-control" id="LastName" placeholder='Doe'>
+        <br>
+        <br>
+        <label for="NewEmail1">Enter Email:</label>
+        <div class="input-group">
+            <input type="email" class="form-control" id="NewEmail1" placeholder="email">
+            <div class="input-group-append">
+                <span class="input-group-text" id='UnrAppend'>@unr.edu</span>
+            </div>
+        </div>
+        <label for="NewPass2">Confirm Email:</label>
+        <div class="input-group">
+            <input type="email" class="form-control" id="NewEmail2" placeholder="email" onChange="checkEmailMatch();">
+            <div class="input-group-append">
+                <span class="input-group-text" id="UnrAppend2">@unr.edu</span>
+            </div>
+        </div>
+        <div>
+            <div class="registrationFormAlert" id="divCheckEmailMatch"> </div>
+        </div>
+        <br>
+        <br>
+        <label for="NewPass">Enter Password:</label>
+        <input type="password" class="form-control" id="NewPass" placeholder="******">
+        <div class="invalid-feedback">
+            Required password length is 5-12 characters and must contain at least one symbol or number
+        </div>
+        <br>
+        <label for="ConfirmNewPass">Confirm Password:</label>
+        <input type="password" class="form-control" id="ConfirmNewPass" placeholder="******" onChange="checkPasswordMatch();">
+        <div>
+            <div class="registrationFormAlert" id="divCheckPasswordMatch"> </div>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary BGroup" id="SubmitNewAcct">Submit</button>
+        <a href="{% url 'accountsView' %}" type="back" class="btn btn-primary BGroup">Back</a>
+    </div>
+</form>
+
+</div>
+
+
+{% endblock content %}
