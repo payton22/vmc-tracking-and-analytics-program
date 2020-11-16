@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-
+from login.models import CustomUser
 
 def landingPageView(request):
     return render(request, 'pages/landingPage.html')
@@ -41,35 +41,14 @@ def viewAccountsList(request):
 
 
 def accessAccounts():
-    import sqlite3;
-    # Initialize connection to DB
-    conn = sqlite3.connect('vmc_tap.db');
-    # Store results of query in table
-    email_table = [];
-    sql_string = 'SELECT email FROM logins'
-    for r in conn.execute(sql_string):
-        email_table.append(r);
-    # We use this slightly roundabout method instead of something like 'results_table = conn.execute(...)' because conn.execute() does not simply return an array, but rather an open reference the the DB. If left unchecked, you'll lock out the table from being written to for the rest of the session.
-    # Close reference to the DB
-    conn.close()
+    users = CustomUser.objects.all()
 
-    return email_table
+    return users
 
 def accessIndividualAccount(emailAddress):
-    import sqlite3;
+    user = CustomUser.objects.get(pk=emailAddress)
 
-    # Initialize connection to DB
-    conn = sqlite3.connect('vmc_tap.db');
-    # Store results of query in table
-    account = [];
-    sql_string = 'SELECT * FROM logins WHERE email =\'' + emailAddress + '\';'
-    for r in conn.execute(sql_string):
-        account.append(r);
-    # We use this slightly roundabout method instead of something like 'results_table = conn.execute(...)' because conn.execute() does not simply return an array, but rather an open reference the the DB. If left unchecked, you'll lock out the table from being written to for the rest of the session.
-    # Close reference to the DB
-    conn.close()
-
-    return account
+    return user
 
 
 def flatten(sqlList):
@@ -82,17 +61,19 @@ def flatten(sqlList):
 
 
 def accountsView(request):
-    email_list = accessAccounts()
-    flattened_email_list = flatten(email_list)
+    accountsList = accessAccounts()
+    emails = []
 
-    return render(request, 'pages/viewAccountsList.html', {'emails': flattened_email_list})
+    for user in accountsList:
+        emails.append(user.email)
+
+    return render(request, 'pages/viewAccountsList.html', {'emails': emails})
 
 def otherAccountOptions(request, emailAddress):
-    accountList = accessIndividualAccount(emailAddress)
+    userAccount = accessIndividualAccount(emailAddress)
 
-    accountInfo = flatten(accountList)
 
-    info = {'accountName': accountInfo[0], 'firstName': accountInfo[2], 'lastName':accountInfo[3]}
+    info = {'accountName': userAccount.email, 'firstName': userAccount.first_name, 'lastName':userAccount.last_name}
     return render(request, 'pages/individualAccountOption.html', info)
 
 def newAccount(request):
@@ -103,43 +84,28 @@ def newAccount(request):
 
         conn = sqlite3.connect('vmc_tap.db');
 
-        firstName = request.POST.get('firstName')
-        lastName = request.POST.get('lastName')
+        first_name = request.POST.get('firstName')
+        last_name = request.POST.get('lastName')
         email = request.POST.get('email')
         password = request.POST.get('password')
         print(request.POST)
 
-        sql_args = [email, password, firstName, lastName]
-
-        # Encrypt the password
-        sql_args[1] = hashlib.md5(sql_args[1].encode('utf-8')).hexdigest();
-
-        # Extracts info from table and insert into database
-        conn.execute('INSERT INTO logins VALUES (' + ', '.join(['\'' + str(a) + '\'' for a in sql_args]) + ');')
-        # Commit changes to database
-        conn.commit()
+        CustomUser.objects.create_user(email, first_name, last_name, password)
 
         return render(request, 'pages/accountCreated.html', {'email' : email})
 
     return render(request, 'pages/newAccount.html')
 
 def deleteAccount(request, emailAddress):
-    import sqlite3
-    # Initialize connection to DB
-    conn = sqlite3.connect('vmc_tap.db');
-    sql_string = 'DELETE FROM logins WHERE email=\'' + emailAddress + '\';'
-    # We use this slightly roundabout method instead of something like 'results_table = conn.execute(...)' because conn.execute() does not simply return an array, but rather an open reference the the DB. If left unchecked, you'll lock out the table from being written to for the rest of the session.
-    # Close reference to the DB
-    conn.execute(sql_string)
-    conn.commit()
+    user = CustomUser.objects.get(pk=emailAddress)
+    print(user.email)
+    user.delete()
 
     return render(request, 'pages/accountDeleted.html', {'email': emailAddress})
 
 def accountCreated(request, emailAddress):
     accountList = accessIndividualAccount(emailAddress)
 
-    accountInfo = flatten(accountList)
-
-    email = accountInfo[0]
+    email = accountList.email
 
     return render(request, 'pages/individualAccountOption.html', {'email' : email})

@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-# Links the overall django application to different apps that the team developes 
+# Links the overall django application to different apps that the team develops
 urlpatterns = [
     path('datagen/', include('datagen.urls')),
     path('admin/', admin.site.urls),
