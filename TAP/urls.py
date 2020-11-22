@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 
 # Links the overall django application to different apps that the team develops
 urlpatterns = [
@@ -22,5 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('parse/', include('parsing.urls')),
     path('', include('pages.urls')),
-    path('sql/', include('sql.urls'))
+    path('sql/', include('sql.urls')),
+
 ]

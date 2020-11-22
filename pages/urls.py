@@ -1,5 +1,9 @@
 from django.urls import path
+
+from .forms import CustomSetPasswordForm
 from .views import *
+from django.contrib.auth import views as auth_views
+
 
 # manages the urls associated with the pages app
 urlpatterns = [
@@ -14,5 +18,10 @@ urlpatterns = [
     path('vmcadmin/ViewAccountsList', accountsView, name='accountsView'),
     path('vmcadmin/ViewAccountsList/newAccount', newAccount, name='newAccount'),
     path('vmcadmin/ViewAccountsList/<str:emailAddress>/', otherAccountOptions, name='otherAccountOptions'),
-    path('vmcadmin/deleteAccount/<str:emailAddress>/', deleteAccount, name='deleteAccount')
+    path('vmcadmin/deleteAccount/<str:emailAddress>/', deleteAccount, name='deleteAccount'),
+    path('password_reset/', PassReset, name='password_reset'),
+    path('accounts/reset/<uidb64>/<token>/', ChangePass, name='password_reset_confirm'),
+    path('password_reset_complete/', successfullyChangedPass, name='password_reset_complete'),
 ]
+
+# path('password_reset', auth_views.PasswordResetView.as_view(template_name='pages/forgotPassword.html'), name='password_reset')

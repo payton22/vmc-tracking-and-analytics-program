@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser, PermissionsMixin
 
 class CustomUserManager(BaseUserManager):
     # Create a new user with the specified fields
-    def create_user(self, email, first_name, last_name, password=None, **extra_fields):
+    def create_superuser(self, email, first_name, last_name, password=None, **extra_fields):
         # If email or password were not provided, throw an exception
         if not email and password:
             raise ValueError('User must have an email address and password.')
@@ -16,24 +16,25 @@ class CustomUserManager(BaseUserManager):
         # Hash the password
         user.set_password(password)
         # All users are superusers in VMC-TAP
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
+        user.is_superuser = True
+        user.is_staff = True
+        user.is_active = True
 
         # Create DB entry and return the user object
         user.save()
         return user
 
 
-class CustomUser(AbstractUser, PermissionsMixin):
+class CustomUser(AbstractUser):
     username = None
     email = models.EmailField('email address', unique=True, primary_key=True)
 
 
-    is_superuser = models.BooleanField(default=True)
+    #is_superuser = models.BooleanField(default=True)
 
 
     USERNAME_FIELD = 'email'
+
 
     # This should contain the required fields that are not email or password (those are
     # already required)
