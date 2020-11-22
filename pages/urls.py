@@ -8,7 +8,7 @@ from django.contrib.auth import views as auth_views
 # manages the urls associated with the pages app
 urlpatterns = [
     path('', landingPageView, name='landingPage'),
-    path('', include('django.contrib.auth.urls')),
+    
     path('home/', homePageView, name="homePage"),
     path('import/', importPageView, name='importPage'),
     path('visualizations/', visPageView, name='visPage'),
@@ -23,6 +23,7 @@ urlpatterns = [
     path('password_reset/', PassReset, name='password_reset'),
     path('accounts/reset/<uidb64>/<token>/', ChangePass, name='password_reset_confirm'),
     path('password_reset_complete/', successfullyChangedPass, name='password_reset_complete'),
+    path('', include('django.contrib.auth.urls')),
 ]
 
 # path('password_reset', auth_views.PasswordResetView.as_view(template_name='pages/forgotPassword.html'), name='password_reset')

@@ -61,8 +61,8 @@ EMAIL_POST = 587
 EMAIL_USE_TLS = True
 
 
-# EMAIL_HOST_USER = 'vmctapdevelopment@gmail.com'
-# EMAIL_HOST_PASSWORD = os.environ['Cs425team12!']
+EMAIL_HOST_USER = 'vmctapdevelopment@gmail.com'
+EMAIL_HOST_PASSWORD = os.environ['VMC_TAP_EMAIL_PASSWORD']
 
 ROOT_URLCONF = 'TAP.urls'
 
