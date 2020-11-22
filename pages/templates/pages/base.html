@@ -15,7 +15,7 @@
     <div class="row text-white px-2" style="height:110vh;" >
 	    <div class="col-auto border bg-dark">
             <!-- col flex-column for nav-->
-            <h1 class="mx-auto font-weight-bold text-white text-center"> VMC-TAP </h1>
+            <a href="/home/"><h1 class="mx-auto font-weight-bold text-white text-center"> VMC-TAP </h1></a>
 		    <nav class="nav flex-column rounded" id="main_navbar">
 			    <a href="{% url 'homePage' %}" class="nav-link l1 active text-dark bg-success">Home</a>
 			    <a href="{% url 'visPage' %}" class="nav-link l1 text-dark bg-success">Visualizations</a>
@@ -24,10 +24,18 @@
 		    </nav>
             <br>
             <br>
-            <br>
-            <h2>[Profile Name]</h2>
-
-
+			<br>
+			<!-- Daniel Edited this portion belw to display username, Payton may change if he would like -->
+			<!-- <h2>[Profile Name]</h2> -->
+			<div class="text-center">
+				{% if user.is_authenticated %}
+				<h4>Hi {{user.first_name}}!</h4>	
+				<p><a href="{% url 'logout' %}">[Log Out]</a></p>
+			{% else %}
+				<p>you are not logged in</p>
+				<a href="{% url 'login' %}">[Log In]</a>
+			{% endif %}
+			</div>
 	    </div>
 	
         <div class="col border bg-secondary">

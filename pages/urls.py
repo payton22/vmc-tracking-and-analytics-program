@@ -1,5 +1,5 @@
-from django.urls import path
-
+from django.urls import path, include
+#from django.contrib import admin
 from .forms import CustomSetPasswordForm
 from .views import *
 from django.contrib.auth import views as auth_views
@@ -8,6 +8,7 @@ from django.contrib.auth import views as auth_views
 # manages the urls associated with the pages app
 urlpatterns = [
     path('', landingPageView, name='landingPage'),
+    path('', include('django.contrib.auth.urls')),
     path('home/', homePageView, name="homePage"),
     path('import/', importPageView, name='importPage'),
     path('visualizations/', visPageView, name='visPage'),
