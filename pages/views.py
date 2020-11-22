@@ -1,6 +1,13 @@
+import sys
+
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.utils.http import urlsafe_base64_decode
+
 from login.models import CustomUser
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth import update_session_auth_hash, logout, login, tokens
+
 
 def landingPageView(request):
     return render(request, 'pages/landingPage.html')
@@ -45,6 +52,7 @@ def accessAccounts():
 
     return users
 
+
 def accessIndividualAccount(emailAddress):
     user = CustomUser.objects.get(pk=emailAddress)
 
@@ -69,20 +77,18 @@ def accountsView(request):
 
     return render(request, 'pages/viewAccountsList.html', {'emails': emails})
 
+
 def otherAccountOptions(request, emailAddress):
     userAccount = accessIndividualAccount(emailAddress)
 
-
-    info = {'accountName': userAccount.email, 'firstName': userAccount.first_name, 'lastName':userAccount.last_name}
+    info = {'accountName': userAccount.email, 'firstName': userAccount.first_name, 'lastName': userAccount.last_name}
     return render(request, 'pages/individualAccountOption.html', info)
 
-def newAccount(request):
 
+def newAccount(request):
     if request.method == 'POST':
         import hashlib
         import sqlite3
-
-        conn = sqlite3.connect('vmc_tap.db');
 
         first_name = request.POST.get('firstName')
         last_name = request.POST.get('lastName')
@@ -90,11 +96,12 @@ def newAccount(request):
         password = request.POST.get('password')
         print(request.POST)
 
-        CustomUser.objects.create_user(email, first_name, last_name, password)
+        CustomUser.objects.create_superuser(email, first_name, last_name, password)
 
-        return render(request, 'pages/accountCreated.html', {'email' : email})
+        return render(request, 'pages/accountCreated.html', {'email': email})
 
     return render(request, 'pages/newAccount.html')
+
 
 def deleteAccount(request, emailAddress):
     user = CustomUser.objects.get(pk=emailAddress)
@@ -103,9 +110,51 @@ def deleteAccount(request, emailAddress):
 
     return render(request, 'pages/accountDeleted.html', {'email': emailAddress})
 
+
 def accountCreated(request, emailAddress):
     accountList = accessIndividualAccount(emailAddress)
 
     email = accountList.email
 
-    return render(request, 'pages/individualAccountOption.html', {'email' : email})
+    return render(request, 'pages/individualAccountOption.html', {'email': email})
+
+
+def PassReset(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            form.save(request=request)
+            return render(request, 'pages/emailSent.html', {'email': email})
+
+    return render(request, 'pages/forgotPassword.html')
+
+
+def ChangePass(request, uidb64, token):
+
+    email = urlsafe_base64_decode(uidb64).decode()
+    user = CustomUser.objects.get(pk=email)
+    tokenChecker = tokens.PasswordResetTokenGenerator()
+    if tokenChecker.check_token(user, token):
+        login(request, user)
+    else:
+        raise Http404('Password reset link is no longer valid. Please get another email.')
+
+    return render(request, 'pages/passResetConfirm.html')
+
+# After the user has change their password, log them out and return to the login page
+def successfullyChangedPass(request):
+
+    request.user.set_password(request.POST.get('newPassword2'))
+    update_session_auth_hash(request, request.user)
+    email = request.user.email
+    logout(request)
+
+    return render(request, 'pages/passChangeSuccess.html', {'email': email})
+
+# Used for sending a test email
+# def send_test_mail():
+# send_mail('Test subject',
+#         'This is the message body',
+#        'pjknoch55@gmail.com',
+#       ['pjknoch@sbcglobal.net'])

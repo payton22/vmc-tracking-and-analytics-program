@@ -316,6 +316,8 @@ $(document).ready(function() {
     $("#NewEmail1, #NewEmail2").keyup(checkEmailMatch);
     // JQuery event handler for checking if passwords match
    $("#NewPass, #ConfirmNewPass").keyup(checkPasswordMatch);
+   // JQuery event handler for only checking passwords (not email or other fields)
+   $("#NewPass1, #NewPass2").keyup(onlyCheckPasswordMatch);
 
 
 });
@@ -324,7 +326,12 @@ $(document).ready(function() {
        var passMatch = false;
        var emailMatch = false;
        var everythingValid = false;
+       const NewPass1 = "NewPass1";
+       const NewPass2 = "NewPass2";
+       const newPassSubmit = "newPassSubmit";
        submitToggle();
+       passwordSubmitToggle();
+
 
        // Used for matching email validation
         function checkEmailMatch() {
@@ -344,11 +351,40 @@ $(document).ready(function() {
 
 
         }
+        // Used for only forms that only involve validating passwords
+        function onlyCheckPasswordMatch(){
+
+            var password = $('#NewPass1').val();
+            var confirmPassword = $('#NewPass2').val();
+
+            if (password != confirmPassword) {
+                passMatch = false;
+                $("#divCheckPasswordMatch").html(("Passwords do not match.").fontcolor("red"));
+            }
+            else {
+                if((password.length < 5 || password.length > 12) || !(containsLowerCase(password) && containsUpperCase(password))
+                    || !(containsSymbol(password) || containsNumber(password))) {
+                   $("#divCheckPasswordMatch").html(("Password must be 5-12 characters long," +
+                       "contain at least one symbol or number, one uppercase letter, and one lowercase letter").fontcolor('red'));
+                   passMatch = false;
+                }
+                else {
+                     $("#divCheckPasswordMatch").html(("Password is valid.").fontcolor('green'));
+                    passMatch = true;
+                    passwordSubmitToggle()
+
+                }
+            }
+
+
+
+        }
 
         // Used for matching password validation
+        // Pass this function "password HTML ID 1, password HTML ID2"
         function checkPasswordMatch() {
             var password = $("#NewPass").val();
-            var confirmPassword = $("#ConfirmNewPass").val();
+            var confirmPassword = $("#NewPass2").val();
 
             if (password != confirmPassword) {
                 passMatch = false;
@@ -379,8 +415,21 @@ $(document).ready(function() {
 
         // Toggle the submit button. If all forms are valid, it will be enabled for clicking.
         function submitToggle(){
-            document.getElementById('SubmitNewAcct').disabled = !everythingValid
+            if(document.getElementById('SubmitNewAcct') != null)
+                document.getElementById('SubmitNewAcct').disabled = !everythingValid;
         }
+
+        // Toggle submit button for a form that only contains password setting
+        function passwordSubmitToggle(){
+            if(document.getElementById('newPassSubmit') != null)
+                document.getElementById('newPassSubmit').disabled = !passMatch;
+        }
+
+        // This is for changing the password. We only want to toggle "submit" when user changes
+        // their password
+        /*function newPassSubmitToggle(){
+            document.getElementById('newPassSubmit').disabled = !passMatch;
+        }*/
 
         function containsSymbol(str){
             regExp = new RegExp("[-!$%^&*()_+|~=`{}\\[\\]:\";'<>?,.\\/]")
