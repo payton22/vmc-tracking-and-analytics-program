@@ -25,8 +25,8 @@ def rebuild_db(request):
         
     #Recreate tables
     conn.execute('CREATE TABLE student_barcode(barcode_id TEXT, nhse_id INTEGER)');
-    conn.execute('CREATE TABLE visits(time_in TEXT, time_out TEXT, duration REAL, barcodeID TEXT,  event_name TEXT, appointment INTEGER)');
-    conn.execute('CREATE TABLE student_demographics(nhse_id INTEGER, rn_net_id TEXT, first_name TEXT, last_name TEXT, acad_career TEXT, units_taken INTEGER, age INTEGER, sex TEXT, ethnicity TEXT, current_gpa REAL, cumulative_gpa REAL, semester_gpa REAL, pell_grant INTEGER, benefit_chapter INTEGER, stem_scholarship INTEGER, residency TEXT, employment TEXT, hrs_per_week TEXT, dependents TEXT, marital_status TEXT, gender TEXT, parent_education TEXT, break_in_attendance INTEGER, needs_based_grants INTEGER, merit_based_grants INTEGER, fed_work_study INTEGER, military_grants INTEGER, millennium_scholarship INTEGER, nv_prepaid INTEGER)');
+    conn.execute('CREATE TABLE visits(time_in TEXT, time_out TEXT, duration REAL, nshe_id TEXT,  event_name TEXT, appointment INTEGER)');
+    conn.execute('CREATE TABLE student_demographics(nshe_id INTEGER, rn_net_id TEXT, first_name TEXT, last_name TEXT, acad_career TEXT, units_taken INTEGER, age INTEGER, sex TEXT, ethnicity TEXT, current_gpa REAL, cumulative_gpa REAL, semester_gpa REAL, pell_grant INTEGER, benefit_chapter INTEGER, stem_scholarship INTEGER, residency TEXT, employment TEXT, hrs_per_week TEXT, dependents TEXT, marital_status TEXT, gender TEXT, parent_education TEXT, break_in_attendance INTEGER, needs_based_grants INTEGER, merit_based_grants INTEGER, fed_work_study INTEGER, military_grants INTEGER, millennium_scholarship INTEGER, nv_prepaid INTEGER)');
     conn.execute('CREATE TABLE logins(email TEXT, password TEXT, first_name TEXT, last_name TEXT)');
 
     
