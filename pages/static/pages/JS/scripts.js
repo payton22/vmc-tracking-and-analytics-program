@@ -384,7 +384,7 @@ $(document).ready(function() {
         // Pass this function "password HTML ID 1, password HTML ID2"
         function checkPasswordMatch() {
             var password = $("#NewPass").val();
-            var confirmPassword = $("#NewPass2").val();
+            var confirmPassword = $("#ConfirmNewPass").val();
 
             if (password != confirmPassword) {
                 passMatch = false;
