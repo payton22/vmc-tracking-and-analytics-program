@@ -138,4 +138,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = 'homePage'
+<<<<<<< HEAD
 LOGOUT_REDIRECT_URL = 'login'
+=======
+LOGOUT_REDIRECT_URL = 'login'
+>>>>>>> ac5c9ff46f6d7b02c6a989967b27c504c1b44851
