@@ -15,12 +15,16 @@ class Visit:
         self.barcode        = barcode
         self.event          = event
         self.is_appointment = is_appointment
+        self.sql_args = [None]*6
     def no_departure(self):
         self.departure_time = 'NO DEPARTURE'
         self.duration = 0
     def add_departure(self, departure_time):
         self.departure_time = departure_time
         self.duration       = (datetime.strptime(departure_time, time_format) - datetime.strptime(self.arrival_time, time_format)).total_seconds() / 60
+    def get_insert_statement(self):
+        self.sql_args = [self.arrival_time, self.departure_time, self.duration, self.barcode, self.event, self.is_appointment]
+        return 'INSERT INTO visits VALUES (' + ', '.join(['\'' + str(a) + '\'' for a in self.sql_args]) + ');'
 
     def __str__(self):
         return "Barcode: " + self.barcode + ' Appointment?: ' + str(self.is_appointment) + ' SignIn: ' + self.arrival_time + ' SignOut: ' + self.departure_time + ' Duration: ' + str(self.duration) + ' mins'
