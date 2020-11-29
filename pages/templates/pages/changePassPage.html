@@ -10,18 +10,22 @@
 </div>
 
 <div class="container">
-<form>
+<form method="post">
     <div class="form-group">
-        <label for="CurrentPass1">Enter Current Password:</label>
-        <input type="password" class="form-control" id="CurrentPass1" placeholder="******">
-        <br>
+        {% csrf_token %}
+        {% if form.current_password.errors %}
+            <div class="error">{{ form.current_password.errors }}</div>
+        {% endif %}
+        <label for="{{ form.current_password.id_for_label }}">Enter Current Password:</label>
+        {{ form.current_password }}
         <br>
         <label for="NewPass1">Enter New Password:</label>
         <input type="password" class="form-control" id="NewPass1" placeholder="******">
         <label for="NewPass2">Confirm New Password:</label>
-        <input type="password" class="form-control" id="NewPass2" placeholder="******">
+        <input type="password" class="form-control" id="NewPass2" placeholder="******" onchange="onlyCheckPasswordMatch()">
+        <div class="registrationFormAlert" id="divCheckPasswordMatch"> </div>
         <br>
-        <button type="submit" class="btn btn-primary BGroup">Submit</button>
+        <button type="submit" id="newPassSubmit" value="OK" class="btn btn-primary BGroup">Submit</button>
         <a href="{% url 'vmcAdminPage' %}" type="back" class="btn btn-primary BGroup">Back</a>
     </div>
 </form>
