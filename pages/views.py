@@ -8,6 +8,8 @@ from login.models import CustomUser
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import update_session_auth_hash, logout, login, tokens
 
+from .forms import CurrentPasswordForm
+
 
 def landingPageView(request):
     return render(request, 'pages/landingPage.html')
@@ -32,7 +34,14 @@ def visPageView(request):
 
 
 def changePassView(request):
-    return render(request, 'pages/changePassPage.html')
+
+    if request.method == 'POST':
+        form = CurrentPasswordForm(request.POST, user=request.user)
+        form.check_entry()
+    else:
+        form = CurrentPasswordForm(user=request.user)
+
+    return render(request, 'pages/changePassPage.html', {'form':form})
 
 
 def changeEmailView(request):

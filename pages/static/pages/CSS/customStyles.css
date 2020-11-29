@@ -3,6 +3,10 @@
     height: 100vh;
 }
 
+.error{
+    color:red;
+    font-size:20px;
+}
 /* Styles for navbar */
 #main_navbar{
     /* Move the navbar down by 100px */
