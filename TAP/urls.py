@@ -24,5 +24,5 @@ urlpatterns = [
     path('parse/', include('parsing.urls')),
     path('', include('pages.urls')),
     path('sql/', include('sql.urls')),
-
+    path('plotly', include('visualizations.urls'))
 ]
