@@ -13,6 +13,9 @@ class CurrentPasswordForm(forms.Form):
         if not self.user.check_password(password):
             self.add_error('current_password', 'Incorrect Password. Please'
                                                      ' enter the correct password for your account.')
+            return False
+        else:
+            return True
 
 
 

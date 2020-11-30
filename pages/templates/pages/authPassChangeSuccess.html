@@ -1,0 +1,18 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Password Successfully Changed{% endblock title %}
+
+{% block content %}
+        <!-- Container for sign in form -->
+        <div class="container border w-50 bg-dark" method="post">
+            <h3>Password for account {{ user.email }} was successfully changed!</h3>
+
+            <form class="col text-center" method="post">
+                <a class="btn btn-secondary BGroup" href="{% url 'vmcAdminPage' %}" type="submit" value="OK">Return to My Account Options</a>
+            </form>
+          </div>
+
+    </body>
+</html>
+
+{% endblock content %}
