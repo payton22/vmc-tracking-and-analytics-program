@@ -35,12 +35,26 @@ def visPageView(request):
 
 def changePassView(request):
 
+    # When the user submits the form
     if request.method == 'POST':
+        # Save the form data
         form = CurrentPasswordForm(request.POST, user=request.user)
-        form.check_entry()
+        # If the user's current password is correct
+        if form.check_entry():
+            # Change the password and save it
+            request.user.set_password(request.POST.get('pass'))
+            # Stay logged in after password is changed
+            update_session_auth_hash(request, request.user)
+            request.user.save()
+            # Change to the page that indicates to the user that
+            # the password was successfully changed
+            return render(request, 'pages/authPassChangeSuccess.html')
     else:
+        # Blank form (no POST yet)
         form = CurrentPasswordForm(user=request.user)
 
+    # Render the current page if the user first enters this page
+    # or the user's current password is incorrect
     return render(request, 'pages/changePassPage.html', {'form':form})
 
 
@@ -154,10 +168,12 @@ def ChangePass(request, uidb64, token):
 # After the user has change their password, log them out and return to the login page
 def successfullyChangedPass(request):
 
-    request.user.set_password(request.POST.get('newPassword2'))
-    update_session_auth_hash(request, request.user)
-    email = request.user.email
-    logout(request)
+    if request.method == 'POST':
+        request.user.set_password(request.POST.get('newPassword2'))
+        update_session_auth_hash(request, request.user)
+        email = request.user.email
+        request.user.save()
+        logout(request)
 
     return render(request, 'pages/passChangeSuccess.html', {'email': email})
 
