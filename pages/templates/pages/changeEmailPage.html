@@ -1,0 +1,34 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Change Email{% endblock title %}
+
+{% block content %}
+<div class="container fixed-top" id="AdminTitleContainer">
+    <div class="row">
+        <h1 class="d-flex justify-content-center">Change Password</h1>
+    </div>
+</div>
+
+<div class="container">
+<form>
+    <div class="form-group">
+        <label for="CurrentEmail1">Enter Current Email:</label>
+        <input type="email" class="form-control" id="CurrentEmail1" placeholder="email@unr.edu">
+        <br>
+        <br>
+        <label for="NewEmail1">Enter New Email:</label>
+        <input type="email" class="form-control" id="NewEmail1" placeholder="newemail@unr.edu">
+        <label for="NewPass2">Confirm New Email:</label>
+        <input type="email" class="form-control" id="NewEmail2" placeholder="newemail@unr.edu">
+        <br>
+        <label for="CurrentPass2">Enter Password:</label>
+        <input type="password" class="form-control" id="CurrentPass2" placeholder="******">
+        <br>
+        <button type="submit" class="btn btn-primary BGroup">Submit</button>
+        <a href="{% url 'vmcAdminPage' %}" type="back" class="btn btn-primary BGroup">Back</a>
+    </div>
+</form>
+
+</div>
+
+{% endblock content %}
