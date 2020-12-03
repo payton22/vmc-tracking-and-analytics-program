@@ -23,10 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('parse/', include('parsing.urls')),
     path('', include('pages.urls')),
-<<<<<<<<< Temporary merge branch 1
     path('sql/', include('sql.urls')),
-
-=========
-    path('plotly', include('visualizations.urls'))
->>>>>>>>> Temporary merge branch 2
+    path('plotly/', include('visualizations.urls'))
 ]
