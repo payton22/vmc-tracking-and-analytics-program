@@ -7,8 +7,7 @@ from django.contrib.auth import views as auth_views
 
 # manages the urls associated with the pages app
 urlpatterns = [
-    path('', landingPageView, name='landingPage'),
-    
+    path('', auth_views.LoginView.as_view(), name='login'),
     path('home/', homePageView, name="homePage"),
     path('import/', importPageView, name='importPage'),
     path('visualizations/', visPageView, name='visPage'),
@@ -23,7 +22,7 @@ urlpatterns = [
     path('password_reset/', PassReset, name='password_reset'),
     path('accounts/reset/<uidb64>/<token>/', ChangePass, name='password_reset_confirm'),
     path('password_reset_complete/', successfullyChangedPass, name='password_reset_complete'),
-    path('login/', auth_views.LoginView.as_view(), name='login'),
+    #path('login/', auth_views.LoginView.as_view(), name='login'), No longer needed. Leaving for now for reference -Daniel
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     #path('', include('django.contrib.auth.urls')),
 ]
