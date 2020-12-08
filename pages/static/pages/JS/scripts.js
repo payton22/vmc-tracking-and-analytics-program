@@ -288,7 +288,7 @@ $(document).ready(function() {
 
         }
 
-        // Function for showing inividual statistic (e.g. average G.P.A, average age)
+        // Function for showing individual statistic (e.g. average G.P.A, average age)
         function showIndStat()
         {
              var data = "<div class=\"graphOptions container border w-50 bg-dark\" id=\"Graph\"> </div> \
@@ -318,6 +318,8 @@ $(document).ready(function() {
    $("#NewPass, #ConfirmNewPass").keyup(checkPasswordMatch);
    // JQuery event handler for only checking passwords (not email or other fields)
    $("#NewPass1, #NewPass2").keyup(onlyCheckPasswordMatch);
+   // JQuery event handler for ensuring name fields are not empty
+    $("#firstName, #lastName").keyup(nonEmptyFields);
 
 
 });
@@ -325,28 +327,42 @@ $(document).ready(function() {
        // We want to disable the "Submit" button until all forms are valid
        var passMatch = false;
        var emailMatch = false;
+       var emailChangeMatch = false;
        var everythingValid = false;
+       var enableNameSubmit = false;
        const NewPass1 = "NewPass1";
        const NewPass2 = "NewPass2";
        const newPassSubmit = "newPassSubmit";
        submitToggle();
        passwordSubmitToggle();
+       nameSubmitToggle();
+       emailSubmitToggle();
 
 
        // Used for matching email validation
         function checkEmailMatch() {
             var email = $("#NewEmail1").val();
             var confirmEmail = $("#NewEmail2").val();
+            emailMatch = false; // If this function is reused, want to make sure it's false first
+            emailChangeMatch = false;
+            submitToggle(); // Start submit button as disabled
+            emailSubmitToggle();
 
             if(email != confirmEmail) {
                 emailMatch = false;
+                emailChangeMatch = false;
+                emailSubmitToggle();
+                checkIfEverythingIsValid();
+                submitToggle();
                 $('#divCheckEmailMatch').html(("Email does not match.").fontcolor("red"));
             }
             else if(email != ""){
                 emailMatch = true;
+                emailChangeMatch = true;
                 $('#divCheckEmailMatch').html(("Valid email.").fontcolor("green"));
                 checkIfEverythingIsValid();
                 submitToggle();
+                emailSubmitToggle();
             }
 
 
@@ -356,9 +372,11 @@ $(document).ready(function() {
 
             var password = $('#NewPass1').val();
             var confirmPassword = $('#NewPass2').val();
-
+            passMatch = false;
+            passwordSubmitToggle();
             if (password != confirmPassword) {
                 passMatch = false;
+                passwordSubmitToggle();
                 $("#divCheckPasswordMatch").html(("Passwords do not match.").fontcolor("red"));
             }
             else {
@@ -367,6 +385,7 @@ $(document).ready(function() {
                    $("#divCheckPasswordMatch").html(("Password must be 5-12 characters long," +
                        "contain at least one symbol or number, one uppercase letter, and one lowercase letter").fontcolor('red'));
                    passMatch = false;
+                   passwordSubmitToggle();
                 }
                 else {
                      $("#divCheckPasswordMatch").html(("Password is valid.").fontcolor('green'));
@@ -385,9 +404,12 @@ $(document).ready(function() {
         function checkPasswordMatch() {
             var password = $("#NewPass").val();
             var confirmPassword = $("#ConfirmNewPass").val();
-
+            everythingValid = false;
+            submitToggle();
             if (password != confirmPassword) {
                 passMatch = false;
+                checkIfEverythingIsValid();
+                submitToggle();
                 $("#divCheckPasswordMatch").html(("Passwords do not match.").fontcolor("red"));
             }
             else {
@@ -396,6 +418,8 @@ $(document).ready(function() {
                    $("#divCheckPasswordMatch").html(("Password must be 5-12 characters long," +
                        "contain at least one symbol or number, one uppercase letter, and one lowercase letter").fontcolor('red'));
                    passMatch = false;
+                   checkIfEverythingIsValid();
+                   submitToggle();
                 }
                 else {
                      $("#divCheckPasswordMatch").html(("Password is valid.").fontcolor('green'));
@@ -407,10 +431,31 @@ $(document).ready(function() {
             }
         }
 
+        function nonEmptyFields() {
+            var firstName = $('#firstName').val();
+            var lastName = $('#lastName').val();
+            enableNameSubmit = false;
+            nameSubmitToggle();
+
+            // If either field is null, inform user that they need to fill it out and disable submit
+            if(firstName==null || firstName=="", lastName ==null || lastName ==""){
+                $("#divAllFieldsCompleted").html("You must fill out both first and last name to continue.".fontcolor('red'));
+                enableNameSubmit = false;
+                nameSubmitToggle();
+            }
+            else{
+                $("#divAllFieldsCompleted").html("");
+                enableNameSubmit = true;
+                nameSubmitToggle()
+            }
+        }
+
         // Check if All forms are valid.
         function checkIfEverythingIsValid(){
             if(passMatch && emailMatch)
                 everythingValid = true;
+            else
+                everythingValid = false;
         }
 
         // Toggle the submit button. If all forms are valid, it will be enabled for clicking.
@@ -423,6 +468,18 @@ $(document).ready(function() {
         function passwordSubmitToggle(){
             if(document.getElementById('newPassSubmit') != null)
                 document.getElementById('newPassSubmit').disabled = !passMatch;
+        }
+
+        // Function for toggling submit on name form
+        function nameSubmitToggle(){
+            if(document.getElementById('nameSubmit')!=null)
+                document.getElementById('nameSubmit').disabled = !enableNameSubmit;
+        }
+
+        // For the change email page, this toggles the submit button
+        function emailSubmitToggle(){
+            if(document.getElementById('emailSubmit')!=null)
+                document.getElementById('emailSubmit').disabled = !emailChangeMatch;
         }
 
         // This is for changing the password. We only want to toggle "submit" when user changes

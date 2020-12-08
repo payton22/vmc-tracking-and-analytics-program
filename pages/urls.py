@@ -11,9 +11,9 @@ urlpatterns = [
     path('home/', homePageView, name="homePage"),
     path('import/', importPageView, name='importPage'),
     path('visualizations/', visPageView, name='visPage'),
-    path('vmcadmin/', vmcAdminPageView, name='vmcAdminPage'),
-    path('vmcadmin/changePassword', changePassView, name='changePassPage'),
-    path('vmcadmin/changeEmail', changeEmailView, name='changeEmailPage'),
+    path('vmcadmin/', accountsView, name='vmcAdminPage'),
+    path('vmcadmin/changePassword/<str:emailAddress>/', changePassView, name='changePassPage'),
+    path('vmcadmin/changeEmail/<str:email>', changeEmailView, name='changeEmailPage'),
     path('vmcadmin/changeProfileInfo', changeProfileView, name='changeProfilePage'),
     path('vmcadmin/ViewAccountsList', accountsView, name='accountsView'),
     path('vmcadmin/ViewAccountsList/newAccount', newAccount, name='newAccount'),
@@ -24,6 +24,7 @@ urlpatterns = [
     path('password_reset_complete/', successfullyChangedPass, name='password_reset_complete'),
     #path('login/', auth_views.LoginView.as_view(), name='login'), No longer needed. Leaving for now for reference -Daniel
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('changeName/<str:accountName>/', changeName, name='changeName')
     #path('', include('django.contrib.auth.urls')),
 ]
 
