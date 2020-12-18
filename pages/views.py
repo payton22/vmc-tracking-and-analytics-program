@@ -9,7 +9,6 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import update_session_auth_hash, logout, login, tokens
 
 from .forms import CurrentPasswordForm, ChangeNameForm, ChangeEmailForm
-import copy
 
 
 def landingPageView(request):
