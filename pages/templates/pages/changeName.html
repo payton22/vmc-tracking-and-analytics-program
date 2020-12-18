@@ -1,11 +1,11 @@
 {% extends "pages/base.html" %}
 
-{% block title %}Change Email{% endblock title %}
+{% block title %}Change Name{% endblock title %}
 
 {% block content %}
 <div class="container fixed-top" id="AdminTitleContainer">
     <div class="row">
-        <h1 class="d-flex justify-content-center">Change Email for account {{ email }}</h1>
+        <h1 class="d-flex justify-content-center">Change Name for Account {{ email }}</h1>
     </div>
 </div>
 
@@ -19,13 +19,13 @@
         <label for="{{ form.current_password.id_for_label }}">Enter your password for your account {{ user.email }}:</label>
         {{ form.current_password }}
         <br>
-        <label for={{ form.email_addr.id_for_label }}>New email for account {{ email }}:</label>
-        {{ form.email_addr }}
-        <label for={{ form.email_confirm.id_for_label }}>Confirm new email for account {{ email }}</label>
-        {{ form.email_confirm}}
-        <div class="registrationFormAlert" id="divCheckEmailMatch"> </div>
+        <label for={{ form.first_name.id_for_label }}>New first name for account {{ email }}:</label>
+        {{ form.first_name }}
+        <label for={{ form.last_name.id_for_label }}>New last name for account {{ email }}</label>
+        {{ form.last_name }}
+        <div class="registrationFormAlert" id="divAllFieldsCompleted"> </div>
         <br>
-        <button type="submit" id="emailSubmit" value="OK" class="btn btn-primary BGroup">Submit</button>
+        <button type="submit" id="nameSubmit" value="OK" class="btn btn-primary BGroup">Submit</button>
         <a href="{% url 'otherAccountOptions' email %}" type="back" class="btn btn-primary BGroup">Back</a>
     </div>
 </form>

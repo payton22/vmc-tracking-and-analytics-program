@@ -24,9 +24,9 @@ def rebuild_db(request):
         conn.execute('DROP TABLE IF EXISTS ' + t + ';');
         
     #Recreate tables
-    conn.execute('CREATE TABLE student(barcodeID TEXT, nhseID INTEGER, netID TEXT, full_name TEXT, gender INTEGER)');
-    conn.execute('CREATE TABLE visits(time_in TEXT, time_out TEXT, duration REAL, barcodeID TEXT,  event_name TEXT, appointment INTEGER)');
-    conn.execute('CREATE TABLE questionnaire(netID TEXT, nhseID INTEGER, timestamp TEXT, benefit_chapter INTEGER, stem_scholarship INTEGER, currently_living BLOB, employment BLOB, num_hrs_working BLOB, pell_grant INTEGER, needs_based_grants INTEGER, merit_based_grants INTEGER, federal_work_study INTEGER, military_grants INTEGER, millennium_scholarship INTEGER, nevada_pre_paid INTEGER, num_dependents BLOB, marital_status BLOB, gender INTEGER, sexual_orientation BLOB, parent_education BLOB, break_in_attendance INTEGER)');
+    conn.execute('CREATE TABLE student_barcode(barcode_id TEXT, nhse_id INTEGER)');
+    conn.execute('CREATE TABLE visits(time_in TEXT, time_out TEXT, duration REAL, nshe_id TEXT,  event_name TEXT, appointment INTEGER)');
+    conn.execute('CREATE TABLE student_demographics(nshe_id INTEGER, rn_net_id TEXT, first_name TEXT, last_name TEXT, acad_career TEXT, units_taken INTEGER, age INTEGER, sex TEXT, ethnicity TEXT, current_gpa REAL, cumulative_gpa REAL, semester_gpa REAL, pell_grant INTEGER, benefit_chapter INTEGER, stem_scholarship INTEGER, residency TEXT, employment TEXT, hrs_per_week TEXT, dependents TEXT, marital_status TEXT, gender TEXT, parent_education TEXT, break_in_attendance INTEGER, needs_based_grants INTEGER, merit_based_grants INTEGER, fed_work_study INTEGER, military_grants INTEGER, millennium_scholarship INTEGER, nv_prepaid INTEGER)');
     conn.execute('CREATE TABLE logins(email TEXT, password TEXT, first_name TEXT, last_name TEXT)');
 
     

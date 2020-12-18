@@ -10,25 +10,50 @@
     </head>
     <body class="bg-dark text-white">
 
-        <!-- Jumbotron that houses the welcom message -->
-        <div class="jumbotron container bg-dark border mt-5">
+        <!-- Welcome message -->
+        <div class="container bg-dark mt-5">
             <span class="text-center">
                 <h1>Welcome to VMC-TAP</h1>
+
+                <!-- Image of the military seals -->
+                <div class="">
+                    <div class="row justify-content-center my-3">
+                        <a href="/home/"><img src="{% static 'pages/images/Veterans_Service_Office.png' %}" alt="Veterans Service Office Logo" class="" style="width:200px;"></a>
+                    </div>
+                </div>
+
+
+<!-- New responsive login form -->
+                <form class="container pb-2 form" method="post">
+                    {% csrf_token %}
+                    <h4>Sign In</h4>
+                    <!-- Div for username which is the same as an email for login purposes -->
+                    <div class="my-3">
+                        <div>
+                            <label for="">Email address:</label>
+                        </div>
+                        {{ form.username }}
+                    </div>
+                    <!-- Div for pasword paired with email for authentication -->
+                    <div class="mb-3">
+                        <div>
+                            <label for="">Password:</label>
+                        </div>
+                        {{ form.password }}
+                    </div>
+
+                    
+                    <p><a href="{% url 'password_reset' %}">Forgot Password?</a></p>
+                    <div class="row justify-content-center">
+                        <button value="submit">Log In</button>
+                    </div>
+                </form>
+
+
+
+
             </span>
         </div>
-
-        <!-- Image of the military seals -->
-        <div class="container mb-5">
-            <a href="/home/"><img src="{% static 'pages/images/military_seals1.png' %}" alt="U.S. Military Seals" class="img-fluid" style="width: 75rem;"></a>
-        </div>
-     
-        <form class="container border w-25 pb-2 form" method="post">
-            {% csrf_token %}
-            <h5>Sign In</h5>
-            {{form.as_p}}
-            <p><a href="{% url 'password_reset' %}">Forgot Passord?</a></p>
-            <button value="submit">Log In</button>
-        </form>
     </body>
 </html>
 

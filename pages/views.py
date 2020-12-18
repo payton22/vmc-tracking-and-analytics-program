@@ -8,7 +8,7 @@ from login.models import CustomUser
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import update_session_auth_hash, logout, login, tokens
 
-from .forms import CurrentPasswordForm
+from .forms import CurrentPasswordForm, ChangeNameForm, ChangeEmailForm
 
 
 def landingPageView(request):
@@ -33,33 +33,85 @@ def visPageView(request):
     return render(request, 'pages/visualizationsPage.html')
 
 
-def changePassView(request):
-
+def changePassView(request, emailAddress):
+    # Get the info. from the selected account
+    user = accessIndividualAccount(emailAddress)
+    email = user.email
     # When the user submits the form
     if request.method == 'POST':
         # Save the form data
         form = CurrentPasswordForm(request.POST, user=request.user)
         # If the user's current password is correct
         if form.check_entry():
-            # Change the password and save it
-            request.user.set_password(request.POST.get('pass'))
-            # Stay logged in after password is changed
-            update_session_auth_hash(request, request.user)
-            request.user.save()
+
+            # If the user is changing their own password
+            if user.email == request.user.email:
+                # Set password with new value, save
+                request.user.set_password(request.POST.get('pass'))
+                request.user.save()
+                # Stay authenticated
+                update_session_auth_hash(request, request.user)
+            else:
+                # Set password with new value, save
+                user.set_password(request.POST.get('pass'))
+                user.save()
+
             # Change to the page that indicates to the user that
             # the password was successfully changed
-            return render(request, 'pages/authPassChangeSuccess.html')
+            return render(request, 'pages/authPassChangeSuccess.html', {'email':email})
     else:
         # Blank form (no POST yet)
+
         form = CurrentPasswordForm(user=request.user)
 
     # Render the current page if the user first enters this page
     # or the user's current password is incorrect
-    return render(request, 'pages/changePassPage.html', {'form':form})
+    return render(request, 'pages/changePassPage.html', {'form':form, 'email': email})
 
 
-def changeEmailView(request):
-    return render(request, 'pages/changeEmailPage.html')
+def changeEmailView(request, email):
+    # Get the info. from the selected account
+    user = accessIndividualAccount(email)
+    previous_email = email
+    email = user.email
+    # When the user submits the form
+    if request.method == 'POST':
+        # Save the form data
+        form = ChangeEmailForm(request.POST, user=request.user)
+        # If the user's current password is correct
+        # TODO check if all attributes are saved when a copy is created
+        if form.check_entry():
+            if request.user.email == user.email:
+                saved_user = request.user
+                logout(request)
+                user.email = request.POST.get('email_confirm')
+                user.save()
+                saved_user.delete()
+                login(request, user)
+            else:
+
+                old_user_email = user.email
+                user.email = request.POST.get('email_confirm')
+                user.save()
+
+                old_user_acct = CustomUser.objects.get(pk=old_user_email)
+                old_user_acct.delete()
+
+
+
+
+
+            # Change to the page that indicates to the user that
+            # the password was successfully changed
+            return render(request, 'pages/emailChangeSuccess.html', {'email': user.email})
+    else:
+        # Blank form (no POST yet)
+
+        form = ChangeEmailForm(user=request.user)
+
+    # Render the current page if the user first enters this page
+    # or the user's current password is incorrect
+    return render(request, 'pages/changeEmailPage.html', {'form':form, 'email':email})
 
 
 def changeProfileView(request):
@@ -128,7 +180,6 @@ def newAccount(request):
 
 def deleteAccount(request, emailAddress):
     user = CustomUser.objects.get(pk=emailAddress)
-    print(user.email)
     user.delete()
 
     return render(request, 'pages/accountDeleted.html', {'email': emailAddress})
@@ -176,6 +227,32 @@ def successfullyChangedPass(request):
         logout(request)
 
     return render(request, 'pages/passChangeSuccess.html', {'email': email})
+
+def changeName(request, accountName):
+    # Get the info. from the selected account
+    user = accessIndividualAccount(accountName)
+    email = user.email
+    # When the user submits the form
+    if request.method == 'POST':
+        # Save the form data
+        form = ChangeNameForm(request.POST, user=request.user)
+        # If the user's current password is correct
+        if form.check_entry():
+            # Change the user's first and last name
+            user.first_name = request.POST.get('first_name')
+            user.last_name= request.POST.get('last_name')
+            user.save()
+
+
+            return render(request, 'pages/nameChangeSuccess.html', {'email': email})
+    else:
+        # Blank form (no POST yet)
+
+        form = ChangeNameForm(user=request.user)
+
+    # Render the current page if the user first enters this page
+    # or the user's current password is incorrect
+    return render(request, 'pages/changeName.html', {'form': form, 'email': email})
 
 # Used for sending a test email
 # def send_test_mail():
