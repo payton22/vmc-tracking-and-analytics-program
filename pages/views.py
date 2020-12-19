@@ -8,7 +8,7 @@ from login.models import CustomUser
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import update_session_auth_hash, logout, login, tokens
 
-from .forms import CurrentPasswordForm, ChangeNameForm, ChangeEmailForm
+from .forms import CurrentPasswordForm, ChangeNameForm, ChangeEmailForm, UserProfileForm
 
 
 def landingPageView(request):
@@ -253,6 +253,18 @@ def changeName(request, accountName):
     # Render the current page if the user first enters this page
     # or the user's current password is incorrect
     return render(request, 'pages/changeName.html', {'form': form, 'email': email})
+
+def profileImageView(request, accountName):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, user=request.user)
+        user = accessIndividualAccount(accountName)
+        if form.check_entry():
+            user.avatar = request.FILES.get('prof_pic')
+            user.save()
+        return render(request, 'pages/homePage.html')
+    else:
+        form = UserProfileForm()
+        return render(request, 'pages/changeProfilePic.html', {'form':form, 'email':accountName})
 
 # Used for sending a test email
 # def send_test_mail():
