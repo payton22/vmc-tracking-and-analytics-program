@@ -29,7 +29,8 @@
 			<!-- <h2>[Profile Name]</h2> -->
 			<div class="text-center">
 				{% if user.is_authenticated %}
-				<h4>Hi {{user.first_name}}</h4>	
+				<h4>Hi {{user.first_name}}</h4>
+                    <img src='{{ user.avatar.url }}' class="rounded-circle" id='profImg' alt=''/>
 				<p><a href="{% url 'logout' %}">[Log Out]</a></p>
 			{% else %}
 				<p>You are not logged in</p>

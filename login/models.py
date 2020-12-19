@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
+from django_resized import ResizedImageField
 
 
 class CustomUserManager(BaseUserManager):
@@ -28,17 +29,13 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     username = None
     email = models.EmailField('email address', unique=True, primary_key=True)
-
-
-    #is_superuser = models.BooleanField(default=True)
-
-
+    is_superuser = models.BooleanField(default=True)
+    avatar = ResizedImageField(quality=100, size=[120, 120], upload_to='profile_pic', blank=True)
     USERNAME_FIELD = 'email'
-
 
     # This should contain the required fields that are not email or password (those are
     # already required)
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'avatar']
 
     objects = CustomUserManager()
 

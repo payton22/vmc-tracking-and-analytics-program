@@ -1,4 +1,5 @@
 from django import forms
+from login.models import CustomUser
 
 # Base class used for incorporating the password authentication
 class CurrentPasswordForm(forms.Form):
@@ -52,6 +53,11 @@ class ChangeEmailForm(CurrentPasswordForm):
         super(ChangeEmailForm, self).__init__(*args, **kwargs)
 
 
+class UserProfileForm(CurrentPasswordForm):
+    attributes = {'class':'form-control', 'name':'prof_pic'}
+    prof_pic = forms.ImageField(label = 'Upload Profile Picture:', widget=forms.FileInput(attrs=attributes))
 
 
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
 
