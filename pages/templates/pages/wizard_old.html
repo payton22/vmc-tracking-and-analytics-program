@@ -1,0 +1,39 @@
+{% extends "pages/base.html" %}
+{% load i18n %}
+
+{% block title %}Reports Wizard{% endblock title %}
+
+{% block content %}
+        <div class="container border w-50 bg-dark" style="height:55vh;">
+        <h1 class="text-center">Reports Wizard</h1>
+        <h5> I need: </h5>
+            <!-- Database query functionality to be placed here in the future -->
+            <form action="" method="post">{% csrf_token %}
+            <div class="row">
+<table>
+{{ wizard.management_form }}
+{% if wizard.form.forms %}
+    {{ wizard.form.management_form }}
+    {% for form in wizard.form.forms %}
+        {{ form }}
+    {% endfor %}
+{% else %}
+    {{ wizard.form }}
+{% endif %}
+</table>
+            </div>
+{% if wizard.steps.prev %}
+    <div class="row">
+<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
+<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
+    </div>
+{% endif %}
+<input type="submit" value="{% trans "submit" %}"/>
+</form>
+
+
+
+
+</div>
+
+{% endblock content %}

@@ -4,7 +4,7 @@ from django.urls import path, include
 from .views import *
 from django.contrib.auth import views as auth_views
 
-
+testForms = [SelectReportType, BarGraphAxes]
 # manages the urls associated with the pages app
 urlpatterns = [
     path('', auth_views.LoginView.as_view(), name='login'),
@@ -25,7 +25,8 @@ urlpatterns = [
     #path('login/', auth_views.LoginView.as_view(), name='login'), No longer needed. Leaving for now for reference -Daniel
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('changeName/<str:accountName>/', changeName, name='changeName'),
-    path('changeProfilePicture/<str:accountName>', profileImageView, name='changeProfilePicture')
+    path('changeProfilePicture/<str:accountName>', profileImageView, name='changeProfilePicture'),
+    path('contact/', ReportWizardBase.as_view(FORMS))
     #path('', include('django.contrib.auth.urls')),
 ]
 

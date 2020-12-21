@@ -95,11 +95,15 @@
     border-style:solid;
     border-color:#40E0D0;
 }
-
+ul li {
+       list-style: none;
+}
 
 
 /*#profileImg{
     width:10%;
     height:auto;
 }*/
+
+
 

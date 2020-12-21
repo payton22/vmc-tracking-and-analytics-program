@@ -7,8 +7,12 @@ from django.utils.http import urlsafe_base64_decode
 from login.models import CustomUser
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import update_session_auth_hash, logout, login, tokens
+from formtools.wizard.views import SessionWizardView
+from .forms import *
 
-from .forms import CurrentPasswordForm, ChangeNameForm, ChangeEmailForm, UserProfileForm
+
+FORMS = [('SelectReportType', SelectReportType),
+         ('BarGraphAxes', BarGraphAxes)]
 
 
 def landingPageView(request):
@@ -58,7 +62,7 @@ def changePassView(request, emailAddress):
 
             # Change to the page that indicates to the user that
             # the password was successfully changed
-            return render(request, 'pages/authPassChangeSuccess.html', {'email':email})
+            return render(request, 'pages/authPassChangeSuccess.html', {'email': email})
     else:
         # Blank form (no POST yet)
 
@@ -66,7 +70,7 @@ def changePassView(request, emailAddress):
 
     # Render the current page if the user first enters this page
     # or the user's current password is incorrect
-    return render(request, 'pages/changePassPage.html', {'form':form, 'email': email})
+    return render(request, 'pages/changePassPage.html', {'form': form, 'email': email})
 
 
 def changeEmailView(request, email):
@@ -97,10 +101,6 @@ def changeEmailView(request, email):
                 old_user_acct = CustomUser.objects.get(pk=old_user_email)
                 old_user_acct.delete()
 
-
-
-
-
             # Change to the page that indicates to the user that
             # the password was successfully changed
             return render(request, 'pages/emailChangeSuccess.html', {'email': user.email})
@@ -111,7 +111,7 @@ def changeEmailView(request, email):
 
     # Render the current page if the user first enters this page
     # or the user's current password is incorrect
-    return render(request, 'pages/changeEmailPage.html', {'form':form, 'email':email})
+    return render(request, 'pages/changeEmailPage.html', {'form': form, 'email': email})
 
 
 def changeProfileView(request):
@@ -205,7 +205,6 @@ def PassReset(request):
 
 
 def ChangePass(request, uidb64, token):
-
     email = urlsafe_base64_decode(uidb64).decode()
     user = CustomUser.objects.get(pk=email)
     tokenChecker = tokens.PasswordResetTokenGenerator()
@@ -216,9 +215,9 @@ def ChangePass(request, uidb64, token):
 
     return render(request, 'pages/passResetConfirm.html')
 
+
 # After the user has change their password, log them out and return to the login page
 def successfullyChangedPass(request):
-
     if request.method == 'POST':
         request.user.set_password(request.POST.get('newPassword2'))
         update_session_auth_hash(request, request.user)
@@ -227,6 +226,7 @@ def successfullyChangedPass(request):
         logout(request)
 
     return render(request, 'pages/passChangeSuccess.html', {'email': email})
+
 
 def changeName(request, accountName):
     # Get the info. from the selected account
@@ -240,9 +240,8 @@ def changeName(request, accountName):
         if form.check_entry():
             # Change the user's first and last name
             user.first_name = request.POST.get('first_name')
-            user.last_name= request.POST.get('last_name')
+            user.last_name = request.POST.get('last_name')
             user.save()
-
 
             return render(request, 'pages/nameChangeSuccess.html', {'email': email})
     else:
@@ -254,6 +253,7 @@ def changeName(request, accountName):
     # or the user's current password is incorrect
     return render(request, 'pages/changeName.html', {'form': form, 'email': email})
 
+
 def profileImageView(request, accountName):
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, user=request.user)
@@ -261,10 +261,35 @@ def profileImageView(request, accountName):
         if form.check_entry():
             user.avatar = request.FILES.get('prof_pic')
             user.save()
-        return render(request, 'pages/homePage.html')
+        return render(request, 'pages/successfullyChangedProfPic.html', {'email': user.email})
     else:
         form = UserProfileForm()
-        return render(request, 'pages/changeProfilePic.html', {'form':form, 'email':accountName})
+        return render(request, 'pages/changeProfilePic.html', {'form': form, 'email': accountName})
+
+def barGraphWizard(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step('SelectReportType') or {}
+
+    if cleaned_data.get('graphType') == 'Bar Graph':
+        return True
+    else:
+        return False
+
+class ReportWizardBase(SessionWizardView):
+    TEMPLATES = {'SelectReportType': 'pages/selectGraph.html',
+                 'BarGraphAxes': 'pages/WizardFiles/barGraphAxes.html'}
+
+
+    # template_name = 'pages/selectGraph.html'
+    condition_dict = {'BarGraphAxes': barGraphWizard}
+
+    def done(self, form_list, **kwargs):
+        return render(self.request, 'pages/done.html', {'form_data': [form.cleaned_data for form in form_list],
+                                                        })
+
+    def get_template_names(self):
+        return self.TEMPLATES[self.steps.current]
+
+
 
 # Used for sending a test email
 # def send_test_mail():
