@@ -1,0 +1,126 @@
+.hidden {
+    display: none;
+}
+
+.quote {
+    visibility: hidden;
+    position: absolute;
+    opacity: 0;
+    color: black;
+    transition: opacity 600ms, visibility 600ms
+}
+
+.quote.unhidden {
+    color: white;
+    opacity: 1;
+    visibility: visible;
+}
+
+.quote-container {
+    width: 1000px;
+    font-size: 32px;
+    word-wrap: break-word;
+    /* margin: 10% auto; */
+    /* margin: auto; */
+}
+
+button {
+    padding: 5px 10px;
+    border: 1px solid black;
+    transition: 250ms background-color;
+}
+
+button:hover {
+    cursor: pointer;
+    background-color: black;
+    color: white;
+}
+
+button:disabled:hover {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.container-import {
+    width: 600px;
+    max-width: 600px;
+    margin: 20px auto 0px auto;
+    padding: 40px;
+    text-align: center;
+}
+
+#stepProgressBar {
+    display: flex;
+    width: auto;
+    margin: 0 auto;
+    margin-bottom: 40px;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.step {
+    text-align: center;
+    width: 75px;
+    /* border: 1px solid black; */
+}
+
+.step-text {
+    margin-bottom: 10px;
+    justify-content: center;
+    color: white;
+}
+
+.bullet {
+    height: 30px;
+    width: 30px;
+    border-radius: 100%;
+    border: 1px solid white;
+    color: white;
+    display: inline-block;
+    position: relative;
+    transition: background-color 1000ms;
+    padding-top: 4px;
+    line-height: 20px;
+}
+
+.bullet.completed {
+    color: black;
+    background-color: #8B7A78;
+    border: 1px solid black;
+}
+
+.bullet.completed::after {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 3px;
+    background-color: #8B7A78;
+    right: -110px;
+    bottom: 10px;
+}
+
+.main-bg {
+    color: white;
+    background-color: #413B4B;
+}
+
+.secondary-bg {
+    color: white;
+    background-color: #312A34;
+}
+
+.nav-bg {
+    color: black;
+    background-color: #8B7A78;
+    border: 1px solid black;
+}
+
+.nav-bg:hover {
+    cursor: pointer;
+    background-color: #645957;
+    color: white;
+}
