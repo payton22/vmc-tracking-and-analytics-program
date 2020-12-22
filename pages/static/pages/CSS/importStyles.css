@@ -50,6 +50,7 @@ button:disabled:hover {
     max-width: 600px;
     margin: 20px auto 0px auto;
     padding: 40px;
+    text-align: center;
 }
 
 #stepProgressBar {
@@ -70,15 +71,15 @@ button:disabled:hover {
 .step-text {
     margin-bottom: 10px;
     justify-content: center;
-    color: black;
+    color: white;
 }
 
 .bullet {
     height: 30px;
     width: 30px;
     border-radius: 100%;
-    border: 1px solid black;
-    color: black;
+    border: 1px solid white;
+    color: white;
     display: inline-block;
     position: relative;
     transition: background-color 1000ms;
@@ -87,8 +88,9 @@ button:disabled:hover {
 }
 
 .bullet.completed {
-    color: white;
-    background-color: green;
+    color: black;
+    background-color: #8B7A78;
+    border: 1px solid black;
 }
 
 .bullet.completed::after {
@@ -96,7 +98,29 @@ button:disabled:hover {
     position: absolute;
     width: 100px;
     height: 3px;
-    background-color: green;
+    background-color: #8B7A78;
     right: -110px;
     bottom: 10px;
+}
+
+.main-bg {
+    color: white;
+    background-color: #413B4B;
+}
+
+.secondary-bg {
+    color: white;
+    background-color: #312A34;
+}
+
+.nav-bg {
+    color: black;
+    background-color: #8B7A78;
+    border: 1px solid black;
+}
+
+.nav-bg:hover {
+    cursor: pointer;
+    background-color: #645957;
+    color: white;
 }
