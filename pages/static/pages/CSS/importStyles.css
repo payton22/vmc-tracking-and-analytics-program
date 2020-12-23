@@ -124,3 +124,19 @@ button:disabled:hover {
     background-color: #645957;
     color: white;
 }
+
+.admin-btn-width {
+    width: 300px;
+}
+
+.delete-bg {
+    color: black;
+    background-color: red;
+    border: 1px solid black;
+}
+
+.delete-bg:hover {
+    cursor: pointer;
+    background-color: rgb(165, 4, 4);
+    color: white;
+}
