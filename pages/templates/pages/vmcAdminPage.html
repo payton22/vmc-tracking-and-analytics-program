@@ -1,6 +1,6 @@
 {% extends "pages/base.html" %}
 
-{% block title %}VMC-TAP Admin{% endblock title %}
+{% block title %}VS-TAP Admin{% endblock title %}
 
 {% block content %}
 <div class="container fixed-top" id="AdminTitleContainer">
@@ -9,24 +9,24 @@
     </div>
 </div>
 
-<div id="AdminButtonSection">
-    <div class="row ">
-        <a type="button" href="{% url 'changePassPage' %}" class="btn btn-primary btn-lg BGroup">Change Account Password</a>
+<div id="AdminButtonSection" class="h-50">
+    <div class="row">
+        <a type="button" href="{% url 'changePassPage' %}" class="btn btn-lg nav-bg admin-btn-width">Change Account Password</a>
     </div>
     <br>
     <br>
     <div class="row flex-column">
-        <button type="button" class="btn btn-primary btn-lg BGroup">Change Profile Image</button>
+        <button type="button" class="btn btn-lg nav-bg admin-btn-width">Change Profile Image</button>
     </div>
     <br>
     <br>
     <div class="row flex-column>">
-        <a type="button" class="btn btn-primary btn-lg BGroup" href="{% url 'changeEmailPage' %}">Change email address</a>
+        <a type="button" class="btn btn-lg nav-bg admin-btn-width" href="{% url 'changeEmailPage' %}">Change Email Address</a>
     </div>
     <br>
     <br>
     <div class="row flex-column">
-        <a type="button" class="btn btn-primary btn-lg BGroup" href="{% url 'accountsView' %}">Accounts List and Options</a>
+        <a type="button" class="btn btn-lg nav-bg admin-btn-width" href="{% url 'accountsView' %}">Accounts List and Options</a>
     </div>
 </div>
 {% endblock content %}
