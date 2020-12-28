@@ -4,24 +4,23 @@
 {% block title %}Reports Wizard{% endblock title %}
 
 {% block content %}
-        <div class="container border w-50 bg-dark" style="height:55vh;">
-        <h1 class="text-center">Reports Wizard</h1>
-        <h5> I need: </h5>
-            <!-- Database query functionality to be placed here in the future -->
-            <form action="" method="post">{% csrf_token %}
+        <div class="container border w-50 bg-dark" style="height:60vh;">
             <div class="row">
-<table>
-{% block wizform %}{% endblock wizform %}
-</table>
-                {% if wizard.steps.prev %}
-    <div class="row">
-<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
-<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
-    {% endif %}
-    </div>
-<input type="submit" value="{% trans "submit" %}"/>
+                <h1 class="col text-center">Reports Wizard</h1>
             </div>
-            </form>
+            <form action="" method="post">{% csrf_token %}
+                <table>
+    {% block wizform %}{% endblock wizform %}
+                </table>
+                <div class="row wizButtons p-2">
+                {% if wizard.steps.prev %}
+                        <button name="wizard_goto_step" class="col-auto" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
+                        <button name="wizard_goto_step" class="col-auto" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
+                {% endif %}
+                    <button type="submit" class="col-auto" value="{% trans "submit" %}">{% trans "submit" %}</button>
+                </div>
 
-</div>
+
+            </form>
+        </div>
 {% endblock content %}

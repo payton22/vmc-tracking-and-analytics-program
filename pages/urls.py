@@ -10,7 +10,7 @@ urlpatterns = [
     path('', auth_views.LoginView.as_view(), name='login'),
     path('home/', homePageView, name="homePage"),
     path('import/', importPageView, name='importPage'),
-    path('visualizations/', visPageView, name='visPage'),
+    #path('visualizations/', visPageView, name='visPage'),
     path('vmcadmin/', accountsView, name='vmcAdminPage'),
     path('vmcadmin/changePassword/<str:emailAddress>/', changePassView, name='changePassPage'),
     path('vmcadmin/changeEmail/<str:email>', changeEmailView, name='changeEmailPage'),
@@ -26,7 +26,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('changeName/<str:accountName>/', changeName, name='changeName'),
     path('changeProfilePicture/<str:accountName>', profileImageView, name='changeProfilePicture'),
-    path('contact/', ReportWizardBase.as_view(FORMS))
+    path('reports/', ReportWizardBase.as_view(FORMS), name='reports')
     #path('', include('django.contrib.auth.urls')),
 ]
 

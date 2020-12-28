@@ -12,7 +12,8 @@ from .forms import *
 
 
 FORMS = [('SelectReportType', SelectReportType),
-         ('BarGraphAxes', BarGraphAxes)]
+         ('BarGraphAxes', BarGraphAxes),
+         ('TimeFrame', TimeFrame)]
 
 
 def landingPageView(request):
@@ -276,7 +277,8 @@ def barGraphWizard(wizard):
 
 class ReportWizardBase(SessionWizardView):
     TEMPLATES = {'SelectReportType': 'pages/selectGraph.html',
-                 'BarGraphAxes': 'pages/WizardFiles/barGraphAxes.html'}
+                 'BarGraphAxes': 'pages/WizardFiles/barGraphAxes.html',
+                 'TimeFrame':'pages/WizardFiles/timeFrame.html'}
 
 
     # template_name = 'pages/selectGraph.html'

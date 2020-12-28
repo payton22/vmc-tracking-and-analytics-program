@@ -1,5 +1,15 @@
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
 from login.models import CustomUser
+
+# Making this global because it will be reused among multiple
+# "reports' forms
+DEMOGRAPHICS = [('Ethnicity', 'Ethnicity'),
+                ('Career', 'Career'),
+                ('Benefit Chapter', 'Benefit Chapter'),
+                ('Usage by Date', 'Usage by Date'),
+                ('College', 'College'),
+                ('Total Usage by Location', 'Total Usage by Location')]
 
 
 # Base class used for incorporating the password authentication
@@ -88,4 +98,11 @@ class SelectReportType(forms.Form):
 # -- Part of the Reports Wizard --
 # If the user selects a bar graph, we want to use this form on the second step
 class BarGraphAxes(forms.Form):
-    selection = forms.CharField(label="Input:", widget=forms.TextInput())
+    selection = forms.ChoiceField(choices=DEMOGRAPHICS)
+
+# Select the reporting time period
+# E.g. total visitors from Jan-March 2019
+class TimeFrame(forms.Form):
+    # TODO DateInput attrs
+    from_time = forms.DateField(label='From:')
+    to_time = forms.DateField(label='To:')

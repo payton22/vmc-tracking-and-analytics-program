@@ -1,6 +1,10 @@
 {% extends 'pages/wizardPage.html' %}
+
 {% block wizform %}
-    <h5>I need: </h5>
+    <div class="row">
+    <h5>Select Time Frame</h5>
+    </div>
+    <div class="row">
 {{ wizard.management_form }}
 {% if wizard.form.forms %}
     {{ wizard.form.management_form }}
@@ -10,4 +14,5 @@
 {% else %}
     {{ wizard.form }}
 {% endif %}
+    </div>
 {% endblock wizform %}

@@ -99,7 +99,11 @@ ul li {
        list-style: none;
 }
 
+.wizButtons{
+    position:absolute;
+    bottom:24%;
 
+}
 /*#profileImg{
     width:10%;
     height:auto;
