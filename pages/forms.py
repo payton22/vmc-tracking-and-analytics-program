@@ -100,9 +100,20 @@ class SelectReportType(forms.Form):
 class BarGraphAxes(forms.Form):
     selection = forms.ChoiceField(choices=DEMOGRAPHICS)
 
+
 # Select the reporting time period
 # E.g. total visitors from Jan-March 2019
 class TimeFrame(forms.Form):
     # TODO DateInput attrs
-    from_time = forms.DateField(label='From:')
-    to_time = forms.DateField(label='To:')
+    #from_time = forms.DateField(input_formats=['%d/%m/%Y'], widget=forms.DateInput(attrs={'class': 'form-control '
+    #                                                                                              'datepicker-input',
+     #                                                                                    'id': 'datepicker1'}))
+    #to_time = forms.DateField(input_formats=['%d/%m/%Y'], widget=forms.DateInput(attrs={'class': 'form-control '
+     #                                                                                           'datepicker-input',
+      #                                                                                 'id': 'datepicker2'}))
+    from_time = forms.DateField(input_formats=['%m/%d/%Y'], widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
+                                                                                                   'datepicker-input',
+                                                                                          'id': 'datepicker1', 'autocomplete':'off'}))
+    to_time = forms.DateField(input_formats=['%m/%d/%Y'], widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
+                                                                                                 'datepicker-input',
+                                                                                        'id': 'datepicker2', 'autocomplete':'off'}))

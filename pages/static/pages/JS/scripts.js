@@ -521,6 +521,21 @@ $(document).ready(function() {
             return regExp.test(str);
         }
 
+        $(function () {
+                $("#datepicker1").datepicker({
+                format: 'DD/MM/YYYY',
+            });
+                console.log('function1');
+
+            });
+
+         $(function () {
+                $("#datepicker2").datepicker({
+                format: 'DD/MM/YYYY',
+            });
+                console.log('function2');
+            });
+
 
 
 
