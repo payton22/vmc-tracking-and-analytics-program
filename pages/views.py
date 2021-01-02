@@ -13,7 +13,12 @@ from .forms import *
 
 FORMS = [('SelectReportType', SelectReportType),
          ('BarGraphAxes', BarGraphAxes),
-         ('TimeFrame', TimeFrame)]
+         ('HistogramAxes', HistogramAxes),
+         ('TimeFrame', TimeFrame),
+         ('CustomizeBarGraph', CustomizeBarGraph),
+         ('AttendanceDataForm', AttendanceDataForm)]
+
+context = {}
 
 
 def landingPageView(request):
@@ -267,10 +272,22 @@ def profileImageView(request, accountName):
         form = UserProfileForm()
         return render(request, 'pages/changeProfilePic.html', {'form': form, 'email': accountName})
 
+# Check if the user selects 'Bar Graph'
 def barGraphWizard(wizard):
-    cleaned_data = wizard.get_cleaned_data_for_step('SelectReportType') or {}
+    return conditionalWizardBranch(wizard, 'Bar Graph')
 
-    if cleaned_data.get('graphType') == 'Bar Graph':
+# Check if the user selects 'Histogram'
+def histogramWizard(wizard):
+    return conditionalWizardBranch(wizard, 'Histogram')
+
+# On the first page of the Reports Wizard, the user will select a graph type
+# (e.g. Bar Graph, Histogram, Pie Chart...). The expected selection for a given graph
+# type is passed as an argument, which is then compared to the user's choice.
+def conditionalWizardBranch(wizard, graphType):
+    # Get the user's choice (e.g. Bar Graph, Histogram, Pie Chart, etc.)
+    cleaned_data = wizard.get_cleaned_data_for_step('SelectReportType') or {}
+    # If the user's selection matches the graph type, return True
+    if cleaned_data.get('graphType') == graphType:
         return True
     else:
         return False
@@ -278,11 +295,23 @@ def barGraphWizard(wizard):
 class ReportWizardBase(SessionWizardView):
     TEMPLATES = {'SelectReportType': 'pages/selectGraph.html',
                  'BarGraphAxes': 'pages/WizardFiles/barGraphAxes.html',
-                 'TimeFrame':'pages/WizardFiles/timeFrame.html'}
+                 'HistogramAxes': 'pages/WizardFiles/histogramFreq.html',
+                 'TimeFrame':'pages/WizardFiles/timeFrame.html',
+                 'CustomizeBarGraph':'pages/WizardFiles/customizeBarGraph.html',
+                 'AttendanceDataForm':'pages/WizardFiles/attendanceLocation.html'}
+
+
+
+    def get_context_data(self, form, **kwargs):
+        context = super(ReportWizardBase, self).get_context_data(form=form, **kwargs)
+        context.update({'all_data':self.get_all_cleaned_data()})
+        print(context['all_data'])
+        return context
+
 
 
     # template_name = 'pages/selectGraph.html'
-    condition_dict = {'BarGraphAxes': barGraphWizard}
+    condition_dict = {'BarGraphAxes': barGraphWizard, 'CustomizeBarGraph': barGraphWizard, 'HistogramAxes': histogramWizard}
 
     def done(self, form_list, **kwargs):
         return render(self.request, 'pages/done.html', {'form_data': [form.cleaned_data for form in form_list],

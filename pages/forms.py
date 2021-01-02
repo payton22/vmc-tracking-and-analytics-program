@@ -11,6 +11,10 @@ DEMOGRAPHICS = [('Ethnicity', 'Ethnicity'),
                 ('College', 'College'),
                 ('Total Usage by Location', 'Total Usage by Location')]
 
+HIST_TIME_CHOICES = [('Time of Day', 'Time of Day'),
+                     ('Months', 'Months'),
+                     ('Years', 'Years')]
+
 
 # Base class used for incorporating the password authentication
 class CurrentPasswordForm(forms.Form):
@@ -114,6 +118,57 @@ class TimeFrame(forms.Form):
     from_time = forms.DateField(input_formats=['%m/%d/%Y'], widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
                                                                                                    'datepicker-input',
                                                                                           'id': 'datepicker1', 'autocomplete':'off'}))
+
     to_time = forms.DateField(input_formats=['%m/%d/%Y'], widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
                                                                                                  'datepicker-input',
                                                                                         'id': 'datepicker2', 'autocomplete':'off'}))
+
+# Used for selecting between different places that visitors attend in the VMC
+# User selects one or more checkboxes that correspond to locations to track attendance
+# for in the report.
+class AttendanceDataForm(forms.Form):
+    CHOICES = [('Main Office', 'Main Office'),
+               ('VMC', 'VMC'),
+               ('Some Other Event A', 'Some Other Event A'),
+               ('Some Other Event B', 'Some Other Event B')]
+
+    attributes = {'title':'Select Attendance Location:'}
+
+    attendance_data = forms.MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple(attrs=attributes))
+
+    select_all = forms.BooleanField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(AttendanceDataForm, self).__init__(*args, **kwargs)
+        self.fields['attendance_data'].label = ''
+
+class CustomizeBarGraph(forms.Form):
+    COLOR_CHOICES = [('Red', 'Red'),
+                     ('Green', 'Green'),
+                     ('Blue', 'Blue'),
+                     ('Magenta', 'Magenta'),
+                     ('Purple', 'Purple'),
+                     ('Orange', 'Orange'),
+                     ('Yellow', 'Yellow'),
+                     ('Brown', 'Brown'),
+                     ('Black', 'Black')]
+
+    Y_N_CHOICES = [('Yes', 'Yes'),
+                   ('No', 'No')]
+
+    select_bar_color = forms.ChoiceField(choices=COLOR_CHOICES)
+
+    autoscale = forms.ChoiceField(choices=Y_N_CHOICES, widget=forms.RadioSelect(), label='Automatically scale the '
+                                                                                         'count?')
+
+    max_count = forms.IntegerField(widget=forms.NumberInput(), label='Max count to display:')
+
+    increment_by = forms.IntegerField(widget=forms.NumberInput(), label='Increment by:')
+
+# In the wizard, this is used if the user wants to create a histogram.
+# The user selects different time periods to track attendance.
+class HistogramAxes(forms.Form):
+    selection = forms.ChoiceField(choices=HIST_TIME_CHOICES)
+
+
+
