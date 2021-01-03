@@ -12,12 +12,16 @@ from .forms import *
 
 FORMS = [('SelectReportType', SelectReportType),
          ('BarGraphAxes', BarGraphAxes),
+         ('LineGraphAxes', BarGraphAxes),
          ('HistogramAxes', HistogramAxes),
          ('TimeFrame', TimeFrame),
          ('CustomizeBarGraph', CustomizeBarGraph),
+         ('CustomizeLineGraph', CustomizeLineGraph),
          ('AttendanceDataForm', AttendanceDataForm),
-         ('ConfirmBarGraph', forms.Form)]
-
+         ('HistogramDetails', HistogramDetails),
+         ('ConfirmBarGraph', forms.Form), # Just use the default Django form class for these,
+         ('ConfirmHistogram', forms.Form), # since we are not asking for any input
+         ('ConfirmLineGraph', forms.Form)]
 
 def landingPageView(request):
     return render(request, 'pages/landingPage.html')
@@ -280,6 +284,10 @@ def barGraphWizard(wizard):
 def histogramWizard(wizard):
     return conditionalWizardBranch(wizard, 'Histogram')
 
+# Branch to line graph wizard if user selects 'Line Graph'
+def lineGraphWizard(wizard):
+    return conditionalWizardBranch(wizard, 'Line Graph')
+
 
 # On the first page of the Reports Wizard, the user will select a graph type
 # (e.g. Bar Graph, Histogram, Pie Chart...). The expected selection for a given graph
@@ -298,12 +306,17 @@ class ReportWizardBase(SessionWizardView):
     choices_dict = {}
     TEMPLATES = {'SelectReportType': 'pages/selectGraph.html',
                  'BarGraphAxes': 'pages/WizardFiles/barGraphAxes.html',
+                 'LineGraphAxes': 'pages/WizardFiles/barGraphAxes.html',
                  'HistogramAxes': 'pages/WizardFiles/histogramFreq.html',
                  'TimeFrame': 'pages/WizardFiles/timeFrame.html',
                  'CustomizeBarGraph': 'pages/WizardFiles/customizeBarGraph.html',
+                 'CustomizeLineGraph': 'pages/WizardFiles/customizeLineGraph.html',
                  'AttendanceDataForm': 'pages/WizardFiles/attendanceLocation.html',
                  'ConfirmBarGraph': 'pages/WizardFiles/confirmationBarGraph.html',
-                 'selection': choices_dict}
+                 'HistogramDetails': 'pages/WizardFiles/histogramDetails.html',
+                 'ConfirmHistogram':'pages/WizardFiles/confirmHistogram.html',
+                 'ConfirmLineGraph': 'pages/WizardFiles/confirmLineGraph.html'}
+                # 'selection': choices_dict} commented out for now
 
     def get_context_data(self, form, **kwargs):
         context = super(ReportWizardBase, self).get_context_data(form=form, **kwargs)
@@ -321,7 +334,10 @@ class ReportWizardBase(SessionWizardView):
          #   return
     # template_name = 'pages/selectGraph.html'
     condition_dict = {'BarGraphAxes': barGraphWizard, 'CustomizeBarGraph': barGraphWizard,
-                      'HistogramAxes': histogramWizard, 'ConfirmBarGraph': barGraphWizard}
+                      'CustomizeLineGraph': lineGraphWizard,
+                      'HistogramAxes': histogramWizard, 'ConfirmBarGraph': barGraphWizard,
+                      'HistogramDetails': histogramWizard, 'ConfirmHistogram': histogramWizard,
+                      'LineGraphAxes': lineGraphWizard, 'ConfirmLineGraph': lineGraphWizard}
 
     def done(self, form_list, **kwargs):
         return render(self.request, 'pages/done.html', {'form_data': [form.cleaned_data for form in form_list],

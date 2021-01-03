@@ -9,7 +9,6 @@
 {% else %}
     {{ wizard.form }}
 {% endif %}
-
     <h5>Confirmation: </h5>
         <div class="row">
             <div class="col-6">
@@ -29,7 +28,7 @@
         </div>
         <div class="row">
             <div class="col-6">
-                  <p>Attendance tracking location(s):
+                <p>Attendance tracking location(s):
        {% for location in all_data.attendance_data %}
            {{ location }} {% if not forloop.last %},{% endif %} {% endfor %} </p>
             </div>
@@ -39,7 +38,7 @@
         </div>
         <div class="row">
             <div class="col-6">
-                 <p>Bar Color: {{ all_data.select_bar_color }}</p>
+                 <p>Bar Color: {{ all_data.bar_color }}</p>
             </div>
             <div class="col-6">
                  <p>Autoscale count: {{ all_data.autoscale }}</p>
@@ -49,7 +48,13 @@
             <div class="col-6">
                  <p>Increment by: {{ all_data.increment_by }}</p>
             </div>
+            <div class="col-6">
+                <p>Attendance demographic data to include(s):
+       {% for category in all_data.data %}
+           {{ category }} {% if not forloop.last %},{% endif %} {% endfor %} </p>
+            </div>
         </div>
+
     <h4>If this is correct, click "submit."</h4>
     <h4>If this is incorrect, return to a previous page to correct the information.</h4>
 {% endblock wizform %}

@@ -109,19 +109,24 @@ class BarGraphAxes(forms.Form):
 # E.g. total visitors from Jan-March 2019
 class TimeFrame(forms.Form):
     # TODO DateInput attrs
-    #from_time = forms.DateField(input_formats=['%d/%m/%Y'], widget=forms.DateInput(attrs={'class': 'form-control '
+    # from_time = forms.DateField(input_formats=['%d/%m/%Y'], widget=forms.DateInput(attrs={'class': 'form-control '
     #                                                                                              'datepicker-input',
-     #                                                                                    'id': 'datepicker1'}))
-    #to_time = forms.DateField(input_formats=['%d/%m/%Y'], widget=forms.DateInput(attrs={'class': 'form-control '
-     #                                                                                           'datepicker-input',
-      #                                                                                 'id': 'datepicker2'}))
-    from_time = forms.DateField(input_formats=['%m/%d/%Y'], widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
-                                                                                                   'datepicker-input',
-                                                                                          'id': 'datepicker1', 'autocomplete':'off'}))
+    #                                                                                    'id': 'datepicker1'}))
+    # to_time = forms.DateField(input_formats=['%d/%m/%Y'], widget=forms.DateInput(attrs={'class': 'form-control '
+    #                                                                                           'datepicker-input',
+    #                                                                                 'id': 'datepicker2'}))
+    from_time = forms.DateField(input_formats=['%m/%d/%Y'],
+                                widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
+                                                                                          'datepicker-input',
+                                                                                 'id': 'datepicker1',
+                                                                                 'autocomplete': 'off'}))
 
-    to_time = forms.DateField(input_formats=['%m/%d/%Y'], widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
-                                                                                                 'datepicker-input',
-                                                                                        'id': 'datepicker2', 'autocomplete':'off'}))
+    to_time = forms.DateField(input_formats=['%m/%d/%Y'],
+                              widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
+                                                                                        'datepicker-input',
+                                                                               'id': 'datepicker2',
+                                                                               'autocomplete': 'off'}))
+
 
 # Used for selecting between different places that visitors attend in the VMC
 # User selects one or more checkboxes that correspond to locations to track attendance
@@ -132,7 +137,7 @@ class AttendanceDataForm(forms.Form):
                ('Some Other Event A', 'Some Other Event A'),
                ('Some Other Event B', 'Some Other Event B')]
 
-    attributes = {'title':'Select Attendance Location:'}
+    attributes = {'title': 'Select Attendance Location:'}
 
     attendance_data = forms.MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple(attrs=attributes))
 
@@ -142,7 +147,10 @@ class AttendanceDataForm(forms.Form):
         super(AttendanceDataForm, self).__init__(*args, **kwargs)
         self.fields['attendance_data'].label = ''
 
+# Allows the user to customize the bar graph
+# Such as visuals and additional details regarding axes
 class CustomizeBarGraph(forms.Form):
+    # Bar color options
     COLOR_CHOICES = [('Red', 'Red'),
                      ('Green', 'Green'),
                      ('Blue', 'Blue'),
@@ -153,17 +161,32 @@ class CustomizeBarGraph(forms.Form):
                      ('Brown', 'Brown'),
                      ('Black', 'Black')]
 
+    # Yes/No choice if user wants to automatically scale the count
     Y_N_CHOICES = [('Yes', 'Yes'),
                    ('No', 'No')]
 
+    # Choice field (dropdown) for selecting the bar color
     select_bar_color = forms.ChoiceField(choices=COLOR_CHOICES)
 
+    # Choice field (checkbox) for toggling autoscale
     autoscale = forms.ChoiceField(choices=Y_N_CHOICES, widget=forms.RadioSelect(), label='Automatically scale the '
                                                                                          'count?')
-
+    # Integer field for scaling the count
     max_count = forms.IntegerField(widget=forms.NumberInput(), label='Max count to display:')
-
+    # Integer field for allowing user to customize incrementation
     increment_by = forms.IntegerField(widget=forms.NumberInput(), label='Increment by:')
+
+# Line Graph customization is the same as bar graph customization, except the user
+# is selecting 'line color' instead of bar color
+class CustomizeLineGraph(CustomizeBarGraph):
+
+
+    select_bar_color = None # Override this field to not show anything
+
+    # Instead, label is "select line color"
+
+    select_line_color = forms.ChoiceField(choices=CustomizeBarGraph.COLOR_CHOICES)
+
 
 # In the wizard, this is used if the user wants to create a histogram.
 # The user selects different time periods to track attendance.
@@ -171,4 +194,12 @@ class HistogramAxes(forms.Form):
     selection = forms.ChoiceField(choices=HIST_TIME_CHOICES)
 
 
+# Detailed options for the histogram wizard
+class HistogramDetails(CustomizeBarGraph):
+    DATA_OPTIONS = DEMOGRAPHICS + [('All', 'All')]
 
+    attributes_for_data_options = {'title': 'Select Data Options:'}
+    attributes_for_attendance_data = {'title': 'Select Attendance Location(s)'}
+
+    data = forms.MultipleChoiceField(choices=DATA_OPTIONS, widget=forms.CheckboxSelectMultiple(
+                                                attrs=attributes_for_data_options))
