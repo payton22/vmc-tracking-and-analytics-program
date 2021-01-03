@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="vmc_tap" uuid="958b713b-44e2-4eca-ac64-fe8770523c6f">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\Payton Knoch\Desktop\vmc-tracking-and-analytics-program\vmc_tap.db</jdbc-url>
+    </data-source>
+  </component>
+</project>

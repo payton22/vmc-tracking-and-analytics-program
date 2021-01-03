@@ -23,16 +23,16 @@
         </div>
      
         <!-- Container for sign in form -->
-        <form class="container border w-25 pb-2" method="post" action="http://127.0.0.1:8000/home/">
+        <form class="container border w-25 pb-2" method="post" action="/home/">
             {% csrf_token %}
             <h5>Sign In</h5>
             <div class="form-group">
-                <label for="inputEmail">Username or Email</label>
-                <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="example@email.com">
+                <label for="inputEmail">Email</label>
+                <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="example@unr.edu">
             </div>
             <div class="form-group">
                 <label for="inputPassword">Password</label>
-                <a href="" class="float-right">Forgot Password</a>
+                <a href="{% url 'password_reset' %}" class="float-right">Forgot Password</a>
               <input type="password" class="form-control" id="inputPassword" placeholder="************">
             </div>
             <div class="col text-center">
