@@ -1,19 +1,89 @@
+/* Custom styles for VMC-TAP go here */
 .full-height{
     height: 100vh;
 }
 
+.error{
+    color:red;
+    font-size:20px;
+}
+/* Styles for navbar */
 #main_navbar{
+    /* Move the navbar down by 100px */
     margin-top:100px;
 }
 
+/* Styles for first three buttons of the nav bar */
 .l1{
+    /* Solid border and green border color */
     border:solid #006400;
+    /* Rounded border with r=8px */
     border-radius:8px;
+    /* No bottom border (need to prevent overlapping borders) */
     border-bottom:none;
 }
 
+/* Styles for the last nav bar button */
 .l2{
+    /* Green solid border */
     border:solid #006400;
+    /* Rounded border with r=8px */
     border-radius:8px;
 }
+
+/* Styles for the container that holds the header text of 'vmcAdminPage' */
+#AdminTitleContainer{
+    /* Make move it to the left so it does cross over the nav bar */
+    padding-left:500px;
+    /* Horizontally align items */
+    justify-content:center;
+    /* Vertically align items */
+    align-items:center;
+
+}
+
+
+
+
+/* Styles for the buttons in 'vmcAdminPage' */
+.BGroup{
+    /* Rounded button at r=12px */
+    border-radius:12px;
+    /* Make sure button is large enough to fix text */
+    width:200px;
+    /* Make button field gray color */
+    background-color:#AAAFAA;
+    /* Make the text black */
+    color:black;
+}
+
+#deleteButton {
+    /* Rounded button at r=12px */
+    border-radius:12px;
+    /* Make sure button is large enough to fix text */
+    width:200px;
+    /* Make button field gray color */
+    background-color:#DC143C;
+    /* Make the text black */
+    color:black;
+}
+
+/* Styles for the buttons 'viewAccountsList' */
+.AccountButton{
+    /* Rounded button at r=12px */
+    border-radius:12px;
+    /* Make sure button is large enough to fix text */
+    width:500px;
+    /* Make button field gray color */
+    background-color:#AAAFAA;
+    /* Make the text black */
+    color:black;
+}
+
+
+
+/*#profileImg{
+    width:10%;
+    height:auto;
+}*/
 
