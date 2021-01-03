@@ -10,15 +10,13 @@ from django.contrib.auth import update_session_auth_hash, logout, login, tokens
 from formtools.wizard.views import SessionWizardView
 from .forms import *
 
-
 FORMS = [('SelectReportType', SelectReportType),
          ('BarGraphAxes', BarGraphAxes),
          ('HistogramAxes', HistogramAxes),
          ('TimeFrame', TimeFrame),
          ('CustomizeBarGraph', CustomizeBarGraph),
-         ('AttendanceDataForm', AttendanceDataForm)]
-
-context = {}
+         ('AttendanceDataForm', AttendanceDataForm),
+         ('ConfirmBarGraph', forms.Form)]
 
 
 def landingPageView(request):
@@ -272,13 +270,16 @@ def profileImageView(request, accountName):
         form = UserProfileForm()
         return render(request, 'pages/changeProfilePic.html', {'form': form, 'email': accountName})
 
+
 # Check if the user selects 'Bar Graph'
 def barGraphWizard(wizard):
     return conditionalWizardBranch(wizard, 'Bar Graph')
 
+
 # Check if the user selects 'Histogram'
 def histogramWizard(wizard):
     return conditionalWizardBranch(wizard, 'Histogram')
+
 
 # On the first page of the Reports Wizard, the user will select a graph type
 # (e.g. Bar Graph, Histogram, Pie Chart...). The expected selection for a given graph
@@ -292,35 +293,42 @@ def conditionalWizardBranch(wizard, graphType):
     else:
         return False
 
+
 class ReportWizardBase(SessionWizardView):
+    choices_dict = {}
     TEMPLATES = {'SelectReportType': 'pages/selectGraph.html',
                  'BarGraphAxes': 'pages/WizardFiles/barGraphAxes.html',
                  'HistogramAxes': 'pages/WizardFiles/histogramFreq.html',
-                 'TimeFrame':'pages/WizardFiles/timeFrame.html',
-                 'CustomizeBarGraph':'pages/WizardFiles/customizeBarGraph.html',
-                 'AttendanceDataForm':'pages/WizardFiles/attendanceLocation.html'}
-
-
+                 'TimeFrame': 'pages/WizardFiles/timeFrame.html',
+                 'CustomizeBarGraph': 'pages/WizardFiles/customizeBarGraph.html',
+                 'AttendanceDataForm': 'pages/WizardFiles/attendanceLocation.html',
+                 'ConfirmBarGraph': 'pages/WizardFiles/confirmationBarGraph.html',
+                 'selection': choices_dict}
 
     def get_context_data(self, form, **kwargs):
         context = super(ReportWizardBase, self).get_context_data(form=form, **kwargs)
-        context.update({'all_data':self.get_all_cleaned_data()})
+        # context.update({'all_data':self.get_all_cleaned_data()})
+        context.update({'all_data': self.get_all_cleaned_data()})
+        self.choices_dict.update({'all_data': self.get_all_cleaned_data()})
         print(context['all_data'])
         return context
 
-
-
+    #def process_step(self, form):
+     #   if self.steps == 6:
+      #      self.extra_context = {'all_data':self.get_all_cleaned_data()}
+       #     return render(self.request, 'pages/WizardFiles/confirmationBarGraph.html', self.extra_context)
+        #else:
+         #   return
     # template_name = 'pages/selectGraph.html'
-    condition_dict = {'BarGraphAxes': barGraphWizard, 'CustomizeBarGraph': barGraphWizard, 'HistogramAxes': histogramWizard}
+    condition_dict = {'BarGraphAxes': barGraphWizard, 'CustomizeBarGraph': barGraphWizard,
+                      'HistogramAxes': histogramWizard, 'ConfirmBarGraph': barGraphWizard}
 
     def done(self, form_list, **kwargs):
         return render(self.request, 'pages/done.html', {'form_data': [form.cleaned_data for form in form_list],
-                                                        })
+                                                        'selections': self.choices_dict})
 
     def get_template_names(self):
         return self.TEMPLATES[self.steps.current]
-
-
 
 # Used for sending a test email
 # def send_test_mail():
