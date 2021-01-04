@@ -232,3 +232,41 @@ class IndividualStatisticOptions(BarGraphAxes):
                      ('Daily average', 'Daily average'),
                      ('Montlhy average', 'Monthly average'),
                      ('Yearly average', 'Yearly average')]
+
+    count_options = forms.ChoiceField(choices=COUNT_OPTIONS)
+
+# Details for individual statistics
+# User can change label font (size and/or color),
+# statistic font (size and/or color)
+class IndividualStatisticDetails(forms.Form):
+    # Color options
+    # Bar color options
+    COLOR_CHOICES = [('Red', 'Red'),
+                     ('Green', 'Green'),
+                     ('Blue', 'Blue'),
+                     ('Magenta', 'Magenta'),
+                     ('Purple', 'Purple'),
+                     ('Orange', 'Orange'),
+                     ('Yellow', 'Yellow'),
+                     ('Brown', 'Brown'),
+                     ('Black', 'Black')]
+    # Choices for font size
+    # TODO user can also customize input
+    FONT_CHOICES = [('8', '8'),
+                    ('10', '10'),
+                    ('12', '12'),
+                    ('14', '14'),
+                    ('16', '16'),
+                    ('18', '18'),
+                    ('20', '20'),
+                    ('24', '24'),
+                    ('28', '28'),
+                    ('32', '32'),
+                    ('36', '36'),
+                    ('42', '42'),
+                    ('48', '48'),
+                    ('72', '72')]
+    label_font_color = forms.ChoiceField(choices=COLOR_CHOICES)
+    statistic_font_color = forms.ChoiceField(choices=COLOR_CHOICES)
+    label_font_size = forms.ChoiceField(choices=FONT_CHOICES)
+    statistic_font_size = forms.ChoiceField(choices=FONT_CHOICES)

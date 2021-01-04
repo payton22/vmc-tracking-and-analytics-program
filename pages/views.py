@@ -16,12 +16,14 @@ FORMS = [('SelectReportType', SelectReportType),
          ('HistogramAxes', HistogramAxes),
          ('PieChartData', BarGraphAxes),
          ('ScatterPlotAxes', BarGraphAxes),
+         ('IndividualStatisticOptions', IndividualStatisticOptions),
          ('TimeFrame', TimeFrame),
          ('CustomizeBarGraph', CustomizeBarGraph),
          ('CustomizeLineGraph', CustomizeLineGraph),
          ('CustomizeScatterPlot', CustomizeScatterPlot),
          ('PieChartDetails', PieChartDetails),
          ('HistogramDetails', HistogramDetails),
+         ('IndividualStatisticDetails', IndividualStatisticDetails),
          ('AttendanceDataForm', AttendanceDataForm),
          ('ConfirmBarGraph', forms.Form), # Just use the default Django form class for these,
          ('ConfirmHistogram', forms.Form), # since we are not asking for any input
@@ -300,6 +302,11 @@ def pieChartWizard(wizard):
 def scatterPlotWizard(wizard):
     return conditionalWizardBranch(wizard, 'Scatter Plot')
 
+# Branch to individual statistic wizard if user selects 'Individual Statistic'
+# on first page
+def individualStatisticWizard(wizard):
+    return conditionalWizardBranch(wizard, 'Individual Statistic')
+
 
 # On the first page of the Reports Wizard, the user will select a graph type
 # (e.g. Bar Graph, Histogram, Pie Chart...). The expected selection for a given graph
@@ -322,6 +329,7 @@ class ReportWizardBase(SessionWizardView):
                  'HistogramAxes': 'pages/WizardFiles/histogramFreq.html',
                  'ScatterPlotAxes': 'pages/WizardFiles/barGraphAxes.html',
                  'PieChartData' : 'pages/WizardFiles/barGraphAxes.html',
+                 'IndividualStatisticOptions': 'pages/WizardFiles/individualStatisticOptions.html',
                  'TimeFrame': 'pages/WizardFiles/timeFrame.html',
                  'CustomizeBarGraph': 'pages/WizardFiles/customizeBarGraph.html',
                  'CustomizeLineGraph': 'pages/WizardFiles/customizeLineGraph.html',
@@ -330,8 +338,9 @@ class ReportWizardBase(SessionWizardView):
                  'ConfirmBarGraph': 'pages/WizardFiles/confirmationBarGraph.html',
                  'HistogramDetails': 'pages/WizardFiles/histogramDetails.html',
                  'PieChartDetails': 'pages/WizardFiles/histogramDetails.html',
+                 'IndividualStatisticDetails': 'pages/WizardFiles/histogramDetails.html',
                  'ConfirmHistogram':'pages/WizardFiles/confirmHistogram.html',
-                 'ConfirmLineGraph': 'pages/WizardFiles/confirmLineGraph.html'}
+                 'ConfirmLineGraph': 'pages/WizardFiles/confirmLineGraph.html', }
                 # 'selection': choices_dict} commented out for now
 
     def get_context_data(self, form, **kwargs):
@@ -355,7 +364,7 @@ class ReportWizardBase(SessionWizardView):
                       'HistogramDetails': histogramWizard, 'ConfirmHistogram': histogramWizard,
                       'LineGraphAxes': lineGraphWizard, 'PieChartData': pieChartWizard,
                       'PieChartDetails': pieChartWizard, 'ConfirmLineGraph': lineGraphWizard,
-                      'CustomizeScatterPlot': scatterPlotWizard}
+                      'IndividualStatisticOptions': individualStatisticWizard, 'CustomizeScatterPlot': scatterPlotWizard}
 
     def done(self, form_list, **kwargs):
         return render(self.request, 'pages/done.html', {'form_data': [form.cleaned_data for form in form_list],
