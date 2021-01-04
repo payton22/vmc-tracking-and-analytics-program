@@ -86,7 +86,6 @@ class SelectReportType(forms.Form):
     CHOICES = [('Bar Graph', 'Bar Graph'),
                ('Histogram', 'Histogram'),
                ('Line Graph', 'Line Graph'),
-               ('3D Graph', '3D Graph'),
                ('Pie Chart', 'Pie Chart'),
                ('Scatter Plot', 'Scatter Plot'),
                ('Table', 'Table'),
@@ -203,3 +202,33 @@ class HistogramDetails(CustomizeBarGraph):
 
     data = forms.MultipleChoiceField(choices=DATA_OPTIONS, widget=forms.CheckboxSelectMultiple(
                                                 attrs=attributes_for_data_options))
+
+# Wizard form that allows the user to customize the pie chart
+# The user can display data in the form of: percentages, count, or both
+class PieChartDetails(forms.Form):
+    # Percentages, count, or both
+    DATA_OPTIONS = [('Percent of total', 'Percent of total'),
+                    ('Count', 'Count'),
+                    ('Both percentages and count', 'Both percentages and count')]
+    # Radio buttons for the data display options
+    Data_units = forms.ChoiceField(choices=DATA_OPTIONS, widget=forms.RadioSelect())
+
+# Scatter Plot customization is the same as bar graph customization, except the user
+# is selecting 'dot color' instead of 'bar color'
+# Inherits from form CustomizeBarGraph
+class CustomizeScatterPlot(CustomizeBarGraph):
+    # Dot color options
+    select_bar_color = None
+
+    # Instead, label is "select dot color"
+    # Reuse same color choices as bar graph
+    select_dot_color = forms.ChoiceField(choices=CustomizeBarGraph.COLOR_CHOICES)
+
+# Individual statistic counting/tracking options
+# Options are similar to the 'axes' options, except the user may
+# want to keep track of averages or percentages instead of total count
+class IndividualStatisticOptions(BarGraphAxes):
+    COUNT_OPTIONS = [('Total Count', 'Total Count'),
+                     ('Daily average', 'Daily average'),
+                     ('Montlhy average', 'Monthly average'),
+                     ('Yearly average', 'Yearly average')]

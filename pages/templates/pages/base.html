@@ -35,7 +35,9 @@
 			<div class="text-center">
 				{% if user.is_authenticated %}
 				<h4>Hi {{user.first_name}}</h4>
+                    {% if user.avatar %}
                     <img src='{{ user.avatar.url }}' class="rounded-circle" id='profImg' alt=''/>
+                        {% endif %}
 				<p><a href="{% url 'logout' %}">[Log Out]</a></p>
 			{% else %}
 				<p>You are not logged in</p>
