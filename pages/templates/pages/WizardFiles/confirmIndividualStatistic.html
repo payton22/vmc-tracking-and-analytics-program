@@ -33,32 +33,26 @@
            {{ location }} {% if not forloop.last %},{% endif %} {% endfor %} </p>
             </div>
             <div class="col-6">
-                  <p>Max count: {{ all_data.max_count }}</p>
+                 <p>Data Units: {{ all_data.count_options }}</p>
             </div>
         </div>
         <div class="row">
             <div class="col-6">
-                 <p>Bar Color: {{ all_data.bar_color }}</p>
+                <p>Label font color: {{ all_data.label_font_color }}</p>
             </div>
             <div class="col-6">
-                 <p>Autoscale count: {{ all_data.autoscale }}</p>
+                <p>Statistic font color: {{ all_data.statistic_font_color }}</p>
             </div>
         </div>
         <div class="row">
             <div class="col-6">
-                 <p>Increment by: {{ all_data.increment_by }}</p>
+                <p>Label font size: {{ all_data.label_font_size }}</p>
             </div>
             <div class="col-6">
-                <p>Attendance demographic data to include(s):
-       {% for category in all_data.data %}
-           {{ category }} {% if not forloop.last %},{% endif %} {% endfor %} </p>
+                <p>Statistic font size: {{ all_data.statistic_font_size }}</p>
             </div>
         </div>
-        <div class="row">
-            <div class="col-6">
-                <p>Include table?: {{ all_data.include_table }}</p>
-            </div>
-        </div>
+
 
     <h4>If this is correct, click "submit."</h4>
     <h4>If this is incorrect, return to a previous page to correct the information.</h4>

@@ -14,7 +14,8 @@ DEMOGRAPHICS = [('Ethnicity', 'Ethnicity'),
 HIST_TIME_CHOICES = [('Time of Day', 'Time of Day'),
                      ('Months', 'Months'),
                      ('Years', 'Years')]
-
+YES_NO = [('Yes', 'Yes'),
+          ('No', 'No')]
 
 # Base class used for incorporating the password authentication
 class CurrentPasswordForm(forms.Form):
@@ -88,7 +89,6 @@ class SelectReportType(forms.Form):
                ('Line Graph', 'Line Graph'),
                ('Pie Chart', 'Pie Chart'),
                ('Scatter Plot', 'Scatter Plot'),
-               ('Table', 'Table'),
                ('Individual Statistic', 'Individual Statistic')]
     attributes = {'title': 'I need: '}  # left out form-check-input
     graphType = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(attrs=attributes))
@@ -102,6 +102,12 @@ class SelectReportType(forms.Form):
 # If the user selects a bar graph, we want to use this form on the second step
 class BarGraphAxes(forms.Form):
     selection = forms.ChoiceField(choices=DEMOGRAPHICS)
+
+    include_table = forms.ChoiceField(choices=YES_NO, widget=forms.RadioSelect())
+
+    def __init__(self, *args, **kwargs):
+        super(BarGraphAxes, self).__init__(*args, **kwargs)
+        self.fields['include_table'].label = 'Include table?'
 
 
 # Select the reporting time period
@@ -192,6 +198,12 @@ class CustomizeLineGraph(CustomizeBarGraph):
 class HistogramAxes(forms.Form):
     selection = forms.ChoiceField(choices=HIST_TIME_CHOICES)
 
+    include_table = forms.ChoiceField(choices=YES_NO, widget=forms.RadioSelect())
+
+    def __init__(self, *args, **kwargs):
+        super(HistogramAxes, self).__init__(*args, **kwargs)
+        self.fields['include_table'].label = 'Include table? '
+
 
 # Detailed options for the histogram wizard
 class HistogramDetails(CustomizeBarGraph):
@@ -230,10 +242,14 @@ class CustomizeScatterPlot(CustomizeBarGraph):
 class IndividualStatisticOptions(BarGraphAxes):
     COUNT_OPTIONS = [('Total Count', 'Total Count'),
                      ('Daily average', 'Daily average'),
-                     ('Montlhy average', 'Monthly average'),
+                     ('Monthly average', 'Monthly average'),
                      ('Yearly average', 'Yearly average')]
 
     count_options = forms.ChoiceField(choices=COUNT_OPTIONS)
+
+    def __init__(self, *args, **kwargs):
+        super(IndividualStatisticOptions, self).__init__(*args, **kwargs)
+        del self.fields['include_table']
 
 # Details for individual statistics
 # User can change label font (size and/or color),

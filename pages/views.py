@@ -27,7 +27,10 @@ FORMS = [('SelectReportType', SelectReportType),
          ('AttendanceDataForm', AttendanceDataForm),
          ('ConfirmBarGraph', forms.Form), # Just use the default Django form class for these,
          ('ConfirmHistogram', forms.Form), # since we are not asking for any input
-         ('ConfirmLineGraph', forms.Form)]
+         ('ConfirmLineGraph', forms.Form),
+         ('ConfirmPieChart', forms.Form),
+         ('ConfirmScatterPlot', forms.Form),
+         ('ConfirmIndividualStatistic', forms.Form)]
 
 def landingPageView(request):
     return render(request, 'pages/landingPage.html')
@@ -340,7 +343,10 @@ class ReportWizardBase(SessionWizardView):
                  'PieChartDetails': 'pages/WizardFiles/histogramDetails.html',
                  'IndividualStatisticDetails': 'pages/WizardFiles/histogramDetails.html',
                  'ConfirmHistogram':'pages/WizardFiles/confirmHistogram.html',
-                 'ConfirmLineGraph': 'pages/WizardFiles/confirmLineGraph.html', }
+                 'ConfirmLineGraph': 'pages/WizardFiles/confirmLineGraph.html',
+                 'ConfirmPieChart': 'pages/WizardFiles/confirmPieChart.html',
+                 'ConfirmScatterPlot': 'pages/WizardFiles/confirmScatterPlot.html',
+                 'ConfirmIndividualStatistic': 'pages/WizardFiles/confirmIndividualStatistic.html'}
                 # 'selection': choices_dict} commented out for now
 
     def get_context_data(self, form, **kwargs):
@@ -362,9 +368,11 @@ class ReportWizardBase(SessionWizardView):
                       'CustomizeLineGraph': lineGraphWizard, 'ScatterPlotAxes': scatterPlotWizard,
                       'HistogramAxes': histogramWizard, 'ConfirmBarGraph': barGraphWizard,
                       'HistogramDetails': histogramWizard, 'ConfirmHistogram': histogramWizard,
+                      'ConfirmPieChart' : pieChartWizard, 'IndividualStatisticDetails': individualStatisticWizard,
                       'LineGraphAxes': lineGraphWizard, 'PieChartData': pieChartWizard,
                       'PieChartDetails': pieChartWizard, 'ConfirmLineGraph': lineGraphWizard,
-                      'IndividualStatisticOptions': individualStatisticWizard, 'CustomizeScatterPlot': scatterPlotWizard}
+                      'IndividualStatisticOptions': individualStatisticWizard, 'CustomizeScatterPlot': scatterPlotWizard,
+                      'ConfirmScatterPlot': scatterPlotWizard, 'ConfirmIndividualStatistic': individualStatisticWizard}
 
     def done(self, form_list, **kwargs):
         return render(self.request, 'pages/done.html', {'form_data': [form.cleaned_data for form in form_list],
