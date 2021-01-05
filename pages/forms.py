@@ -17,6 +17,7 @@ HIST_TIME_CHOICES = [('Time of Day', 'Time of Day'),
 YES_NO = [('Yes', 'Yes'),
           ('No', 'No')]
 
+
 # Base class used for incorporating the password authentication
 class CurrentPasswordForm(forms.Form):
     current_password = forms.CharField(label='Enter your password for your account:',
@@ -152,6 +153,7 @@ class AttendanceDataForm(forms.Form):
         super(AttendanceDataForm, self).__init__(*args, **kwargs)
         self.fields['attendance_data'].label = ''
 
+
 # Allows the user to customize the bar graph
 # Such as visuals and additional details regarding axes
 class CustomizeBarGraph(forms.Form):
@@ -174,19 +176,19 @@ class CustomizeBarGraph(forms.Form):
     select_bar_color = forms.ChoiceField(choices=COLOR_CHOICES)
 
     # Choice field (checkbox) for toggling autoscale
-    autoscale = forms.ChoiceField(choices=Y_N_CHOICES, widget=forms.RadioSelect(), label='Automatically scale the '
-                                                                                         'count?')
+    autoscale = forms.ChoiceField(choices=Y_N_CHOICES, widget=forms.RadioSelect(attrs={'id': 'autoscale'}),
+                                  label='Automatically scale the '
+                                        'count?')
     # Integer field for scaling the count
-    max_count = forms.IntegerField(widget=forms.NumberInput(), label='Max count to display:')
+    max_count = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'max_count'}), label='Max count to display:')
     # Integer field for allowing user to customize incrementation
-    increment_by = forms.IntegerField(widget=forms.NumberInput(), label='Increment by:')
+    increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'max_count'}), label='Increment by:')
+
 
 # Line Graph customization is the same as bar graph customization, except the user
 # is selecting 'line color' instead of bar color
 class CustomizeLineGraph(CustomizeBarGraph):
-
-
-    select_bar_color = None # Override this field to not show anything
+    select_bar_color = None  # Override this field to not show anything
 
     # Instead, label is "select line color"
 
@@ -213,7 +215,8 @@ class HistogramDetails(CustomizeBarGraph):
     attributes_for_attendance_data = {'title': 'Select Attendance Location(s)'}
 
     data = forms.MultipleChoiceField(choices=DATA_OPTIONS, widget=forms.CheckboxSelectMultiple(
-                                                attrs=attributes_for_data_options))
+        attrs=attributes_for_data_options))
+
 
 # Wizard form that allows the user to customize the pie chart
 # The user can display data in the form of: percentages, count, or both
@@ -225,6 +228,7 @@ class PieChartDetails(forms.Form):
     # Radio buttons for the data display options
     Data_units = forms.ChoiceField(choices=DATA_OPTIONS, widget=forms.RadioSelect())
 
+
 # Scatter Plot customization is the same as bar graph customization, except the user
 # is selecting 'dot color' instead of 'bar color'
 # Inherits from form CustomizeBarGraph
@@ -235,6 +239,7 @@ class CustomizeScatterPlot(CustomizeBarGraph):
     # Instead, label is "select dot color"
     # Reuse same color choices as bar graph
     select_dot_color = forms.ChoiceField(choices=CustomizeBarGraph.COLOR_CHOICES)
+
 
 # Individual statistic counting/tracking options
 # Options are similar to the 'axes' options, except the user may
@@ -250,6 +255,7 @@ class IndividualStatisticOptions(BarGraphAxes):
     def __init__(self, *args, **kwargs):
         super(IndividualStatisticOptions, self).__init__(*args, **kwargs)
         del self.fields['include_table']
+
 
 # Details for individual statistics
 # User can change label font (size and/or color),
