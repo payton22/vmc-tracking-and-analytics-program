@@ -180,9 +180,24 @@ class CustomizeBarGraph(forms.Form):
                                   label='Automatically scale the '
                                         'count?')
     # Integer field for scaling the count
-    max_count = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'max_count'}), label='Max count to display:')
+    max_count = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'max_count'}),
+                                   label='Max count to display:', required=False)
     # Integer field for allowing user to customize incrementation
-    increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'max_count'}), label='Increment by:')
+    increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'increment_by'}),
+                                      label='Increment by:', required=False)
+
+    def clean(self):
+        data = self.cleaned_data
+        print(data.get('max_count', '1'))
+
+        if data.get('autoscale') == 'Yes':
+            return data
+        elif data.get('autoscale') == 'No' and (data.get('max_count') and data.get('increment_by')) is not None:
+            return data
+        else:
+            raise forms.ValidationError('Enter values for \'Max Count\' and \'Increment by\' or change autoscale to \'Yes\'.')
+
+
 
 
 # Line Graph customization is the same as bar graph customization, except the user
@@ -193,6 +208,13 @@ class CustomizeLineGraph(CustomizeBarGraph):
     # Instead, label is "select line color"
 
     select_line_color = forms.ChoiceField(choices=CustomizeBarGraph.COLOR_CHOICES)
+
+    # Integer field for scaling the count
+    max_count = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'line_max'}),
+                                   label='Max count to display:', required=False)
+    # Integer field for allowing user to customize incrementation
+    increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'line_increment'}),
+                                      label='Increment by:', required=False)
 
 
 # In the wizard, this is used if the user wants to create a histogram.
@@ -217,6 +239,13 @@ class HistogramDetails(CustomizeBarGraph):
     data = forms.MultipleChoiceField(choices=DATA_OPTIONS, widget=forms.CheckboxSelectMultiple(
         attrs=attributes_for_data_options))
 
+    # Integer field for scaling the count
+    max_count = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'hist_max'}),
+                                   label='Max count to display:', required=False)
+    # Integer field for allowing user to customize incrementation
+    increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'hist_increment'}),
+                                      label='Increment by:', required=False)
+
 
 # Wizard form that allows the user to customize the pie chart
 # The user can display data in the form of: percentages, count, or both
@@ -239,6 +268,14 @@ class CustomizeScatterPlot(CustomizeBarGraph):
     # Instead, label is "select dot color"
     # Reuse same color choices as bar graph
     select_dot_color = forms.ChoiceField(choices=CustomizeBarGraph.COLOR_CHOICES)
+
+    # Integer field for scaling the count
+    max_count = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'scatter_max'}),
+                                   label='Max count to display:', required=False)
+    # Integer field for allowing user to customize incrementation
+    increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'scatter_increment'}),
+                                      label='Increment by:', required=False)
+
 
 
 # Individual statistic counting/tracking options

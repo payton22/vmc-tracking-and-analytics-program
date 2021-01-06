@@ -186,7 +186,6 @@ def newAccount(request):
         last_name = request.POST.get('lastName')
         email = request.POST.get('email')
         password = request.POST.get('password')
-        print(request.POST)
 
         CustomUser.objects.create_superuser(email, first_name, last_name, password)
 
