@@ -10,35 +10,30 @@
         <div class="row">
             <h4 class="d-flex justify-content-center" id="name">{{ firstName }}  {{ lastName }}</h4>
         </div>
-
-
-
-    <div id="IndividualAccountOptions">
-        <div class="row">
-            <a type="button" href="{% url 'vmcAdminPage' %}" class="btn btn-primary BGroup">Back</a>
-        </div>
-        <br>
+    <div id="IndividualAccountOptions" class="h-50">
         <div class="row ">
+                <a type='button' href = "{% url 'vmcAdminPage' accountName %}" class='btn btn-lg nav-bg admin-btn-width'> Back </a>
             <br>
-            <a type="button" href="{% url 'changePassPage' accountName %}" class="btn btn-primary btn-lg BGroup">Change Account Password</a>
+            <a type="button" href="{% url 'changePassPage' accountName %}" class="btn btn-lg nav-bg admin-btn-width">Change Account Password</a>
         </div>
         <br>
         <div class="row flex-column">
-            <a type="button" class="btn btn-primary btn-lg BGroup" href="{% url 'changeName' accountName %}">Change Name</a>
+            <a type="button" class="btn btn-lg nav-bg admin-btn-width" href="{% url 'changeName' accountName %}">Change Name</a>
+        </div>
+        <br>
+        <div class="row flex-column>">
+            <a type="button" class="btn btn-lg nav-bg admin-btn-width" href="{% url 'changeEmailPage' accountName %}">Change email address</a>
         </div>
         <br>
         <div class="row flex-column">
-            <a type="button" class="btn btn-primary btn-lg BGroup" href="{% url 'changeEmailPage' accountName %}">Change email address</a>
+            <a type="button" class="btn btn-lg nav-bg admin-btn-width" href="{% url 'changeProfilePicture' accountName %}">Change Profile Picture</a>
         </div>
-        <br>
-        <div class="row flex-column">
-            <a type="button" class="btn btn-primary btn-lg BGroup" href="{% url 'changeProfilePicture' accountName %}">Change Profile Picture</a>
-        </div>
+        
         <br>
         <div class="row flex-column">
             <!-- Button trigger modal -->
-            <button type="button" id="deleteButton" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#confirmation">
-                Delete this Account
+            <button type="button" id="" class="btn btn-lg delete-bg" data-toggle="modal" data-target="#confirmation">
+                Delete This Account
             </button>
 
 

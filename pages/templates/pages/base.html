@@ -4,28 +4,29 @@
 <head>
 	<meta charset="utf-8">
 	<!-- The below is filled in by html files that extend this base.html -->
-	<title>{% block title %}VMC Home Page{% endblock %}</title>
+	<title>{% block title %}VS Home Page{% endblock %}</title>
+	
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-	<link rel="stylesheet" href="{% static 'pages/CSS/customStyles.css' %}">
 	<link rel="stylesheet" href="{% static 'pages/CSS/importStyles.css' %}">
-    <link rel="stylesheet" href="{% static 'pages/CSS/jquery-ui.min.css' %}">
-    <link rel="stylesheet" href="{% static 'pages/CSS/jquery-ui.structure.min.css' %}">
-
-
-
+	<link rel="stylesheet" href="{% static 'pages/CSS/customStyles.css' %}">
 
 </head>
-<body>
+<body onload="quoteFade()">
 
     <div class="row text-white px-2" style="height:110vh;" >
-	    <div class="col-auto border bg-dark">
+	    <div class="col-auto border secondary-bg">
             <!-- col flex-column for nav-->
-            <a href="/home/"><h1 class="mx-auto font-weight-bold text-white text-center"> VMC-TAP </h1></a>
+            <a href="/home/"><h1 class="mx-auto font-weight-bold text-white text-center"> VS-TAP </h1></a>
 		    <nav class="nav flex-column rounded" id="main_navbar">
-			    <a href="{% url 'homePage' %}" class="nav-link l1 active text-dark bg-success">Home</a>
-			    <a href="{% url 'reports' %}" class="nav-link l1 text-dark bg-success">Reports</a>
+			    <a href="{% url 'homePage' %}" class="nav-link rounded nav-bg">Home</a>
+			    <a href="{% url 'importPage' %}" class="nav-link rounded nav-bg">Upload</a>
+				<a href="{% url 'reports' %}" class="nav-link rounded nav-bg">Reports</a>
+				<a href="{% url 'vmcAdminPage' %}" class="nav-link rounded nav-bg">Administrative</a>
+				
+				
+				<!-- <a href="{% url 'visPage' %}" class="nav-link l1 text-dark bg-success">Visualizations</a>
 			    <a href="{% url 'importPage' %}" class="nav-link l1 text-dark bg-success">Upload Files</a>
-			    <a href="{% url 'vmcAdminPage' %}" class="nav-link l2 text-dark bg-success">Administrative</a>
+			    <a href="{% url 'vmcAdminPage' %}" class="nav-link l2 text-dark bg-success">Administrative</a> -->
 		    </nav>
             <br>
             <br>
@@ -46,7 +47,7 @@
 			</div>
 	    </div>
 	
-        <div class="col border bg-secondary">
+        <div class="col border main-bg">
 		    <div class="row h-100 justify-content-center align-items-center">
 		        <!-- The below is filled in by html files that extend this base.html -->
 		        {% block content %}{% endblock %}

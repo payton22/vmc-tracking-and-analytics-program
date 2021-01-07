@@ -4,9 +4,13 @@ const finshBtn = document.getElementById('finishBtn');
 const content = document.getElementById('content');
 const bullets = [... document.querySelectorAll('.bullet')];
 const files = [... document.querySelectorAll('.file-input')];
+const quotes = [... document.querySelectorAll('.hidden-content')];
+
 
 const MAX_STEPS = 4;
 let currentStep = 1;
+let previousQuoteStep = 0;
+let currentQuoteStep = 10;
 
 nextBtn.addEventListener('click', () => {
     const currentBullet =  bullets[currentStep - 1];
@@ -22,7 +26,6 @@ nextBtn.addEventListener('click', () => {
         // nextFile.classList.add('hidden');
         finishBtn.disabled = false;
     }
-    content.innerText = 'Step Number ${currentStep}';
 })
 
 previousBtn.addEventListener('click', () => {
@@ -38,9 +41,37 @@ previousBtn.addEventListener('click', () => {
     if(currentStep == 1) {
         previousBtn.disabled = true;
     }
-    content.innerText = 'Step Number ${currentStep}';
 })
 
-finishBtn.addEventListener('click', () => {
-    location.reload();
-})
+// finishBtn.addEventListener('click', () => {
+//     location.reload();
+// })
+
+
+function quoteFade() {
+    
+    if(currentQuoteStep > 9) {
+        const currentQuote = quotes[previousQuoteStep];
+        currentQuote.classList.add('unhidden');
+        previousQuoteStep++;
+    }
+
+    setTimeout(function() {
+        if(previousQuoteStep % quotes.length - 1 < 0) {
+            currentQuoteStep = quotes.length - 1
+        } else {
+            currentQuoteStep = previousQuoteStep % quotes.length - 1;
+        }
+
+        const currentQuote = quotes[previousQuoteStep];
+        const previousQuote = quotes[currentQuoteStep];
+        previousQuote.classList.remove('unhidden');
+        currentQuote.classList.add('unhidden');
+        
+        previousQuoteStep++;
+        if(previousQuoteStep >= quotes.length) {
+            previousQuoteStep = 0;    
+        }
+        quoteFade();
+    }, 30000);
+}
