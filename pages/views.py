@@ -166,11 +166,13 @@ def accountsView(request):
 
     for user in accountsList:
         emails.append(user.email)
+    print('made it here')
 
     return render(request, 'pages/viewAccountsList.html', {'emails': emails})
 
 
 def otherAccountOptions(request, emailAddress):
+    print('made it here.')
     userAccount = accessIndividualAccount(emailAddress)
 
     info = {'accountName': userAccount.email, 'firstName': userAccount.first_name, 'lastName': userAccount.last_name}
