@@ -25,6 +25,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('parse/', include('parsing.urls')),
     path('', include('pages.urls')),
+    path('plotly/', include('visualizations.urls')),
     path('sql/', include('sql.urls')),
-    path('plotly/', include('visualizations.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
