@@ -525,7 +525,6 @@ $(document).ready(function() {
                 $("#datepicker1").datepicker({
                 format: 'DD/MM/YYYY',
             });
-                console.log('function1');
 
             });
 
@@ -533,7 +532,7 @@ $(document).ready(function() {
                 $("#datepicker2").datepicker({
                 format: 'DD/MM/YYYY',
             });
-                console.log('function2');
+
             });
 
 

@@ -93,8 +93,8 @@ def gen_visit(student,date):
 
     visit.check_in_date = date.strftime('%m/%d/%y')
     visit.check_out_date = date.strftime('%m/%d/%y')
-    visit.check_in_time = check_in.strftime('%-I:%M %p')
-    visit.check_out_time = check_out.strftime('%-I:%M %p')
+    visit.check_in_time = check_in.strftime('%I:%M %p')
+    visit.check_out_time = check_out.strftime('%I:%M %p')
     visit.duration = str(duration)
     visit.location = gen_location()
     visit.staff_name = gen_staff()

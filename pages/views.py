@@ -25,12 +25,13 @@ FORMS = [('SelectReportType', SelectReportType),
          ('HistogramDetails', HistogramDetails),
          ('IndividualStatisticDetails', IndividualStatisticDetails),
          ('AttendanceDataForm', AttendanceDataForm),
-         ('ConfirmBarGraph', forms.Form), # Just use the default Django form class for these,
-         ('ConfirmHistogram', forms.Form), # since we are not asking for any input
+         ('ConfirmBarGraph', forms.Form),  # Just use the default Django form class for these,
+         ('ConfirmHistogram', forms.Form),  # since we are not asking for any input
          ('ConfirmLineGraph', forms.Form),
          ('ConfirmPieChart', forms.Form),
          ('ConfirmScatterPlot', forms.Form),
          ('ConfirmIndividualStatistic', forms.Form)]
+
 
 def landingPageView(request):
     return render(request, 'pages/landingPage.html')
@@ -294,17 +295,21 @@ def barGraphWizard(wizard):
 def histogramWizard(wizard):
     return conditionalWizardBranch(wizard, 'Histogram')
 
+
 # Branch to line graph wizard if user selects 'Line Graph'
 def lineGraphWizard(wizard):
     return conditionalWizardBranch(wizard, 'Line Graph')
+
 
 # Branch to pie chart wizard if user selects 'Pie Chart' on first page
 def pieChartWizard(wizard):
     return conditionalWizardBranch(wizard, 'Pie Chart')
 
+
 # Branch to scatter plot wizard if user selects 'Scatter Plot' on first page
 def scatterPlotWizard(wizard):
     return conditionalWizardBranch(wizard, 'Scatter Plot')
+
 
 # Branch to individual statistic wizard if user selects 'Individual Statistic'
 # on first page
@@ -332,7 +337,7 @@ class ReportWizardBase(SessionWizardView):
                  'LineGraphAxes': 'pages/WizardFiles/barGraphAxes.html',
                  'HistogramAxes': 'pages/WizardFiles/histogramFreq.html',
                  'ScatterPlotAxes': 'pages/WizardFiles/barGraphAxes.html',
-                 'PieChartData' : 'pages/WizardFiles/barGraphAxes.html',
+                 'PieChartData': 'pages/WizardFiles/barGraphAxes.html',
                  'IndividualStatisticOptions': 'pages/WizardFiles/individualStatisticOptions.html',
                  'TimeFrame': 'pages/WizardFiles/timeFrame.html',
                  'CustomizeBarGraph': 'pages/WizardFiles/customizeBarGraph.html',
@@ -343,36 +348,27 @@ class ReportWizardBase(SessionWizardView):
                  'HistogramDetails': 'pages/WizardFiles/histogramDetails.html',
                  'PieChartDetails': 'pages/WizardFiles/histogramDetails.html',
                  'IndividualStatisticDetails': 'pages/WizardFiles/histogramDetails.html',
-                 'ConfirmHistogram':'pages/WizardFiles/confirmHistogram.html',
+                 'ConfirmHistogram': 'pages/WizardFiles/confirmHistogram.html',
                  'ConfirmLineGraph': 'pages/WizardFiles/confirmLineGraph.html',
                  'ConfirmPieChart': 'pages/WizardFiles/confirmPieChart.html',
                  'ConfirmScatterPlot': 'pages/WizardFiles/confirmScatterPlot.html',
                  'ConfirmIndividualStatistic': 'pages/WizardFiles/confirmIndividualStatistic.html'}
-                # 'selection': choices_dict} commented out for now
 
     def get_context_data(self, form, **kwargs):
         context = super(ReportWizardBase, self).get_context_data(form=form, **kwargs)
-        # context.update({'all_data':self.get_all_cleaned_data()})
         context.update({'all_data': self.get_all_cleaned_data()})
         self.choices_dict.update({'all_data': self.get_all_cleaned_data()})
-        print(context['all_data'])
         return context
 
-    #def process_step(self, form):
-     #   if self.steps == 6:
-      #      self.extra_context = {'all_data':self.get_all_cleaned_data()}
-       #     return render(self.request, 'pages/WizardFiles/confirmationBarGraph.html', self.extra_context)
-        #else:
-         #   return
-    # template_name = 'pages/selectGraph.html'
     condition_dict = {'BarGraphAxes': barGraphWizard, 'CustomizeBarGraph': barGraphWizard,
                       'CustomizeLineGraph': lineGraphWizard, 'ScatterPlotAxes': scatterPlotWizard,
                       'HistogramAxes': histogramWizard, 'ConfirmBarGraph': barGraphWizard,
                       'HistogramDetails': histogramWizard, 'ConfirmHistogram': histogramWizard,
-                      'ConfirmPieChart' : pieChartWizard, 'IndividualStatisticDetails': individualStatisticWizard,
+                      'ConfirmPieChart': pieChartWizard, 'IndividualStatisticDetails': individualStatisticWizard,
                       'LineGraphAxes': lineGraphWizard, 'PieChartData': pieChartWizard,
                       'PieChartDetails': pieChartWizard, 'ConfirmLineGraph': lineGraphWizard,
-                      'IndividualStatisticOptions': individualStatisticWizard, 'CustomizeScatterPlot': scatterPlotWizard,
+                      'IndividualStatisticOptions': individualStatisticWizard,
+                      'CustomizeScatterPlot': scatterPlotWizard,
                       'ConfirmScatterPlot': scatterPlotWizard, 'ConfirmIndividualStatistic': individualStatisticWizard}
 
     def done(self, form_list, **kwargs):
