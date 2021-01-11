@@ -373,9 +373,12 @@ class ReportWizardBase(SessionWizardView):
 
     # This function is called after the user is done with the wizard
     def done(self, form_list, **kwargs):
-        data = {'form_data': [form.cleaned_data for form in form + list]}
+        return render(self.request, 'pages/done.html', {'form_data': [form.cleaned_data for form in form_list],
+                                                        'selections': self.choices_dict})
+
+        preset_name_form = ReportPresetName()
+        data = {'form_data': [form.cleaned_data for form in form_list], 'form': preset_name_form}
         # If the user wants to save their report presets (except for date)
-        form = ReportPresetName()
         if self.request.POST.get('save'):
             return render(self.request, 'pages/wizardFiles/savePreset.html',
                           data) #'selections': self.choices_dict, 'form':form})
@@ -387,12 +390,12 @@ class ReportWizardBase(SessionWizardView):
     def get_template_names(self):
         return self.TEMPLATES[self.steps.current]
 
-def savePreset(request, data):
+def savePreset(request, form_data):
     name = request.POST.get('preset_input')
 
-    data['form_data'].append(name)
+    form_data['form_data'].append(name)
 
-    return render(request, 'pages/presetSaved.html', data)
+    return render(request, 'pages/presetSaved.html', form_data)
 
 # Used for sending a test email
 # def send_test_mail():
