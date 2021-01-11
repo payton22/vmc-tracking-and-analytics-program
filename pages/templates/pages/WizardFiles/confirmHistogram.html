@@ -1,4 +1,4 @@
-{% extends "pages/wizardPage.html" %}
+{% extends "pages/WizardFiles/wizardPage.html" %}
 {% block wizform %}
     {{ wizard.management_form }}
 {% if wizard.form.forms %}
@@ -15,7 +15,7 @@
                 <p>Report Type: {{ all_data.graphType }}</p>
             </div>
             <div class="col-6">
-                <p>Count total of category: {{ all_data.selection }}</p>
+                <p>Time Units: {{ all_data.time_period }}</p>
             </div>
         </div>
         <div class="row">

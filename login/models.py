@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django_resized import ResizedImageField
 
 
+
 class CustomUserManager(BaseUserManager):
     # Create a new user with the specified fields
     def create_superuser(self, email, first_name, last_name, password=None, **extra_fields):
@@ -31,6 +32,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField('email address', unique=True, primary_key=True)
     is_superuser = models.BooleanField(default=True)
     avatar = ResizedImageField(quality=100, size=[120, 120], upload_to='profile_pic', blank=True)
+
     USERNAME_FIELD = 'email'
 
     # This should contain the required fields that are not email or password (those are

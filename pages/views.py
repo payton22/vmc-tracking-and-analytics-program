@@ -332,7 +332,7 @@ def conditionalWizardBranch(wizard, graphType):
 
 class ReportWizardBase(SessionWizardView):
     choices_dict = {}
-    TEMPLATES = {'SelectReportType': 'pages/selectGraph.html',
+    TEMPLATES = {'SelectReportType': 'pages/WizardFiles/selectGraph.html',
                  'BarGraphAxes': 'pages/WizardFiles/barGraphAxes.html',
                  'LineGraphAxes': 'pages/WizardFiles/barGraphAxes.html',
                  'HistogramAxes': 'pages/WizardFiles/histogramFreq.html',
@@ -371,12 +371,28 @@ class ReportWizardBase(SessionWizardView):
                       'CustomizeScatterPlot': scatterPlotWizard,
                       'ConfirmScatterPlot': scatterPlotWizard, 'ConfirmIndividualStatistic': individualStatisticWizard}
 
+    # This function is called after the user is done with the wizard
     def done(self, form_list, **kwargs):
-        return render(self.request, 'pages/done.html', {'form_data': [form.cleaned_data for form in form_list],
-                                                        'selections': self.choices_dict})
+        data = {'form_data': [form.cleaned_data for form in form + list]}
+        # If the user wants to save their report presets (except for date)
+        form = ReportPresetName()
+        if self.request.POST.get('save'):
+            return render(self.request, 'pages/wizardFiles/savePreset.html',
+                          data) #'selections': self.choices_dict, 'form':form})
+        # If the user does not want to save their report presets
+        else:
+            return render(self.request, 'pages/done.html', data)
+                                                           # 'selections': self.choices_dict})
 
     def get_template_names(self):
         return self.TEMPLATES[self.steps.current]
+
+def savePreset(request, data):
+    name = request.POST.get('preset_input')
+
+    data['form_data'].append(name)
+
+    return render(request, 'pages/presetSaved.html', data)
 
 # Used for sending a test email
 # def send_test_mail():

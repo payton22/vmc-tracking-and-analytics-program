@@ -143,7 +143,7 @@ class AttendanceDataForm(forms.Form):
                ('Some Other Event A', 'Some Other Event A'),
                ('Some Other Event B', 'Some Other Event B')]
 
-    attributes = {'title': 'Select Attendance Location:'}
+    attributes = {'title': 'Select Attendance Location:', 'class': 'Locations'}
 
     attendance_data = forms.MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple(attrs=attributes))
 
@@ -220,7 +220,9 @@ class CustomizeLineGraph(CustomizeBarGraph):
 # In the wizard, this is used if the user wants to create a histogram.
 # The user selects different time periods to track attendance.
 class HistogramAxes(forms.Form):
-    selection = forms.ChoiceField(choices=HIST_TIME_CHOICES)
+    selection = None
+
+    time_units = forms.ChoiceField(choices=HIST_TIME_CHOICES)
 
     include_table = forms.ChoiceField(choices=YES_NO, widget=forms.RadioSelect())
 
@@ -329,3 +331,9 @@ class IndividualStatisticDetails(forms.Form):
     statistic_font_color = forms.ChoiceField(choices=COLOR_CHOICES)
     label_font_size = forms.ChoiceField(choices=FONT_CHOICES)
     statistic_font_size = forms.ChoiceField(choices=FONT_CHOICES)
+
+class ReportPresetName(forms.Form):
+    attributes = {'id': 'preset_input', 'name': 'preset_input', 'class': 'form-control'}
+
+    enter_preset_name = forms.CharField(widget=forms.TextInput(attrs=attributes))
+

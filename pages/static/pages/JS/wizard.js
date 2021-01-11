@@ -9,14 +9,12 @@ function defaultOff(groupName, max, inc) {
 
    if($('input[name='+ groupName + ']:checked').val() == null ||
    $('input[name=' + groupName + ']:checked').val() == 'Yes') {
-       console.log('In if branch');
        if(max_ct != null || inc_by != null) {
            max_ct.disabled = true;
            inc_by.disabled = true;
        }
     }
    else {
-       console.log('In else branch');
        if(max_ct != null || inc_by != null) {
            max_ct.disabled = false;
            max_ct.disabled = false;
@@ -77,4 +75,12 @@ $('input[name=CustomizeScatterPlot-autoscale]').change(function (){
         max_ct.disabled = false;
         inc_by.disabled = false;
     }
+});
+
+$('#id_AttendanceDataForm-select_all').click(function() {
+    $('input:checkbox').not(this).prop('checked', this.checked);
+});
+
+$('.Locations').click(function() {
+    $('#id_AttendanceDataForm-select_all').prop('checked', false);
 });

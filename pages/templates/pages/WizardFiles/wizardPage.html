@@ -18,7 +18,13 @@
                         <button name="wizard_goto_step" class="col-auto" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
                         <button name="wizard_goto_step" class="col-auto" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
                 {% endif %}
-                    <button type="submit" class="col-auto" value="{% trans "submit" %}">{% trans "submit" %}</button>
+                {% if wizard.steps.current == wizard.steps.last %}
+                    <button type="submit only" class="col-auto" value="{% trans "submit" %}">{% trans "submit" %}</button>
+                    <button type="submit and save choices" name="save" class="col-auto" value="submit and save choices">submit and save choices</button>
+                    {% else %}
+                    <button type="submit" class="col-auto" value="{% trans "next" %}">{% trans "next" %}</button>
+                {% endif %}
+
                 </div>
 
 
