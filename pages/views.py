@@ -9,6 +9,7 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth import update_session_auth_hash, logout, login, tokens
 from formtools.wizard.views import SessionWizardView
 from .forms import *
+from visualizations.models import ReportPresets
 
 FORMS = [('SelectReportType', SelectReportType),
          ('BarGraphAxes', BarGraphAxes),
@@ -32,6 +33,8 @@ FORMS = [('SelectReportType', SelectReportType),
          ('ConfirmScatterPlot', forms.Form),
          ('ConfirmIndividualStatistic', forms.Form)]
 
+# Temporarily store wizard choices if the user wants to save a "preset"
+preset_storage = {}
 
 def landingPageView(request):
     return render(request, 'pages/landingPage.html')
@@ -173,7 +176,6 @@ def accountsView(request):
 
 
 def otherAccountOptions(request, emailAddress):
-    print('made it here.')
     userAccount = accessIndividualAccount(emailAddress)
 
     info = {'accountName': userAccount.email, 'firstName': userAccount.first_name, 'lastName': userAccount.last_name}
@@ -373,11 +375,11 @@ class ReportWizardBase(SessionWizardView):
 
     # This function is called after the user is done with the wizard
     def done(self, form_list, **kwargs):
-        return render(self.request, 'pages/done.html', {'form_data': [form.cleaned_data for form in form_list],
-                                                        'selections': self.choices_dict})
+        global preset_storage
 
         preset_name_form = ReportPresetName()
         data = {'form_data': [form.cleaned_data for form in form_list], 'form': preset_name_form}
+        preset_storage = {'form_data': [form.cleaned_data for form in form_list]}
         # If the user wants to save their report presets (except for date)
         if self.request.POST.get('save'):
             return render(self.request, 'pages/wizardFiles/savePreset.html',
@@ -390,12 +392,138 @@ class ReportWizardBase(SessionWizardView):
     def get_template_names(self):
         return self.TEMPLATES[self.steps.current]
 
-def savePreset(request, form_data):
-    name = request.POST.get('preset_input')
+def savePreset(request):
+    if request.method == 'POST':
+        name = request.POST.get('enter_preset_name')
+        saveChoices(request, name)
 
-    form_data['form_data'].append(name)
+    print('data is:', preset_storage, ' and the name is: ', name)
 
-    return render(request, 'pages/presetSaved.html', form_data)
+
+    return render(request, 'pages/WizardFiles/presetSaved.html', {'name': name})
+
+def saveChoices(request, name):
+    global preset_storage
+    preference = ReportPresets()
+    inner_dict = preset_storage['form_data']
+    graph_type = inner_dict[0]
+
+    if graph_type['graphType'] == 'Bar Graph':
+        sel_dict = inner_dict[1]
+        selection = sel_dict['selection']
+        incl_table = sel_dict['include_table']
+        customization = inner_dict[3]
+        sel_bar_color = customization['select_bar_color']
+        autoscale = customization['autoscale']
+        max_ct = customization['max_count']
+        inc_by = customization['increment_by']
+
+        loc_dict = inner_dict[4]
+        loc = loc_dict['attendance_data']
+
+        Preset = ReportPresets(graph_type=graph_type, selection=selection, include_table=incl_table, select_bar_color=sel_bar_color, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, locations=loc, user=request.user, preset_name=name)
+        Preset.save()
+    elif graph_type['graphType'] == 'Histogram':
+        sel_dict = inner_dict[1]
+        time_units = sel_dict['time_units']
+        incl_tabe = sel_dict['include_table']
+        customization = inner_dict[3]
+        sel_bar_color = customization['select_bar_color']
+        autoscale = customization['autoscale']
+        max_ct = customization['max_count']
+        inc_by = customization['increment_by']
+        data = customization['data']
+
+        loc_dict = inner_dict[4]
+        loc = loc_dict['attendance_data']
+
+        Preset = ReportPresets(graph_type=graph_type, time_units=time_units, include_table=incl_tabe, select_bar_color=sel_bar_color, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, hist_data=data, locations=loc, user=request.user, preset_name=name)
+        Preset.save()
+    elif graph_type['graphType'] == 'Line Graph':
+        sel_dict = inner_dict[1]
+        selection = sel_dict['selection']
+        incl_table = sel_dict['include_table']
+        customization = inner_dict[3]
+        autoscale = customization['autoscale']
+        max_ct = customization['max_count']
+        inc_by = customization['increment_by']
+        sel_line_color = customization['select_line_color']
+
+        loc_dict = inner_dict[4]
+        loc = loc_dict['attendance_data']
+
+        Preset = ReportPresets(graph_type=graph_type, selection=selection, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, line_color=sel_line_color, locations=loc, preset_name=name, user=request.user)
+        Preset.save()
+    elif graph_type['graphType'] == 'Pie Chart':
+        sel_dict = inner_dict[1]
+        selection = sel_dict['selection']
+        incl_table = sel_dict['include_table']
+
+        data_units_dict = inner_dict[3]
+        data_units = data_units_dict['Data_units']
+
+        loc_dict = inner_dict[4]
+        loc = loc_dict['attendance_data']
+
+        Preset = ReportPresets(graph_type=graph_type, selection=selection, include_table=incl_table, data_units=data_units, locations=loc, preset_name=name, user=request.user)
+        Preset.save()
+    elif graph_type['graphType'] == 'Scatter Plot':
+        sel_dict = inner_dict[1]
+        selection = sel_dict['selection']
+        incl_table = sel_dict['include_table']
+
+        customization = inner_dict[3]
+        autoscale = customization['autoscale']
+        max_ct = customization['max_count']
+        inc_by = customization['increment_by']
+        sel_dot_color = customization['select_dot_color']
+
+        loc_dict = inner_dict[4]
+        loc = loc_dict['attendance_data']
+
+        Preset = ReportPresets(graph_type=graph_type, selection=selection, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, dot_color=sel_dot_color, locations=loc, preset_name=name, user=request.user)
+        Preset.save()
+    elif graph_type['graphType'] == 'Individual Statistic':
+        sel_dict = inner_dict[1]
+        selection = sel_dict['selection']
+        count_options = sel_dict['count_options']
+
+        customization = inner_dict[3]
+        label_color = customization['label_font_color']
+        statistic_font_color = customization['statistic_font_color']
+        statistic_font_size = customization['statistic_font_size']
+        label_font_size = customization['label_font_size']
+
+        loc_dict = inner_dict[4]
+        loc = loc_dict['attendance_data']
+
+        Preset = ReportPresets(graph_type=graph_type, selection=selection, count_options=count_options, label_color=label_color, statistic_font_color=statistic_font_color, statistic_font_size=statistic_font_size, label_font_size=label_font_size, locations=loc, preset_name=name, user=request.user)
+        Preset.save()
+
+    print('inner_dict:', graph_type['graphType'])
+
+def reportsView(request):
+    return render(request, 'pages/reportsPage.html')
+
+def viewPresets(request):
+    presets = ReportPresets.objects.filter(user=request.user)
+    pres_names = []
+
+    for preset in presets:
+        pres_names.append(preset.preset_name)
+
+    return render(request, 'pages/viewPresets.html', {'pres_names': pres_names})
+
+def individualPresetOptions(request, name):
+    preset = ReportPresets.objects.get(pk=name)
+
+    return render(request, 'pages/individualPresetOptions.html', {'name': name})
+
+def deletePreset(request, name):
+    preset = ReportPresets.objects.get(pk=name)
+    preset.delete()
+
+    return render(request, 'pages/deletePreset.html', {'name': name})
 
 # Used for sending a test email
 # def send_test_mail():

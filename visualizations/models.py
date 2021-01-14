@@ -7,7 +7,7 @@ from django.db import models
 from login.models import CustomUser
 
 
-class ReportPreferences(models.Model):
+class ReportPresets(models.Model):
     # Choices for 'selection' field
     DEMOGRAPHICS = [('Ethnicity', 'Ethnicity'),
                     ('Career', 'Career'),
@@ -73,42 +73,52 @@ class ReportPreferences(models.Model):
                     ('48', '48'),
                     ('72', '72')]
 
+    HIST_TIME_CHOICES = [('Time of Day', 'Time of Day'),
+                         ('Months', 'Months'),
+                         ('Years', 'Years')]
+
     # Required for all report types
     graph_type = models.CharField(choices=GRAPH_CHOICES, max_length=50)
-    selection = models.CharField(choices=DEMOGRAPHICS, max_length=50)
+
+    # Required for all report types except Histogram
+    selection = models.CharField(choices=DEMOGRAPHICS, max_length=50, null=True)
+
+    # Required for Histogram onlly
+    time_units = models.CharField(choices=HIST_TIME_CHOICES, null=True, max_length=50)
 
     # Required for everything except Individual Statistic
-    locations = models.CharField(max_length=50)
-    include_table = models.BooleanField(choices=YES_NO, max_length=50)
+    locations = models.CharField(max_length=50, null=True)
+    include_table = models.CharField(choices=YES_NO, max_length=50, null=True)
 
     # Required for Bar Graph and Histogram
-    select_bar_color = models.CharField(choices=COLOR_CHOICES, max_length=50)
+    select_bar_color = models.CharField(choices=COLOR_CHOICES, max_length=50, null=True)
 
     # Required for everything except Individual Statistic and Pie Chart
-    autoscale = models.BooleanField(choices=YES_NO, max_length=50)
-    max_count = models.IntegerField()
-    increment_by = models.IntegerField()
+    autoscale = models.CharField(choices=YES_NO, max_length=50, null=True)
+    max_count = models.IntegerField(null=True)
+    increment_by = models.IntegerField(null=True)
 
     # Required for Histogram only
-    hist_data = models.CharField(max_length=50)
+    hist_data = models.CharField(max_length=50, null=True)
 
     # Required for Line Graph only
-    line_color = models.CharField(choices=COLOR_CHOICES, max_length=50)
+    line_color = models.CharField(choices=COLOR_CHOICES, max_length=50, null=True)
 
     # Required for Pie Chart only
-    data_units = models.CharField(choices=PIE_DATA_OPTIONS, max_length=50)
+    data_units = models.CharField(choices=PIE_DATA_OPTIONS, max_length=50, null=True)
 
     # Required for scatter plot only
-    dot_color = models.CharField(choices=COLOR_CHOICES, max_length=50)
+    dot_color = models.CharField(choices=COLOR_CHOICES, max_length=50, null=True)
+
 
     # Required for Individual Statistic only
-    count_options = models.CharField(choices=COUNT_OPTIONS, max_length=50)
-    label_color = models.CharField(choices=COLOR_CHOICES, max_length=50)
-    statistic_font_color = models.CharField(choices=COLOR_CHOICES, max_length=50)
-    label_font_size = models.IntegerField(choices=FONT_CHOICES)
-    statistic_font_size = models.IntegerField(choices=FONT_CHOICES)
+    count_options = models.CharField(choices=COUNT_OPTIONS, max_length=50, null=True)
+    label_color = models.CharField(choices=COLOR_CHOICES, max_length=50, null=True)
+    statistic_font_color = models.CharField(choices=COLOR_CHOICES, max_length=50, null=True)
+    label_font_size = models.IntegerField(choices=FONT_CHOICES, null=True)
+    statistic_font_size = models.IntegerField(choices=FONT_CHOICES, null=True)
 
-    preset_name = models.CharField(max_length=100)
+    preset_name = models.CharField(max_length=100, primary_key=True)
 
     # Each graph preset is linked to a user (many-to-one relationship)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, max_length=50)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, max_length=50, null=True)

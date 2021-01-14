@@ -27,8 +27,12 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('changeName/<str:accountName>/', changeName, name='changeName'),
     path('changeProfilePicture/<str:accountName>', profileImageView, name='changeProfilePicture'),
-    path('reports/', ReportWizardBase.as_view(FORMS), name='reports'),
-    path('reports/savePreset/<path:data>', savePreset, name='savePreset')
+    path('reports/', reportsView, name='reports'),
+    path('reports/Wizard/', ReportWizardBase.as_view(FORMS), name='reportsWizard'),
+    path('reports/savePreset/', savePreset, name='savePreset'),
+    path('reports/viewPresets', viewPresets, name='viewPresets'),
+    path('reports/presetOptions/<str:name>/', individualPresetOptions, name='individualPresetOptions'),
+    path('reports/presetDeleted/<str:name>', deletePreset, name='deletePreset')
     #path('', include('django.contrib.auth.urls')),
 ]
 
