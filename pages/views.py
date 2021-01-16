@@ -421,7 +421,7 @@ def saveChoices(request, name):
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
 
-        Preset = ReportPresets(graph_type=graph_type, selection=selection, include_table=incl_table, select_bar_color=sel_bar_color, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, locations=loc, user=request.user, preset_name=name)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], selection=selection, include_table=incl_table, select_bar_color=sel_bar_color, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, locations=loc, user=request.user, preset_name=name)
         Preset.save()
     elif graph_type['graphType'] == 'Histogram':
         sel_dict = inner_dict[1]
@@ -437,7 +437,7 @@ def saveChoices(request, name):
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
 
-        Preset = ReportPresets(graph_type=graph_type, time_units=time_units, include_table=incl_tabe, select_bar_color=sel_bar_color, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, hist_data=data, locations=loc, user=request.user, preset_name=name)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], time_units=time_units, include_table=incl_tabe, select_bar_color=sel_bar_color, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, hist_data=data, locations=loc, user=request.user, preset_name=name)
         Preset.save()
     elif graph_type['graphType'] == 'Line Graph':
         sel_dict = inner_dict[1]
@@ -452,7 +452,7 @@ def saveChoices(request, name):
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
 
-        Preset = ReportPresets(graph_type=graph_type, selection=selection, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, line_color=sel_line_color, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], selection=selection, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, line_color=sel_line_color, locations=loc, preset_name=name, user=request.user)
         Preset.save()
     elif graph_type['graphType'] == 'Pie Chart':
         sel_dict = inner_dict[1]
@@ -465,7 +465,7 @@ def saveChoices(request, name):
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
 
-        Preset = ReportPresets(graph_type=graph_type, selection=selection, include_table=incl_table, data_units=data_units, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], selection=selection, include_table=incl_table, data_units=data_units, locations=loc, preset_name=name, user=request.user)
         Preset.save()
     elif graph_type['graphType'] == 'Scatter Plot':
         sel_dict = inner_dict[1]
@@ -481,7 +481,7 @@ def saveChoices(request, name):
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
 
-        Preset = ReportPresets(graph_type=graph_type, selection=selection, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, dot_color=sel_dot_color, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], selection=selection, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, dot_color=sel_dot_color, locations=loc, preset_name=name, user=request.user)
         Preset.save()
     elif graph_type['graphType'] == 'Individual Statistic':
         sel_dict = inner_dict[1]
@@ -497,10 +497,9 @@ def saveChoices(request, name):
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
 
-        Preset = ReportPresets(graph_type=graph_type, selection=selection, count_options=count_options, label_color=label_color, statistic_font_color=statistic_font_color, statistic_font_size=statistic_font_size, label_font_size=label_font_size, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], selection=selection, count_options=count_options, label_color=label_color, statistic_font_color=statistic_font_color, statistic_font_size=statistic_font_size, label_font_size=label_font_size, locations=loc, preset_name=name, user=request.user)
         Preset.save()
 
-    print('inner_dict:', graph_type['graphType'])
 
 def reportsView(request):
     return render(request, 'pages/reportsPage.html')
@@ -516,8 +515,9 @@ def viewPresets(request):
 
 def individualPresetOptions(request, name):
     preset = ReportPresets.objects.get(pk=name)
+    print(preset.selection)
 
-    return render(request, 'pages/individualPresetOptions.html', {'name': name})
+    return render(request, 'pages/individualPresetOptions.html', {'name': name, 'preset':preset})
 
 def deletePreset(request, name):
     preset = ReportPresets.objects.get(pk=name)

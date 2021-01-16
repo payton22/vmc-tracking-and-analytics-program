@@ -7,6 +7,201 @@
        <div class="row">
           <h1 class="d-flex justify-content-center">Preset options for {{ name }}</h1>
         </div>
+        {% if preset.graph_type == 'Bar Graph' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Graph Type: {{ preset.graph_type }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Selection: {{ preset.selection }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Include table: {{ preset.include_table }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Bar color: {{ preset.select_bar_color }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Autoscale: {{ preset.autoscale }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Max count: {{ preset.max_count }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Increment by: {{ preset.increment_by }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Locations to track: {{ preset.locations }}</p>
+                </div>
+            </div>
+        {% elif preset.graph_type == 'Histogram' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Graph type: {{ preset.graph_type }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Time units: {{ preset.time_units }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Include table: {{ preset.include_table }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Bar color: {{ preset.select_bar_color }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Autoscale: {{ preset.autoscale }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Max count: {{ preset.max_count }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Increment by: {{ preset.increment_by }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Data to include: {{ preset.hist_data }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Locations to track: {{ preset.locations }}</p>
+                </div>
+            </div>
+        {% elif preset.graph_type == 'Line Graph' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Graph type: {{ preset.graph_type }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Selection: {{ preset.selection }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Include table: {{ preset.include_table }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Autoscale: {{ preset.autoscale }}</p>
+                </div>
+
+            </div>
+            <div class="row">
+             <div class="col-6">
+                    <p>Max count: {{ preset.max_count }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Increment by: {{ preset.increment_by }}</p>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Line color: {{ preset.line_color }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Locations to track: {{ preset.locations }}</p>
+                </div>
+            </div>
+        {% elif preset.graph_type == 'Pie Chart' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Graph type: {{ preset.graph_type }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Selection: {{ preset.selection }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Include table: {{ preset.include_table }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Data units: {{ preset.data_units }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Locations to track: {{ preset.locations }}</p>
+                </div>
+            </div>
+        {% elif graph_type == 'Scatter Plot' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Graph type: {{ preset.graph_type }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Selection: {{ preset.selection }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Include table: {{ preset.include_table }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Autoscale: {{ preset.autoscale }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Max count: {{ preset.max_count }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Increment by: {{ preset.increment_by }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Dot color: {{ preset.sel_dot_color }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Locations to track: {{ preset.locations }}</p>
+                </div>
+            </div>
+        {% elif preset.graph_type == 'Individual Statistic' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Graph type: {{ preset.graph_type }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Selection: {{ preset.selection }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Count options: {{ preset.count_options }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Label color: {{ preset.label_color }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Statistic font color: {{ preset.statistic_font_color }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Statistic font size: {{ preset.statistic_font_size }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <p>Label font size: {{ preset.label_font_size }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Locations to track: {{ preset.locations }}</p>
+                </div>
+            </div>
+        {% endif %}
     <div id="IndividualAccountOptions" class="h-50">
         <div class="row ">
                 <a type='button' href ="{% url 'viewPresets' %}" class="btn btn-lg nav-bg admin-btn-width"> Back </a>
