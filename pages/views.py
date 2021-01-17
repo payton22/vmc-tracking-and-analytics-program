@@ -393,18 +393,21 @@ class ReportWizardBase(SessionWizardView):
         return self.TEMPLATES[self.steps.current]
 
 def savePreset(request):
+    presets = ReportPresets.objects.filter(user=request.user)
+    if len(presets) <= 14:
+        if request.method == 'POST':
+            form = ReportPresetName(request.POST)
+            if form.check_entry():
+                name = request.POST.get('enter_preset_name')
+                saveChoices(request, name)
+            else:
+                return render(request, 'pages/wizardFiles/savePreset.html',
+                            {'form': form})
 
-    if request.method == 'POST':
-        form = ReportPresetName(request.POST)
-        if form.check_entry():
-            name = request.POST.get('enter_preset_name')
-            saveChoices(request, name)
-        else:
-            return render(request, 'pages/wizardFiles/savePreset.html',
-                          {'form': form})
 
-
-    return render(request, 'pages/WizardFiles/presetSaved.html', {'name': name})
+        return render(request, 'pages/WizardFiles/presetSaved.html', {'name': name})
+    else:
+        return render(request, 'pages/sizeLimitReached.html')
 
 def saveChoices(request, name):
     global preset_storage
