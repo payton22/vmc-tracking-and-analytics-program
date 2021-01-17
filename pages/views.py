@@ -393,11 +393,15 @@ class ReportWizardBase(SessionWizardView):
         return self.TEMPLATES[self.steps.current]
 
 def savePreset(request):
-    if request.method == 'POST':
-        name = request.POST.get('enter_preset_name')
-        saveChoices(request, name)
 
-    print('data is:', preset_storage, ' and the name is: ', name)
+    if request.method == 'POST':
+        form = ReportPresetName(request.POST)
+        if form.check_entry():
+            name = request.POST.get('enter_preset_name')
+            saveChoices(request, name)
+        else:
+            return render(request, 'pages/wizardFiles/savePreset.html',
+                          {'form': form})
 
 
     return render(request, 'pages/WizardFiles/presetSaved.html', {'name': name})
@@ -524,6 +528,20 @@ def deletePreset(request, name):
     preset.delete()
 
     return render(request, 'pages/deletePreset.html', {'name': name})
+
+def createReportFromPreset(request, name):
+    if request.method == 'POST':
+        form = TimeFrame(request.POST)
+        from_time = request.POST.get('from_time')
+        to_time = request.POST.get('to_time')
+        # Generate report here
+
+        return render(request, 'pages/presetReportGenerated.html', {'name': name, 'form': form})
+    else:
+        form = TimeFrame()
+        return render(request, 'pages/createReportFromPreset.html', {'name': name, 'form':form})
+
+
 
 # Used for sending a test email
 # def send_test_mail():

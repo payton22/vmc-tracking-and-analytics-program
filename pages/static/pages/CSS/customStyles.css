@@ -7,6 +7,10 @@
     color:red;
     font-size:20px;
 }
+
+.listButtons{
+    width:200px;
+}
 /* Styles for navbar */
 #main_navbar{
     /* Move the navbar down by 100px */

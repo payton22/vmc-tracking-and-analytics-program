@@ -32,7 +32,8 @@ urlpatterns = [
     path('reports/savePreset/', savePreset, name='savePreset'),
     path('reports/viewPresets', viewPresets, name='viewPresets'),
     path('reports/presetOptions/<str:name>/', individualPresetOptions, name='individualPresetOptions'),
-    path('reports/presetDeleted/<str:name>', deletePreset, name='deletePreset')
+    path('reports/presetDeleted/<str:name>', deletePreset, name='deletePreset'),
+    path('reports/createReportFromPreset/<str:name>/', createReportFromPreset, name='createReportFromPreset')
     #path('', include('django.contrib.auth.urls')),
 ]
 

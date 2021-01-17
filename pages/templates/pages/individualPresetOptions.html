@@ -205,12 +205,10 @@
     <div id="IndividualAccountOptions" class="h-50">
         <div class="row ">
                 <a type='button' href ="{% url 'viewPresets' %}" class="btn btn-lg nav-bg admin-btn-width"> Back </a>
-            <br>
-            <a type="button" href="" class="btn btn-lg nav-bg admin-btn-width">Change Preset Name</a>
         </div>
         <br>
         <div class="row flex-column">
-            <a type="button" class="btn btn-lg nav-bg admin-btn-width" href="">Create Report with this Preset</a>
+            <a type="button" class="btn btn-lg nav-bg admin-btn-width" href="{% url 'createReportFromPreset' name %}">Create Report with this Preset</a>
         </div>
         <br>
         <div class="row flex-column">

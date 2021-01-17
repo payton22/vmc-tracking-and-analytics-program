@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.admin.widgets import AdminDateWidget
 from login.models import CustomUser
+from visualizations.models import ReportPresets
 
 # Making this global because it will be reused among multiple
 # "reports' forms
@@ -125,13 +126,13 @@ class TimeFrame(forms.Form):
                                 widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
                                                                                           'datepicker-input',
                                                                                  'id': 'datepicker1',
-                                                                                 'autocomplete': 'off'}))
+                                                                                 'autocomplete': 'off', 'name': 'from_time'}))
 
     to_time = forms.DateField(input_formats=['%m/%d/%Y'],
                               widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
                                                                                         'datepicker-input',
                                                                                'id': 'datepicker2',
-                                                                               'autocomplete': 'off'}))
+                                                                               'autocomplete': 'off', 'name': 'to_time'}))
 
 
 # Used for selecting between different places that visitors attend in the VMC
@@ -336,4 +337,13 @@ class ReportPresetName(forms.Form):
     attributes = {'id': 'preset_input', 'name': 'preset_input', 'class': 'form-control'}
 
     enter_preset_name = forms.CharField(widget=forms.TextInput(attrs=attributes))
+    
+    def check_entry(self):
+        name = self.data['enter_preset_name']
+        if ReportPresets.objects.filter(pk=name).exists():
+            self.add_error('enter_preset_name', 'This preset with the name ' + name + ' already exists. Please choose a different name.')
+            return False
+        else:
+            return True
+
 

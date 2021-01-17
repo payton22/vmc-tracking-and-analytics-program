@@ -9,9 +9,17 @@
         </div>
         <br>
         {% for name in pres_names %}
-            <div class="row">
-                <a href="{% url 'individualPresetOptions' name %}" class="btn btn-lg nav-bg">{{ name }}</a>
-            </div>
+               {% if forloop.counter0|divisibleby:2 %}
+                <div class="row">
+                    <div class="col-6">
+                        <a href="{% url 'individualPresetOptions' name %}" class="btn btn-lg nav-bg listButtons">{{ name }}</a>
+                    </div>
+                    {% else %}
+                    <div class="col-6">
+                        <a href="{% url 'individualPresetOptions' name %}" class="btn btn-lg nav-bg listButtons">{{ name }}</a>
+                    </div>
+                </div>
+                {% endif %}
             <br>
         {% endfor %}
             <br>
@@ -21,6 +29,4 @@
             <a href="{% url 'reports' %}" class="btn btn-lg nav-bg">Back</a>
         </div>
     </div>
-
-
 {% endblock content %}
