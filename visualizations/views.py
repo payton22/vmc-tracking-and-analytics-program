@@ -15,3 +15,5 @@ def plotly(request):
     return render(request, "visualizations/plotly.html", context={'plot_div':plot_div})
 
 # Create your views here.
+def exampleGraph(request):
+    return render(request, 'visualizations/exampleGraph.html')

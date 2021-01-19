@@ -27,4 +27,5 @@ urlpatterns = [
     path('', include('pages.urls')),
     path('plotly/', include('visualizations.urls')),
     path('sql/', include('sql.urls')),
+    path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

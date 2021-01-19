@@ -144,6 +144,7 @@ class AttendanceDataForm(forms.Form):
                ('Some Other Event A', 'Some Other Event A'),
                ('Some Other Event B', 'Some Other Event B')]
 
+
     attributes = {'title': 'Select Attendance Location:', 'class': 'Locations'}
 
     attendance_data = forms.MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple(attrs=attributes))
