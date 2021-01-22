@@ -83,7 +83,7 @@ class ReportPresets(models.Model):
     # Required for all report types except Histogram
     selection = models.CharField(choices=DEMOGRAPHICS, max_length=50, null=True)
 
-    # Required for Histogram onlly
+    # Required for Histogram only
     time_units = models.CharField(choices=HIST_TIME_CHOICES, null=True, max_length=50)
 
     # Required for everything except Individual Statistic

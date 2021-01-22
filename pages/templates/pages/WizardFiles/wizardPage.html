@@ -15,14 +15,14 @@
                 </table>
                 <div class="row wizButtons p-2">
                 {% if wizard.steps.prev %}
-                        <button name="wizard_goto_step" class="col-auto" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
-                        <button name="wizard_goto_step" class="col-auto" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
+                        <button name="wizard_goto_step" class="col-auto" type="submit" value="{{ wizard.steps.first }}">{% trans "First step" %}</button>
+                        <button name="wizard_goto_step" class="col-auto" type="submit" value="{{ wizard.steps.prev }}">{% trans "Prev step" %}</button>
                 {% endif %}
                 {% if wizard.steps.current == wizard.steps.last %}
-                    <button type="submit only" class="col-auto" value="{% trans "submit" %}">{% trans "submit" %}</button>
-                    <button type="submit and save choices" name="save" class="col-auto" value="submit and save choices">submit and save choices</button>
+                    <button type="submit only" class="col-auto" value="submit">Submit</button>
+                    <button type="submit and save choices" name="save" class="col-auto" value="submit and save choices">Submit and save choices</button>
                     {% else %}
-                    <button type="submit" class="col-auto" value="{% trans "next" %}">{% trans "next" %}</button>
+                    <button type="submit" class="col-auto" value="{% trans "Next" %}">{% trans "Next" %}</button>
                 {% endif %}
 
                 </div>

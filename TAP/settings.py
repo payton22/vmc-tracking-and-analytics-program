@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'TAP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'vmc_tap.db',
+        'NAME': os.path.join(BASE_DIR, 'vmc_tap.db'),
     }
 }
 
@@ -146,3 +146,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_REDIRECT_URL = 'homePage'
 LOGOUT_REDIRECT_URL = 'login'
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)

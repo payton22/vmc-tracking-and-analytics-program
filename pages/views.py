@@ -384,6 +384,7 @@ class ReportWizardBase(SessionWizardView):
         if self.request.POST.get('save'):
             return render(self.request, 'pages/wizardFiles/savePreset.html',
                           data) #'selections': self.choices_dict, 'form':form})
+        #elif self.request.POST.get('')
         # If the user does not want to save their report presets
         else:
             return render(self.request, 'pages/done.html', data)
