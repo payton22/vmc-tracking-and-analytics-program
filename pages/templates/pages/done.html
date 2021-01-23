@@ -1,5 +1,12 @@
 {% extends "pages/base.html" %}
-{% block title %}Done Page{% endblock %}
+{% block title %}Get Report Without Saving{% endblock %}
 {% block content %}
-<p>Done!</p>
-{% endblock %}
+    <div class="container fixed-top justify-content-center" style="padding-left: 540px;">
+        <div class="row">
+            <h1 class="d-flex">Retrieve Report</h1>
+        </div>
+    </div>
+
+    <a href="{% url 'visualizations:getReport' %}" class="btn btn-lg nav-bg" style="width: 250px;" >Retrieve Report</a>
+
+{% endblock content %}
