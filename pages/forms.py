@@ -139,10 +139,8 @@ class TimeFrame(forms.Form):
 # User selects one or more checkboxes that correspond to locations to track attendance
 # for in the report.
 class AttendanceDataForm(forms.Form):
-    CHOICES = [('Main Office', 'Main Office'),
-               ('VMC', 'VMC'),
-               ('Some Other Event A', 'Some Other Event A'),
-               ('Some Other Event B', 'Some Other Event B')]
+    CHOICES = [('Veteran Services_VMC', 'VMC'),
+               ('Veteran Services_Fitzgerald', 'Fitzgerald')]
 
 
     attributes = {'title': 'Select Attendance Location:', 'class': 'Locations'}
