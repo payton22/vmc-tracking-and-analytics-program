@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime
 
 
 class Data:
@@ -25,8 +26,8 @@ class Data:
     def get_insert_statement(self):
         insert_val_list = [self.student_name, self.student_email, self.student_id, self.student_alt_id,
                            self.classification, self.major, self.assigned_staff, self.care_unit, self.services,
-                           self.course_name, self.course_number, self.location, self.check_in_date, self.check_in_time,
-                           self.check_out_date, self.check_out_time, self.duration, self.staff_name, self.staff_id,
+                           self.course_name, self.course_number, self.location, datetime.strptime(self.check_in_date, '%m/%d/%y').strftime('%Y-%m-%d'), self.check_in_time,
+                           datetime.strptime(self.check_out_date, '%m/%d/%y').strftime('%Y-%m-%d'), self.check_out_time, self.duration, self.staff_name, self.staff_id,
                            self.staff_email]
         input_val_string = ''
         for i in insert_val_list:
