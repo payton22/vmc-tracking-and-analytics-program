@@ -26,7 +26,7 @@ class ReportGenerator():
         self.data = data
         self.barGraph = BarGraph(self, self.request, self.data)
         # To be implemented later
-        # self.histogram = State(data, request, self)
+        # self.histogram = Histogram(data, request, self)
         # self.lineGraph = State(data, request, self)
         # self.pieChart = State(data, request, self)
         # self.scatterPlot = State(data, request, self)
@@ -90,6 +90,17 @@ class BarGraph(State):
         # Convert selection into query '*' for SQL
         if self.selection == 'Total Usage by Location':
             self.selection = '*'
+            self.group_by = 'location'
+        elif self.selection == 'Usage by Date':
+            self.selection = '*'
+            self.group_by = 'check_in_date'
+        elif self.selection == 'Classification':
+            self.group_by = 'classification'
+        elif self.selection == 'Major':
+            self.group_by = 'major'
+        elif self.selection == 'Services':
+            self.group_by = 'services'
+
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -107,7 +118,7 @@ class BarGraph(State):
 
     def determineLocationsToTrack(self):
         self.location_dict = self.inner_dict[4]
-        location_list = self.location_dict['attendance_data']
+        self.location_list = self.location_dict['attendance_data']
 
     def generateReport(self):
         self.determineSelection()
@@ -120,8 +131,20 @@ class BarGraph(State):
 
         title = self.title
 
-        # conn_string_sql = "select location, count(" + selection + ") from visits where check_in_date >= " + from_time.strftime('%m/%d/%y') + " and check_in_date <= " + to_time.strftime('%m/%d/%y') + " group by location;"
-        conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
+        substr = ''
+
+        for i, location in enumerate(self.location_list):
+            if i != (len(self.location_list) - 1):
+                substr += location + '\' or location = \''
+            else:
+                substr += location
+
+
+
+        conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime('%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime('%Y-%m-%d') + "\' group by " + self.group_by + ";"
+        print('location_list: ', self.location_list)
+
+        #conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
         print('conn_string_sql', conn_string_sql)
         #       print('conn.execute: ', conn.execute(conn_string_sql))

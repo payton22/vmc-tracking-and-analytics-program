@@ -10,7 +10,10 @@ DEMOGRAPHICS = [('Ethnicity', 'Ethnicity'),
                 ('Benefit Chapter', 'Benefit Chapter'),
                 ('Usage by Date', 'Usage by Date'),
                 ('College', 'College'),
-                ('Total Usage by Location', 'Total Usage by Location')]
+                ('Total Usage by Location', 'Total Usage by Location'),
+                ('Classification', 'Classification'),
+                ('Major', 'Major'),
+                ('Services', 'Services')]
 
 HIST_TIME_CHOICES = [('Time of Day', 'Time of Day'),
                      ('Months', 'Months'),
