@@ -86,6 +86,7 @@ class BarGraph(State):
         self.selection_dict = self.inner_dict[1]
         self.selection = self.selection_dict['selection']
         self.title = self.selection
+        self.include_table = self.selection_dict['include_table']
 
         # Convert selection into query '*' for SQL
         if self.selection == 'Total Usage by Location':
@@ -100,7 +101,6 @@ class BarGraph(State):
             self.group_by = 'major'
         elif self.selection == 'Services':
             self.group_by = 'services'
-
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -139,12 +139,12 @@ class BarGraph(State):
             else:
                 substr += location
 
-
-
-        conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime('%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime('%Y-%m-%d') + "\' group by " + self.group_by + ";"
+        conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
+            '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
+            '%Y-%m-%d') + "\' group by " + self.group_by + ";"
         print('location_list: ', self.location_list)
 
-        #conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
+        # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
         print('conn_string_sql', conn_string_sql)
         #       print('conn.execute: ', conn.execute(conn_string_sql))
@@ -152,12 +152,12 @@ class BarGraph(State):
         for d in conn.execute(conn_string_sql):
             conn_results.append(d);
 
-        print('Conn results:', conn_results)
-
         conn.close()
 
         # Rotates 2D array to work w/ plotly
         conn_results_rotated = list(zip(*conn_results[::-1]));
+
+        print('Conn results_rotated:', conn_results_rotated)
 
         app = DjangoDash('Graph')  # replaces dash.Dash
 
@@ -177,18 +177,45 @@ class BarGraph(State):
             print('x_axis: ', x_axis)
             print(y_axis)
 
-        layout = Layout(title=title)
-        fig = go.Figure(data=[go.Bar(x=x_axis, y=y_axis)], layout=layout)
+        # If autoscaling is not enabled by the user, we need to set the max count of the y-axis
+        if self.autoscale != 'Yes':
+            layout = go.Layout(title=title, yaxis=dict(range=[0, self.max_count]))
+        else:
+            layout = Layout(title=title)
+
+        fig = go.Figure(data=[go.Bar(x=x_axis, y=y_axis, marker=dict(color=self.bar_color.lower()))], layout=layout)
+
+        # Now implement the custom scaling if enabled
+        if self.autoscale != 'Yes':
+            fig.update_yaxes(dtick=self.increment_by)
         # graph = [Bar(x=x_axis,y=y_axis)]
         # layout = Layout(title='Length of Visits',xaxis=dict(title='Length (min)'),yaxis=dict(title='# of Visits'))
         # fig = Figure(data=graph,layout=layout)
         # plot_div = plot(fig,output_type='div',show_link=False,link_text="")
 
-        app.layout = html.Div(children=[
-            dcc.Graph(id='figure', figure=fig),
-        ], style={'height': '100vh'})
+        # Dash instance for includng a table
+        if self.include_table == 'Yes':
+            header = ['Row Labels', 'Count of Location']
+            x_list = list(x_axis)
+            y_list = list(y_axis)
+            values = [x_list, y_list]
+            print('values: ', values)
 
+            total = 0
+            for count in y_axis:
+                total += count
 
+            x_list.append('<b>Grand Total</b>')
+            y_list.append(total)
+            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))])
+
+            app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
+                , dcc.Graph(id='figure', figure=fig, style={'height': '40vh'}),
+                                            ], style={'height': '40vh', 'width': '70vw'})
+        else:
+            app.layout = html.Div(children=[
+                dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
+            ], style={'height': '70vh', 'width': '70vw'})
 
         return app, title
 
