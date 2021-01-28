@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 	<meta charset="utf-8">
 	<!-- The below is filled in by html files that extend this base.html -->
 	<title>{% block title %}VS Home Page{% endblock %}</title>
@@ -9,7 +10,10 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 	<link rel="stylesheet" href="{% static 'pages/CSS/importStyles.css' %}">
 	<link rel="stylesheet" href="{% static 'pages/CSS/customStyles.css' %}">
-
+    <link rel="stylesheet" href="{% static 'pages/CSS/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'pages/CSS/jquery-ui.structure.css' %}">
+    {% load plotly_dash %}
+    {% plotly_header %}
 </head>
 <body onload="quoteFade()">
 
@@ -20,13 +24,10 @@
 		    <nav class="nav flex-column rounded" id="main_navbar">
 			    <a href="{% url 'homePage' %}" class="nav-link rounded nav-bg">Home</a>
 			    <a href="{% url 'importPage' %}" class="nav-link rounded nav-bg">Upload</a>
-				<a href="{% url 'visPage' %}" class="nav-link rounded nav-bg">Reports</a>
+				<a href="{% url 'reports' %}" class="nav-link rounded nav-bg">Reports</a>
 				<a href="{% url 'vmcAdminPage' %}" class="nav-link rounded nav-bg">Administrative</a>
 				
-				
-				<!-- <a href="{% url 'visPage' %}" class="nav-link l1 text-dark bg-success">Visualizations</a>
-			    <a href="{% url 'importPage' %}" class="nav-link l1 text-dark bg-success">Upload Files</a>
-			    <a href="{% url 'vmcAdminPage' %}" class="nav-link l2 text-dark bg-success">Administrative</a> -->
+
 		    </nav>
             <br>
             <br>
@@ -35,7 +36,10 @@
 			<!-- <h2>[Profile Name]</h2> -->
 			<div class="text-center">
 				{% if user.is_authenticated %}
-				<h4>Hi {{user.first_name}}</h4>	
+				<h4>Hi {{user.first_name}}</h4>
+                    {% if user.avatar %}
+                    <img src='{{ user.avatar.url }}' class="rounded-circle" id='profImg' alt=''/>
+                        {% endif %}
 				<p><a href="{% url 'logout' %}">[Log Out]</a></p>
 			{% else %}
 				<p>You are not logged in</p>
@@ -45,17 +49,21 @@
 	    </div>
 	
         <div class="col border main-bg">
-		    <div class="row h-100 justify-content-center align-items-center">
+		    <div class="row h-100 align-items-center justify-content-center">
 		        <!-- The below is filled in by html files that extend this base.html -->
 		        {% block content %}{% endblock %}
 		    </div>
         </div>
     </div>
-    <script src="{% static 'pages/JS/jquery.slim.min.js' %}" type="text/javascript"> </script>
+    <script src="{% static 'pages/JS/jquery.js' %}" type="text/javascript"> </script>
     <script src="{% static 'pages/JS/bootstrap.js' %}" type="text/javascript"> </script>
-	<script src="{% static 'pages/JS/scripts.js' %}" type="text/javascript"> </script>
 	<script src="{% static 'pages/JS/importApp.js' %}" type="text/javascript"> </script>
+    <script src="{% static 'pages/JS/moment.js' %}" type="text/javascript"> </script>
+    <script src="{% static 'pages/JS/jquery-ui.js' %}" type="text/javascript"></script>
+    <script src="{% static 'pages/JS/scripts.js' %}" type="text/javascript"> </script>
+    <script src="{% static 'pages/JS/wizard.js' %}" type="text/javascript"></script>
 
 	
 </body>
+ {% plotly_footer %}
 </html>

@@ -1,0 +1,33 @@
+{% extends "pages/base.html" %}
+{% load i18n %}
+
+{% block title %}Reports Wizard{% endblock title %}
+
+{% block content %}
+
+        <div class="container w-50" style="height:80vh;">
+            <div class="row">
+                <h1 class="col text-center">Reports Wizard</h1>
+            </div>
+            <form action="" method="post">{% csrf_token %}
+                <table>
+    {% block wizform %}{% endblock wizform %}
+                </table>
+                <div class="row wizButtons p-2">
+                {% if wizard.steps.prev %}
+                        <button name="wizard_goto_step" class="col-auto" type="submit" value="{{ wizard.steps.first }}">{% trans "First step" %}</button>
+                        <button name="wizard_goto_step" class="col-auto" type="submit" value="{{ wizard.steps.prev }}">{% trans "Prev step" %}</button>
+                {% endif %}
+                {% if wizard.steps.current == wizard.steps.last %}
+                    <button type="submit only" class="col-auto" value="submit">Submit</button>
+                    <button type="submit and save choices" name="save" class="col-auto" value="submit and save choices">Submit and save choices</button>
+                    {% else %}
+                    <button type="submit" class="col-auto" value="{% trans "Next" %}">{% trans "Next" %}</button>
+                {% endif %}
+
+                </div>
+
+
+            </form>
+        </div>
+{% endblock content %}

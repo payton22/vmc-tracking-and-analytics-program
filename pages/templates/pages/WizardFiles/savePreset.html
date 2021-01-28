@@ -1,0 +1,23 @@
+{% extends "pages/base.html" %}
+
+
+{% block title %}Save Report Wizard Presets{% endblock title %}
+{% block content %}
+    {{ wizard.management_form }}
+    <div class="container fixed-top justify-content-center" style="padding-left: 540px;">
+        <div class="row">
+            <h1 class="d-flex">Save Presets</h1>
+        </div>
+    </div>
+
+    <form action="{% url 'savePreset' %}" method="post" class="h-50 justify-content-center"> {% csrf_token %}
+            <div class="row flex-column">
+                {{ form }}
+            </div>
+            <br>
+            <br>
+            <div class="row flex-column">
+                 <button type="submit"  value="save_preset" class="btn btn-lg nav-bg" style="width: 250px;" >Save and Retrieve Report</button>
+            </div>
+    </form>
+{% endblock content %}

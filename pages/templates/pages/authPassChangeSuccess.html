@@ -5,7 +5,7 @@
 {% block content %}
         <!-- Container for sign in form -->
         <div class="container w-50 h-50" method="post">
-            <h3>Password for account {{ user.email }} was successfully changed!</h3>
+            <h3>Password for account {{ email }} was successfully changed!</h3>
 
             <form class="col text-center" method="post">
                 <a class="btn btn-lg nav-bg" href="{% url 'vmcAdminPage' %}" type="submit" value="OK">Return to My Account Options</a>
