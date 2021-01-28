@@ -39,6 +39,8 @@ preset_storage = {}
 def landingPageView(request):
     return render(request, 'pages/landingPage.html')
 
+def surveyPageView(request):
+    return render(request, 'pages/survey.html')
 
 def homePageView(request):
     return render(request, 'pages/homePage.html')
