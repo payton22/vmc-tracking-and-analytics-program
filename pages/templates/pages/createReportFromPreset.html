@@ -1,0 +1,22 @@
+{% extends "pages/base.html" %}
+
+
+{% block title %}Create Report from Preset{% endblock title %}
+{% block content %}
+    <div class="container fixed-top justify-content-center" style="padding-left: 540px;">
+        <div class="row">
+            <h1 class="d-flex">Create Report from Preset</h1>
+        </div>
+    </div>
+
+    <form action="" method="post" class="h-50 justify-content-center"> {% csrf_token %}
+            <div class="row flex-column">
+                {{ form }}
+            </div>
+            <br>
+            <br>
+            <div class="row flex-column">
+                 <button type="submit"  value="create_report_from_preset" class="btn btn-lg nav-bg" style="width: 250px;" >Create Report from Preset</button>
+            </div>
+    </form>
+{% endblock content %}

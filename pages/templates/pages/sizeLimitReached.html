@@ -1,0 +1,18 @@
+{% extends "pages/base.html" %}
+
+
+{% block title %}Size Limit Reached{% endblock title %}
+{% block content %}
+    <div class="container fixed-top justify-content-center" style="padding-left: 540px;">
+        <div class="row">
+            <h1 class="d-flex">Error! You can only save up to 15 report presets.</h1>
+        </div>
+        <br>
+        <br>
+
+            <div class="row flex-column">
+                 <a type="submit"  class="btn btn-lg nav-bg" style="width: 250px;" href="{% url 'reports' %}">Return to Reports</a>
+            </div>
+    </div>
+
+{% endblock content %}

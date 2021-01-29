@@ -5,27 +5,28 @@
 {% block content %}
 <div class="container fixed-top" id="AdminTitleContainer">
     <div class="row">
-        <h1 class="d-flex justify-content-center">Change Password</h1>
+        <h1 class="d-flex justify-content-center">Change Email for account {{ email }}</h1>
     </div>
 </div>
 
 <div class="container">
-<form>
+<form method="post">
     <div class="form-group">
-        <label for="CurrentEmail1">Enter Current Email:</label>
-        <input type="email" class="form-control" id="CurrentEmail1" placeholder="email@unr.edu">
+        {% csrf_token %}
+        {% if form.current_password.errors %}
+            <div class="error">{{ form.current_password.errors }}</div>
+        {% endif %}
+        <label for="{{ form.current_password.id_for_label }}">Enter your password for your account {{ user.email }}:</label>
+        {{ form.current_password }}
         <br>
+        <label for={{ form.email_addr.id_for_label }}>New email for account {{ email }}:</label>
+        {{ form.email_addr }}
+        <label for={{ form.email_confirm.id_for_label }}>Confirm new email for account {{ email }}</label>
+        {{ form.email_confirm}}
+        <div class="registrationFormAlert" id="divCheckEmailMatch"> </div>
         <br>
-        <label for="NewEmail1">Enter New Email:</label>
-        <input type="email" class="form-control" id="NewEmail1" placeholder="newemail@unr.edu">
-        <label for="NewPass2">Confirm New Email:</label>
-        <input type="email" class="form-control" id="NewEmail2" placeholder="newemail@unr.edu">
-        <br>
-        <label for="CurrentPass2">Enter Password:</label>
-        <input type="password" class="form-control" id="CurrentPass2" placeholder="******">
-        <br>
-        <button type="submit" class="btn btn-primary BGroup">Submit</button>
-        <a href="{% url 'vmcAdminPage' %}" type="back" class="btn btn-primary BGroup">Back</a>
+        <button type="submit" id='emailSubmit' class="btn btn-lg nav-bg" value='OK'>Submit</button>
+        <a href="{% url 'otherAccountOptions' email %}" type="back" class="btn btn-lg nav-bg">Back</a>
     </div>
 </form>
 
