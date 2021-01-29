@@ -7,6 +7,10 @@
     color:red;
     font-size:20px;
 }
+
+.listButtons{
+    width:200px;
+}
 /* Styles for navbar */
 #main_navbar{
     /* Move the navbar down by 100px */
@@ -42,6 +46,17 @@
 
 }
 
+#AccountsContainer{
+        /* Make move it to the left so it does cross over the nav bar */
+    padding-left:440px;
+    /* Horizontally align items */
+    justify-content:center;
+    /* Vertically align items */
+    align-items:center;
+}
+
+
+
 
 
 
@@ -50,7 +65,7 @@
     /* Rounded button at r=12px */
     border-radius:12px;
     /* Make sure button is large enough to fix text */
-    width:200px;
+    width:250px;
     /* Make button field gray color */
     background-color:#AAAFAA;
     /* Make the text black */
@@ -61,7 +76,7 @@
     /* Rounded button at r=12px */
     border-radius:12px;
     /* Make sure button is large enough to fix text */
-    width:200px;
+    width:250px;
     /* Make button field gray color */
     background-color:#DC143C;
     /* Make the text black */
@@ -80,10 +95,23 @@
     color:black;
 }
 
+#profImg{
+    border-style:solid;
+    border-color:#40E0D0;
+}
+ul li {
+       list-style: none;
+}
 
+.wizButtons{
+    position:absolute;
+    bottom:14%;
 
+}
 /*#profileImg{
     width:10%;
     height:auto;
 }*/
+
+
 

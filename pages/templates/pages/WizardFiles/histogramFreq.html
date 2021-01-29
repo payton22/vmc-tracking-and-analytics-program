@@ -1,0 +1,18 @@
+{% extends 'pages/WizardFiles/wizardPage.html' %}
+
+{% block wizform %}
+    <div class="row">
+    <h5>Track Frequency of Average Visitors</h5>
+    </div>
+    <div class="row">
+{{ wizard.management_form }}
+{% if wizard.form.forms %}
+    {{ wizard.form.management_form }}
+    {% for form in wizard.form.forms %}
+        {{ form }}
+    {% endfor %}
+{% else %}
+    {{ wizard.form }}
+{% endif %}
+    </div>
+{% endblock wizform %}

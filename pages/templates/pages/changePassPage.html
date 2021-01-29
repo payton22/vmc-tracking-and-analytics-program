@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container fixed-top" id="AdminTitleContainer">
     <div class="row">
-        <h1 class="d-flex justify-content-center">Change Password</h1>
+        <h1 class="d-flex justify-content-center">Change Password for Account {{ email }}</h1>
     </div>
 </div>
 
@@ -16,17 +16,18 @@
         {% if form.current_password.errors %}
             <div class="error">{{ form.current_password.errors }}</div>
         {% endif %}
-        <label for="{{ form.current_password.id_for_label }}">Enter Current Password:</label>
+        <label for="{{ form.current_password.id_for_label }}">Enter password
+            for your account {{user.email}}:</label>
         {{ form.current_password }}
         <br>
-        <label for="NewPass1">Enter New Password:</label>
+        <label for="NewPass1">Enter New Password for account {{ email }}:</label>
         <input type="password" class="form-control" id="NewPass1" placeholder="******">
         <label for="NewPass2">Confirm New Password:</label>
-        <input type="password" class="form-control" id="NewPass2" placeholder="******" onchange="onlyCheckPasswordMatch()">
+        <input type="password" class="form-control" id="NewPass2" name="pass" placeholder="******" onchange="onlyCheckPasswordMatch();">
         <div class="registrationFormAlert" id="divCheckPasswordMatch"> </div>
         <br>
-        <button type="submit" id="newPassSubmit" value="OK" class="btn btn-primary BGroup">Submit</button>
-        <a href="{% url 'vmcAdminPage' %}" type="back" class="btn btn-primary BGroup">Back</a>
+        <button type="submit" id="newPassSubmit" value="OK" class="btn btn-lg nav-bg">Submit</button>
+        <a href="{% url 'otherAccountOptions' email %}" type="back" class="btn btn-lg nav-bg">Back</a>
     </div>
 </form>
 
