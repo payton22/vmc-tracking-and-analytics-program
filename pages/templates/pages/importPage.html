@@ -4,50 +4,29 @@
 
 {% block content %}
 
-    <form class="h-100" style="" enctype="multipart/form-data" method="post" action="/parse/">
+<div class="h-100 row">
+    <form class="col" style="" enctype="multipart/form-data" method="post" action="/parse/" class="border">
         {% csrf_token %}
-        <div class="container col-sm">
-            <h1>Document Upload</h1>
-            <!-- <div id="stepProgressBar" class="my-5">
-                <div class="step">
-                    <p class="step-text">Navigate Traffic</p>
-                    <div class="bullet">1</div>
-                </div>
-                <div class="step">
-                    <p class="step-text">Navigate Demographics</p>
-                    <div class="bullet">2</div>
-                </div>
-                <div class="step">
-                    <p class="step-text">Survey Information</p>
-                    <div class="bullet">3</div>
-                </div>
-                <div class="step">
-                    <p class="step-text">Finished</p>
-                    <div class="bullet">4</div>
-                </div>
-            </div> -->
-                    <!-- <div id="main" class="text-center"> -->
-                    <!-- <p id="content">Step Number 1</p> -->
+        <div class="h-100">
+            <h1 class="text-center">Document Upload</h1>
+
+            <div class="h-75 row align-items-center">
+                <div class="col upload-area p-3">
+                    <div class="row justify-content-center">
+                        <!-- <p><input type="file" class="col-sm" name="datafile"></p> -->
+                        <input type="file" name="datafile" id="file" class="inputfile hidden" />
+                        <label for="file" id="file" class="upload-button nav-bg w-75 upload-btn">Upload file</label>
+                    </div>
                     
                     
-                    <div class="mt-5">
-                        <div class="row justify-content-center">
-                            <p><input type="file" class="col-sm" name="datafile"></p>
-                            <!-- <button value="submit">Submit</button> -->
-                        </div>
-                        
-                        <div class="row justify-content-center mt-4">
-                            <!-- <p><input type="file" class="col-sm" name="datafile"></p> -->
-                            <button value="submit">Submit</button>
-                        </div>
-
-
-                        <!-- <p class="file-input" style="height: 21px;"></p> -->
+                    <div class="row justify-content-center mt-4">
+                        <button value="submit">Submit</button>
                     </div>
                 </div>
+            </div>
         </div>
     </form>
-
+</div>
 
 
 
