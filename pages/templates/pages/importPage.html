@@ -3,91 +3,30 @@
 {% block title %}VS-TAP Import{% endblock title %}
 
 {% block content %}
-        <!-- <div class="container border w-50 bg-dark"> -->
 
-        <!-- Below the action attribute needs to have a URL to post data to (i.e. data parser) -->
-        <!-- <form class="" style="" enctype="multipart/form-data" method="post" action="/parse/">
-	    {% csrf_token %}
-                <div class="row">
-                    <h5 class="col text-center">Import</h5>
-                </div> -->
-
-                <!-- Form group for selecting the document and doc type-->
-                <!-- <div class="row my-3 form-group">
-                    <div class="col">
-                        <select name="DocumentType" id="DocumentType" class="col-sm">
-                            <option disabled selected value>--Document Type--</option>
-                            <option value="Scanner document">Scanner CSV</option>
-                            <option value="Demo Graphics">Demographics</option>
-                            <option value="Google Forms">Google Forms Survey</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <input type="file" class="col-sm" name="datafile">
-                    </div>
-                </div> -->
-
-                <!-- Radio buttons for selecting the locations that the associated document was taken-->
-                <!-- <div class="row form-group">
-                    <div class="col">
-                        <input type="radio" id="pennington" name="documentType">
-                        <label for="pennington">Pennington</label>
-                    </div>
-                    <div class="col">
-                        <input type="radio" id="fitzgerald" name="documentType">
-                        <label for="fitzgerald">Fitzgerald</label>
-                    </div>
-                    <div class="col">
-                        <input type="radio" id="event" name="documentType">
-                        <input type="text" for="event" placeholder="Event" class="w-50">
-                    </div>
-                </div>
-                <div class="col text-center my-3">
-                    <button type="submit" class="btn btn-secondary">Submit</button>
-                </div>
-            </form>
-        </div> -->
-
-    <form class="h-100" style="" enctype="multipart/form-data" method="post" action="/parse/">
+<div class="h-100 row">
+    <form class="col" style="" enctype="multipart/form-data" method="post" action="/parse/" class="border">
         {% csrf_token %}
-        <div class="container-import col-sm">
-            <h1>Document Upload</h1>
-            <div id="stepProgressBar" class="my-5">
-                <div class="step">
-                    <p class="step-text">Navigate Traffic</p>
-                    <div class="bullet">1</div>
-                </div>
-                <div class="step">
-                    <p class="step-text">Navigate Demographics</p>
-                    <div class="bullet">2</div>
-                </div>
-                <div class="step">
-                    <p class="step-text">Survey Information</p>
-                    <div class="bullet">3</div>
-                </div>
-                <div class="step">
-                    <p class="step-text">Finished</p>
-                    <div class="bullet">4</div>
+        <div class="h-100">
+            <h1 class="text-center">Document Upload</h1>
+
+            <div class="h-75 row align-items-center">
+                <div class="col upload-area p-3">
+                    <div class="row justify-content-center">
+                        <!-- <p><input type="file" class="col-sm" name="datafile"></p> -->
+                        <input type="file" name="datafile" id="file" class="inputfile hidden" />
+                        <label for="file" id="file" class="upload-button nav-bg w-75 upload-btn">Upload file</label>
+                    </div>
+                    
+                    
+                    <div class="row justify-content-center mt-4">
+                        <button value="submit">Submit</button>
+                    </div>
                 </div>
             </div>
-                    <div id="main" class="text-center">
-                    <!-- <p id="content">Step Number 1</p> -->
-                    <div class="container-fluid">
-			<p><input type="file" class="col-sm" name="datafile"></p>
-                        <p class="file-input hidden" style="height: 21px;"></p>
-
-
-                    </div>
-                    <div class="my-4" style="">
-                        <button id="previousBtn" type="button" disabled>Previous</button>
-                        <button id="nextBtn" type="button">Next</button>
-                        <button id="finishBtn" type="submit" >Finish</button>
-                    </div>
-                </div>
         </div>
     </form>
-
-
+</div>
 
 
 
