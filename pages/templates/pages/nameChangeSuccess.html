@@ -4,11 +4,11 @@
 
 {% block content %}
         <!-- Container for sign in form -->
-        <div class="container border w-50 bg-dark" method="post">
+        <div class="container w-50 h-50" method="post">
             <h3>Name for account {{ email }} was successfully changed!</h3>
 
             <form class="col text-center" method="post">
-                <a class="btn btn-secondary BGroup" href="{% url 'vmcAdminPage' %}" type="submit" value="OK">Return to Admin Options</a>
+                <a class="btn btn-lg nav-bg" href="{% url 'vmcAdminPage' %}" type="submit" value="OK">Return to Admin Options</a>
             </form>
           </div>
 

@@ -1,0 +1,38 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Change Profile Image{% endblock title %}
+
+{% block content %}
+<div class="container fixed-top" id="AdminTitleContainer">
+    <div class="row">
+        <h1 class="d-flex justify-content-center">Change Profile Image for Account {{ email }}</h1>
+    </div>
+</div>
+
+
+<div class="container">
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        {% csrf_token %}
+        {% if form.current_password.errors %}
+            <div class="error">{{ form.current_password.errors }}</div>
+        {% endif %}
+        <label for="{{ form.current_password.id_for_label }}">Enter your password for your account {{ user.email }}:</label>
+        {{ form.current_password }}
+    </div>
+    <div class="custom-file">
+        {{ form.prof_pic }}
+        <div class="custom-file">
+        <label class="custom-file-label" for="{{ form.prof_pic.id_for_label }}">Choose image</label>
+    </div>
+        <br>
+        <br>
+        <button type="submit"  value="OK" class="btn btn-primary BGroup">Submit</button>
+        <a href="{% url 'otherAccountOptions' email %}" type="back" class="btn btn-primary BGroup">Back</a>
+    </div>
+</form>
+
+</div>
+
+
+{% endblock content %}

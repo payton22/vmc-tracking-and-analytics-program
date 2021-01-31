@@ -1,0 +1,22 @@
+{% extends "pages/base.html" %}
+
+
+{% block title %}Save Report Wizard Presets{% endblock title %}
+{% block content %}
+    <div class="container fixed-top justify-content-center" style="padding-left: 540px;">
+        <div class="row">
+            <h1 class="d-flex">Preset {{ name }} successfully saved!</h1>
+        </div>
+    </div>
+
+    <form method="post" class="h-50 justify-content-center" > {% csrf_token %}
+            <div class="row flex-column">
+                {{ form }}
+            </div>
+            <br>
+            <br>
+            <div class="row flex-column">
+                 <a type="submit"  class="btn btn-lg nav-bg" style="width: 250px;" href="{% url 'reports' %}">Return to Reports</a>
+            </div>
+    </form>
+{% endblock content %}
