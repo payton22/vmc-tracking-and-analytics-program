@@ -7,6 +7,10 @@
     color:red;
     font-size:20px;
 }
+
+.listButtons{
+    width:200px;
+}
 /* Styles for navbar */
 #main_navbar{
     /* Move the navbar down by 100px */
@@ -91,10 +95,23 @@
     color:black;
 }
 
+#profImg{
+    border-style:solid;
+    border-color:#40E0D0;
+}
+ul li {
+       list-style: none;
+}
 
+.wizButtons{
+    position:absolute;
+    bottom:14%;
 
+}
 /*#profileImg{
     width:10%;
     height:auto;
 }*/
+
+
 

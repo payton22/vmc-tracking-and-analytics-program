@@ -1,6 +1,8 @@
 $(document).ready(function() {
     // all custom jQuery will go here
-    /* The following adds/removes classes to <html> accordingly */
+    $("#prof_pic").change(function(){
+  $("#prof_pic").text(this.files[0].name);
+});
 
 
     /* When the user selects a graph type from the dropdown menu,
@@ -458,6 +460,17 @@ $(document).ready(function() {
                 everythingValid = false;
         }
 
+        // When the user selects a new profile picture, this displays the file name
+        $('#prof_change').on('change',function(){
+                // Name of the file
+                var fileName = $('#prof_change').val();
+                // Get rid of the path -- only show the file name
+                fileName =  fileName.replace(/^.*[\\\/]/, '');
+                // Replace "Choose image" with the file name
+                $('.custom-file-label').html(fileName);
+        })
+
+
         // Toggle the submit button. If all forms are valid, it will be enabled for clicking.
         function submitToggle(){
             if(document.getElementById('SubmitNewAcct') != null)
@@ -507,5 +520,21 @@ $(document).ready(function() {
             const regExp = new RegExp('[a-z]');
             return regExp.test(str);
         }
+
+        $(function () {
+                $("#datepicker1").datepicker({
+                format: 'DD/MM/YYYY',
+            });
+
+            });
+
+         $(function () {
+                $("#datepicker2").datepicker({
+                format: 'DD/MM/YYYY',
+            });
+
+            });
+
+
 
 

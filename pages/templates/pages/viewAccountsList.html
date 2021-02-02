@@ -13,10 +13,10 @@
         </div>
     </div>
 
-    <div class="AdminButtonSection">
+    <div class="AdminButtonSection h-50">
         {% for account in emails %}
             <div class="row flex-column">
-                <a type="button" href="{% url 'otherAccountOptions' account %}" class="btn btn-primary btn-large AccountButton">{{ account }}</a>
+                <a type="button" href="{% url 'otherAccountOptions' account %}" class="btn btn-lg nav-bg admin-btn-width">{{ account }}</a>
             </div>
             <br>
             <br>
@@ -24,7 +24,7 @@
             <br>
             <br>
             <div class="row flex-column">
-                <a type="button" class="btn btn-primary btn-large BGroup" href="{% url 'newAccount' %}">Create New Account</a>
+                <a type="button" class="btn btn-lg nav-bg" style="width: 250px;" href="{% url 'newAccount' %}">Create New Account</a>
             </div>
     </div>
 {% endblock content %}
