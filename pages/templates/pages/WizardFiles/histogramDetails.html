@@ -1,0 +1,13 @@
+{% extends 'pages/WizardFiles/wizardPage.html' %}
+{% block wizform %}
+    <h5>Details: </h5>
+{{ wizard.management_form }}
+{% if wizard.form.forms %}
+    {{ wizard.form.management_form }}
+    {% for form in wizard.form.forms %}
+        {{ form }}
+    {% endfor %}
+{% else %}
+    {{ wizard.form }}
+{% endif %}
+{% endblock wizform %}

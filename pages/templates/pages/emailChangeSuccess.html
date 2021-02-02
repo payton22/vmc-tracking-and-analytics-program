@@ -1,0 +1,18 @@
+{% extends 'pages/base.html' %}
+
+{% block title %}Email Successfully Changed{% endblock title %}
+
+{% block content %}
+        <!-- Container for sign in form -->
+        <div class="container w-50 h-50" method="post">
+            <h3>Email for account {{ email }} was successfully changed!</h3>
+
+            <form class="col text-center" method="post">
+                <a class="btn btn-lg nav-bg" href="{% url 'vmcAdminPage' %}" type="submit" value="OK">Return to Admin Options</a>
+            </form>
+          </div>
+
+    </body>
+</html>
+
+{% endblock content %}

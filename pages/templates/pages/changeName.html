@@ -1,0 +1,35 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Change Name{% endblock title %}
+
+{% block content %}
+<div class="container fixed-top" id="AdminTitleContainer">
+    <div class="row">
+        <h1 class="d-flex justify-content-center">Change Name for Account {{ email }}</h1>
+    </div>
+</div>
+
+<div class="container">
+<form method="post">
+    <div class="form-group">
+        {% csrf_token %}
+        {% if form.current_password.errors %}
+            <div class="error">{{ form.current_password.errors }}</div>
+        {% endif %}
+        <label for="{{ form.current_password.id_for_label }}">Enter your password for your account {{ user.email }}:</label>
+        {{ form.current_password }}
+        <br>
+        <label for={{ form.first_name.id_for_label }}>New first name for account {{ email }}:</label>
+        {{ form.first_name }}
+        <label for={{ form.last_name.id_for_label }}>New last name for account {{ email }}</label>
+        {{ form.last_name }}
+        <div class="registrationFormAlert" id="divAllFieldsCompleted"> </div>
+        <br>
+        <button type="submit" id="nameSubmit" value="OK" class="btn btn-primary BGroup">Submit</button>
+        <a href="{% url 'otherAccountOptions' email %}" type="back" class="btn btn-primary BGroup">Back</a>
+    </div>
+</form>
+
+</div>
+
+{% endblock content %}

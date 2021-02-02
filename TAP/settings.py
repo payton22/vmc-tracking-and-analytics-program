@@ -38,8 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'mailer',
-    'login'
+    'login',
+    'visualizations',
+    'formtools'
 ]
 
 
@@ -51,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_plotly_dash.middleware.BaseMiddleware',
 ]
 
 # Uncomment the following line to switch to a queue-based email system
@@ -61,8 +65,8 @@ EMAIL_POST = 587
 EMAIL_USE_TLS = True
 
 
-#EMAIL_HOST_USER = 'vmctapdevelopment@gmail.com'
-#EMAIL_HOST_PASSWORD = os.environ['VMC_TAP_EMAIL_PASSWORD']
+EMAIL_HOST_USER = 'vmctapdevelopment@gmail.com'
+EMAIL_HOST_PASSWORD = os.environ['VMC_TAP_EMAIL_PASSWORD']
 
 ROOT_URLCONF = 'TAP.urls'
 
@@ -93,7 +97,7 @@ WSGI_APPLICATION = 'TAP.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'vmc_tap.db',
+        'NAME': os.path.join(BASE_DIR, 'vmc_tap.db'),
     }
 }
 
@@ -137,5 +141,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_REDIRECT_URL = 'homePage'
 LOGOUT_REDIRECT_URL = 'login'
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)

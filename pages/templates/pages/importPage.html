@@ -1,19 +1,19 @@
 {% extends "pages/base.html" %}
 
-{% block title %}VMC-TAP Import{% endblock title %}
+{% block title %}VS-TAP Import{% endblock title %}
 
 {% block content %}
-        <div class="container border w-50 bg-dark">
-        
+        <!-- <div class="container border w-50 bg-dark"> -->
+
         <!-- Below the action attribute needs to have a URL to post data to (i.e. data parser) -->
-        <form class="" style="" enctype="multipart/form-data" method="post" action="/parse/">
+        <!-- <form class="" style="" enctype="multipart/form-data" method="post" action="/parse/">
 	    {% csrf_token %}
                 <div class="row">
                     <h5 class="col text-center">Import</h5>
-                </div>
+                </div> -->
 
-                <!-- Form group for selecting the document and doc type--> 
-                <div class="row my-3 form-group">
+                <!-- Form group for selecting the document and doc type-->
+                <!-- <div class="row my-3 form-group">
                     <div class="col">
                         <select name="DocumentType" id="DocumentType" class="col-sm">
                             <option disabled selected value>--Document Type--</option>
@@ -25,10 +25,10 @@
                     <div class="col">
                         <input type="file" class="col-sm" name="datafile">
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Radio buttons for selecting the locations that the associated document was taken-->
-                <div class="row form-group">
+                <!-- <div class="row form-group">
                     <div class="col">
                         <input type="radio" id="pennington" name="documentType">
                         <label for="pennington">Pennington</label>
@@ -46,7 +46,52 @@
                     <button type="submit" class="btn btn-secondary">Submit</button>
                 </div>
             </form>
+        </div> -->
+
+    <form class="h-100" style="" enctype="multipart/form-data" method="post" action="/parse/">
+        {% csrf_token %}
+        <div class="container-import col-sm">
+            <h1>Document Upload</h1>
+            <div id="stepProgressBar" class="my-5">
+                <div class="step">
+                    <p class="step-text">Navigate Traffic</p>
+                    <div class="bullet">1</div>
+                </div>
+                <div class="step">
+                    <p class="step-text">Navigate Demographics</p>
+                    <div class="bullet">2</div>
+                </div>
+                <div class="step">
+                    <p class="step-text">Survey Information</p>
+                    <div class="bullet">3</div>
+                </div>
+                <div class="step">
+                    <p class="step-text">Finished</p>
+                    <div class="bullet">4</div>
+                </div>
+            </div>
+                    <div id="main" class="text-center">
+                    <!-- <p id="content">Step Number 1</p> -->
+                    <div class="container-fluid">
+			<p><input type="file" class="col-sm" name="datafile"></p>
+                        <p class="file-input hidden" style="height: 21px;"></p>
+
+
+                    </div>
+                    <div class="my-4" style="">
+                        <button id="previousBtn" type="button" disabled>Previous</button>
+                        <button id="nextBtn" type="button">Next</button>
+                        <button id="finishBtn" type="submit" >Finish</button>
+                    </div>
+                </div>
         </div>
+    </form>
 
 
- {% endblock content %}
+
+
+
+
+
+
+{% endblock content %}
