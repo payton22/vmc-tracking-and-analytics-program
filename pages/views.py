@@ -23,6 +23,7 @@ FORMS = [('SelectReportType', SelectReportType),
          ('CustomizeLineGraph', CustomizeLineGraph),
          ('CustomizeScatterPlot', CustomizeScatterPlot),
          ('PieChartDetails', PieChartDetails),
+         ('HistogramHours', HistogramHours),
          ('HistogramDetails', HistogramDetails),
          ('IndividualStatisticDetails', IndividualStatisticDetails),
          ('AttendanceDataForm', AttendanceDataForm),
@@ -310,7 +311,7 @@ def pieChartWizard(wizard):
 
 # Branch to scatter plot wizard if user selects 'Scatter Plot' on first page
 def scatterPlotWizard(wizard):
-    return conditionalWizardBranch(wizard, 'Scatter Plot')
+    return conditionalWizardBranch(wizard, 'Line and/or Scatter')
 
 
 # Branch to individual statistic wizard if user selects 'Individual Statistic'
@@ -327,6 +328,14 @@ def conditionalWizardBranch(wizard, graphType):
     cleaned_data = wizard.get_cleaned_data_for_step('SelectReportType') or {}
     # If the user's selection matches the graph type, return True
     if cleaned_data.get('graphType') == graphType:
+        return True
+    else:
+        return False
+
+def clockWizard(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step('HistogramAxes') or {}
+
+    if cleaned_data.get('time_units') == 'Average visitors by time':
         return True
     else:
         return False
@@ -354,7 +363,8 @@ class ReportWizardBase(SessionWizardView):
                  'ConfirmLineGraph': 'pages/WizardFiles/confirmLineGraph.html',
                  'ConfirmPieChart': 'pages/WizardFiles/confirmPieChart.html',
                  'ConfirmScatterPlot': 'pages/WizardFiles/confirmScatterPlot.html',
-                 'ConfirmIndividualStatistic': 'pages/WizardFiles/confirmIndividualStatistic.html'}
+                 'ConfirmIndividualStatistic': 'pages/WizardFiles/confirmIndividualStatistic.html',
+                 'HistogramHours': 'pages/WizardFiles/customizeBarGraph.html'}
 
     def get_context_data(self, form, **kwargs):
         context = super(ReportWizardBase, self).get_context_data(form=form, **kwargs)
@@ -366,6 +376,7 @@ class ReportWizardBase(SessionWizardView):
                       'CustomizeLineGraph': lineGraphWizard, 'ScatterPlotAxes': scatterPlotWizard,
                       'HistogramAxes': histogramWizard, 'ConfirmBarGraph': barGraphWizard,
                       'HistogramDetails': histogramWizard, 'ConfirmHistogram': histogramWizard,
+                      'HistogramHours' : clockWizard,
                       'ConfirmPieChart': pieChartWizard, 'IndividualStatisticDetails': individualStatisticWizard,
                       'LineGraphAxes': lineGraphWizard, 'PieChartData': pieChartWizard,
                       'PieChartDetails': pieChartWizard, 'ConfirmLineGraph': lineGraphWizard,

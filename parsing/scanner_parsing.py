@@ -50,6 +50,7 @@ def parse_scanner_data(csvfile):
 
     return visits
 
+
 def parse_scan(data,scan_index,visits):
     scan = data[scan_index]
     #if the scan is a wolfcard, check the previous scan to see if it is a scan in or out
