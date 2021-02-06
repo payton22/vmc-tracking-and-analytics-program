@@ -341,9 +341,9 @@ class IndividualStatisticDetails(forms.Form):
                     ('42', '42'),
                     ('48', '48'),
                     ('72', '72')]
-    label_font_color = forms.ChoiceField(choices=COLOR_CHOICES)
+    header_font_color = forms.ChoiceField(choices=COLOR_CHOICES)
     statistic_font_color = forms.ChoiceField(choices=COLOR_CHOICES)
-    label_font_size = forms.ChoiceField(choices=FONT_CHOICES)
+    header_font_size = forms.ChoiceField(choices=FONT_CHOICES)
     statistic_font_size = forms.ChoiceField(choices=FONT_CHOICES)
 
 

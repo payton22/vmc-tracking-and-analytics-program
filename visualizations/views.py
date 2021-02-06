@@ -419,9 +419,9 @@ class IndividualStatistic(State):
 
     def determineStyleSettings(self):
         self.style_dict = self.inner_dict[3]
-        self.label_font_color = self.style_dict['label_font_color']
+        self.header_font_color = self.style_dict['header_font_color']
         self.statistic_font_color = self.style_dict['statistic_font_color']
-        self.label_font_size = self.style_dict['label_font_size']
+        self.header_font_size = self.style_dict['header_font_size']
         self.statistic_font_size = self.style_dict['statistic_font_size']
 
 
@@ -444,11 +444,9 @@ class IndividualStatistic(State):
             title = 'Daily average visitors from ' + self.from_time.strftime('%m/%d/%d') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Monthly average':
             title = 'Monthly average visitors from ' + self.from_time.strftime(
-                '%m/%d/%d') + ' to ' + self.to_time.strftime('%m/%d/%y')
+                '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Yearly average':
-            title = 'Yearly average visitors from ' + self.from_time.strftime(
-
-            )
+            title = 'Yearly average visitors from ' + self.from_time.strftime('%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
 
         # The max size of a location list is 2. If this is true, then show "all locations in the title"
         if len(self.location_list) == 2:
@@ -459,6 +457,7 @@ class IndividualStatistic(State):
                 title2 += location + ' '
 
         title += '\n' + title2
+        substr = ''
 
         for i, location in enumerate(self.location_list):
             if i != (len(self.location_list) - 1):
@@ -466,10 +465,27 @@ class IndividualStatistic(State):
             else:
                 substr += location
 
-        conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
-            '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-            '%Y-%m-%d') + "\' group by " + self.group_by + ";"
-        print('location_list: ', self.location_list)
+
+        if self.subselection == 'Total Count':
+            conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
+                '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
+                '%Y-%m-%d') + "\' group by " + self.group_by + ";"
+        #print('location_list: ', self.location_list)
+        elif self.subselection == 'Daily average':
+            #conn_string_sql = "select major, avg(count(*)) from (select check_in_date, count(*) from visits) group by major;"
+            conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (julianday('" + self.to_time.strftime('%Y-%m-%d') + "') - julianday('" + self.from_time.strftime('%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime('%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
+        elif self.subselection == 'Monthly average':
+            conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (strftime('%m','" + self.to_time.strftime(
+                '%Y-%m-%d') + "') - strftime('%m', '" + self.from_time.strftime(
+                '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
+                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
+        elif self.subselection == 'Yearly average':
+            conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (strftime('%Y','" + self.to_time.strftime(
+                '%Y-%m-%d') + "') - strftime('%Y', '" + self.from_time.strftime(
+                '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
+                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
+
+
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
@@ -515,11 +531,13 @@ class IndividualStatistic(State):
         x_list.append('<b>Grand Total</b>')
         y_list.append(total)
 
-        layout = Layout(title=title)
-        table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))], layout=layout)
 
-        app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
-                                        ], style={'height': '40vh', 'width': '70vw'})
+
+        layout = Layout(title=title)
+        table = go.Figure(data=[go.Table(header=dict(values=header, height=int(self.header_font_size)*3, font=dict(color=self.header_font_color, size=int(self.header_font_size))), cells=dict(values=values, height=int(self.statistic_font_size)*3, font=dict(color=self.statistic_font_color, size=int(self.statistic_font_size))))], layout=layout)
+
+        app.layout = html.Div(children=[dcc.Graph(id='table', figure=table, style={'height': '70vh'})
+                                        ], style={'height': '80vh', 'width': '70vw'})
 
 
         # graph = [Bar(x=x_axis,y=y_axis)]
