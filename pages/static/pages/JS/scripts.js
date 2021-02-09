@@ -4,6 +4,10 @@ $(document).ready(function() {
   $("#prof_pic").text(this.files[0].name);
 });
 
+    $('.timepicker').mdtimepicker();
+
+
+
 
     /* When the user selects a graph type from the dropdown menu,
     clear a graph selection (if one is already selected) and call the appropriate
