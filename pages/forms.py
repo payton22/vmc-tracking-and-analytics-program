@@ -5,19 +5,19 @@ from visualizations.models import ReportPresets
 
 # Making this global because it will be reused among multiple
 # "reports' forms
-DEMOGRAPHICS = [('Ethnicity', 'Ethnicity'),
-                ('Career', 'Career'),
-                ('Benefit Chapter', 'Benefit Chapter'),
+DEMOGRAPHICS = [('Ethnicity', 'Ethnicity (Coming soon)'),
+                ('Career', 'Career (Coming soon)'),
+                ('Benefit Chapter', 'Benefit Chapter (Coming soon)'),
                 ('Usage by Date', 'Usage by Date'),
-                ('College', 'College'),
+                ('College', 'College (Coming soon)'),
                 ('Total Usage by Location', 'Total Usage by Location'),
                 ('Classification', 'Classification'),
                 ('Major', 'Major'),
                 ('Services', 'Services')]
 
-HIST_TIME_CHOICES = [('Time of Day', 'Time of Day'),
-                     ('Months', 'Months'),
-                     ('Years', 'Years')]
+HIST_TIME_CHOICES = [('Average visitors by time', 'Average visitors by time'),
+                     ('Total visitors by day', 'Total visitors by day'),
+                     ('Total visitors by year', 'Total visitors by year')]
 YES_NO = [('Yes', 'Yes'),
           ('No', 'No')]
 
@@ -91,9 +91,8 @@ class UserProfileForm(CurrentPasswordForm):
 class SelectReportType(forms.Form):
     CHOICES = [('Bar Graph', 'Bar Graph'),
                ('Histogram', 'Histogram'),
-               ('Line Graph', 'Line Graph'),
+               ('Line and/or Scatter', 'Line and/or Scatter'),
                ('Pie Chart', 'Pie Chart'),
-               ('Scatter Plot', 'Scatter Plot'),
                ('Individual Statistic', 'Individual Statistic')]
     attributes = {'title': 'I need: '}  # left out form-check-input
     graphType = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(attrs=attributes))
@@ -129,22 +128,35 @@ class TimeFrame(forms.Form):
                                 widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
                                                                                           'datepicker-input',
                                                                                  'id': 'datepicker1',
-                                                                                 'autocomplete': 'off', 'name': 'from_time'}))
+                                                                                 'autocomplete': 'off',
+                                                                                 'name': 'from_time'}))
 
     to_time = forms.DateField(input_formats=['%m/%d/%Y'],
                               widget=forms.DateInput(format='%m/%d/%Y', attrs={'class': 'form-control '
                                                                                         'datepicker-input',
                                                                                'id': 'datepicker2',
-                                                                               'autocomplete': 'off', 'name': 'to_time'}))
+                                                                               'autocomplete': 'off',
+                                                                               'name': 'to_time'}))
+
+
+class HistogramHours(forms.Form):
+    from_time = forms.TimeField(input_formats=['%H:%M %p'],
+                                widget=forms.TimeInput(format='%H:%M %p',
+                                                       attrs={'name': 'timepicker', 'class': 'timepicker form-control timepicker-input'}))
+
+    to_time = forms.TimeField(input_formats=['%H:%M %p'],
+                              widget=forms.TimeInput(format='%H:%M %p',
+                                                     attrs={'name': 'timepicker', 'class': 'timepicker form-control timepicker-input'}))
 
 
 # Used for selecting between different places that visitors attend in the VMC
+
+
 # User selects one or more checkboxes that correspond to locations to track attendance
 # for in the report.
 class AttendanceDataForm(forms.Form):
     CHOICES = [('Veteran Services_VMC', 'VMC'),
                ('Veteran Services_Fitzgerald', 'Fitzgerald')]
-
 
     attributes = {'title': 'Select Attendance Location:', 'class': 'Locations'}
 
@@ -198,9 +210,8 @@ class CustomizeBarGraph(forms.Form):
         elif data.get('autoscale') == 'No' and (data.get('max_count') and data.get('increment_by')) is not None:
             return data
         else:
-            raise forms.ValidationError('Enter values for \'Max Count\' and \'Increment by\' or change autoscale to \'Yes\'.')
-
-
+            raise forms.ValidationError(
+                'Enter values for \'Max Count\' and \'Increment by\' or change autoscale to \'Yes\'.')
 
 
 # Line Graph customization is the same as bar graph customization, except the user
@@ -236,13 +247,8 @@ class HistogramAxes(forms.Form):
 
 # Detailed options for the histogram wizard
 class HistogramDetails(CustomizeBarGraph):
-    DATA_OPTIONS = DEMOGRAPHICS + [('All', 'All')]
-
     attributes_for_data_options = {'title': 'Select Data Options:'}
     attributes_for_attendance_data = {'title': 'Select Attendance Location(s)'}
-
-    data = forms.MultipleChoiceField(choices=DATA_OPTIONS, widget=forms.CheckboxSelectMultiple(
-        attrs=attributes_for_data_options))
 
     # Integer field for scaling the count
     max_count = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'hist_max'}),
@@ -270,6 +276,10 @@ class CustomizeScatterPlot(CustomizeBarGraph):
     # Dot color options
     select_bar_color = None
 
+    OPTIONS = [('Dots', 'Dots'),
+               ('Lines', 'Lines'),
+               ('Dots and Lines', 'Dots and Lines')]
+
     # Instead, label is "select dot color"
     # Reuse same color choices as bar graph
     select_dot_color = forms.ChoiceField(choices=CustomizeBarGraph.COLOR_CHOICES)
@@ -281,6 +291,7 @@ class CustomizeScatterPlot(CustomizeBarGraph):
     increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'scatter_increment'}),
                                       label='Increment by:', required=False)
 
+    display_as = forms.ChoiceField(choices=OPTIONS)
 
 
 # Individual statistic counting/tracking options
@@ -330,22 +341,22 @@ class IndividualStatisticDetails(forms.Form):
                     ('42', '42'),
                     ('48', '48'),
                     ('72', '72')]
-    label_font_color = forms.ChoiceField(choices=COLOR_CHOICES)
+    header_font_color = forms.ChoiceField(choices=COLOR_CHOICES)
     statistic_font_color = forms.ChoiceField(choices=COLOR_CHOICES)
-    label_font_size = forms.ChoiceField(choices=FONT_CHOICES)
+    header_font_size = forms.ChoiceField(choices=FONT_CHOICES)
     statistic_font_size = forms.ChoiceField(choices=FONT_CHOICES)
+
 
 class ReportPresetName(forms.Form):
     attributes = {'id': 'preset_input', 'name': 'preset_input', 'class': 'form-control'}
 
     enter_preset_name = forms.CharField(widget=forms.TextInput(attrs=attributes))
-    
+
     def check_entry(self):
         name = self.data['enter_preset_name']
         if ReportPresets.objects.filter(pk=name).exists():
-            self.add_error('enter_preset_name', 'This preset with the name ' + name + ' already exists. Please choose a different name.')
+            self.add_error('enter_preset_name',
+                           'This preset with the name ' + name + ' already exists. Please choose a different name.')
             return False
         else:
             return True
-
-
