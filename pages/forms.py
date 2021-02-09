@@ -5,11 +5,11 @@ from visualizations.models import ReportPresets
 
 # Making this global because it will be reused among multiple
 # "reports' forms
-DEMOGRAPHICS = [('Ethnicity', 'Ethnicity'),
-                ('Career', 'Career'),
-                ('Benefit Chapter', 'Benefit Chapter'),
+DEMOGRAPHICS = [('Ethnicity', 'Ethnicity (Coming soon)'),
+                ('Career', 'Career (Coming soon)'),
+                ('Benefit Chapter', 'Benefit Chapter (Coming soon)'),
                 ('Usage by Date', 'Usage by Date'),
-                ('College', 'College'),
+                ('College', 'College (Coming soon)'),
                 ('Total Usage by Location', 'Total Usage by Location'),
                 ('Classification', 'Classification'),
                 ('Major', 'Major'),
