@@ -15,13 +15,13 @@ def parse(request):
         conn = sqlite3.connect('vmc_tap.db');
 
         data_file = request.FILES['datafile'].read().decode('utf-8').splitlines()
-        data, tags, staff = parser.parse_report(data_file)
+        data, tags = parser.parse_report(data_file)
         return_string = ''
         total_duration = 0
         for visit in data:
             return_string += str(visit) + '<br>'
             # Insert data into database
-            conn.execute(visit.get_insert_statement())
+   #         conn.execute(visit.get_insert_statement())
         conn.commit();
         return_string += 'Number of Visits: ' + str(len(data)) + '.<br>'
 
