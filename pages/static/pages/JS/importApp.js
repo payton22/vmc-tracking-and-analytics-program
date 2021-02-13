@@ -1,16 +1,34 @@
 const previousBtn = document.getElementById('previousBtn');
 const nextBtn = document.getElementById('nextBtn');
 const finshBtn = document.getElementById('finishBtn');
+const navigateBtn = document.getElementById('navigateBtn');
+const gpaBtn = document.getElementById('gpaBtn');
 const content = document.getElementById('content');
 const bullets = [... document.querySelectorAll('.bullet')];
+const tLinks = [... document.querySelectorAll('.tablink')];
 const files = [... document.querySelectorAll('.file-input')];
 const quotes = [... document.querySelectorAll('.hidden-content')];
 
 
-const MAX_STEPS = 4;
+
+const MAX_STEPS = 1;
 let currentStep = 1;
 let previousQuoteStep = 0;
 let currentQuoteStep = 10;
+
+navigateBtn.addEventListener('click', () => {
+    const previousTLink = tLinks[currentStep]
+    const currentTLink = tLinks[currentStep - 1];
+    previousTLink.classList.remove('darkTab');
+    currentTLink.classList.add('darkTab');
+})
+
+gpaBtn.addEventListener('click', () => {
+    const previousTLink = tLinks[currentStep-1]
+    const currentTLink = tLinks[currentStep];
+    previousTLink.classList.remove('darkTab');
+    currentTLink.classList.add('darkTab');
+})
 
 nextBtn.addEventListener('click', () => {
     const currentBullet =  bullets[currentStep - 1];
@@ -75,3 +93,12 @@ function quoteFade() {
         quoteFade();
     }, 30000);
 }
+
+function openForm(formName) {
+    var i;
+    var x = document.getElementsByClassName("form");
+    for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+    }
+    document.getElementById(formName).style.display = "block";
+    }
