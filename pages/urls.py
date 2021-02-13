@@ -9,6 +9,7 @@ choices_dict = {}
 # manages the urls associated with the pages app
 urlpatterns = [
     path('', auth_views.LoginView.as_view(), name='login'),
+    path('survey/', surveyPageView, name='surveyPage'),
     path('home/', homePageView, name="homePage"),
     path('import/', importPageView, name='importPage'),
     #path('visualizations/', visPageView, name='visPage'),
