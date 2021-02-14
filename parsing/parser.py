@@ -48,7 +48,6 @@ def raw_data(csvfile):
         data.append(row)
     return data
 
-
 def parse_report(csvfile):
     data = raw_data(csvfile)
     formatted = []
@@ -60,21 +59,7 @@ def parse_report(csvfile):
         if point:
             formatted.append(format_data(titles, point))
             format_tag(titles, point, tags)
-            format_assigned_staff(titles, point, staff)
-    return formatted, tags, staff
-
-
-def format_assigned_staff(titles, raw, staff):
-    staff_list = raw[titles.index('Assigned Staff')].split(';')
-    student_id = raw[titles.index('Student ID')]
-    if not staff_list[0]:
-        return
-    for staff_name in staff_list:
-        new_staff = Staff()
-        new_staff.student_id = student_id
-        new_staff.staff = staff_name
-        staff.append(new_staff)
-
+    return formatted, tags
 
 def format_tag(titles, raw, tags):
     tag_list = raw[titles.index('Tags')].split(',')
@@ -87,7 +72,6 @@ def format_tag(titles, raw, tags):
         new_tag.tag = tag
         tags.append(new_tag)
 
-
 def format_data(titles, raw):
     if not raw:
         return
@@ -95,14 +79,9 @@ def format_data(titles, raw):
     data.student_name = raw[titles.index('Student Name')]
     data.student_email = raw[titles.index('Student E-mail')]
     data.student_id = raw[titles.index('Student ID')]
-    data.student_alt_id = raw[titles.index('Student Alternate ID')]
     data.classification = raw[titles.index('Classification')]
     data.major = raw[titles.index('Major')]
-    data.assigned_staff = raw[titles.index('Assigned Staff')]
-    data.care_unit = raw[titles.index('Care Unit')]
     data.services = raw[titles.index('Services')]
-    data.course_name = raw[titles.index('Course Name')]
-    data.course_number = raw[titles.index('Course Number')]
     data.location = raw[titles.index('Location')]
     data.check_in_date = raw[titles.index('Check In Date')]
     data.check_in_time = raw[titles.index('Check In Time')]

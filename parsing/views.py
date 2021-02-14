@@ -15,7 +15,7 @@ def parse(request):
         conn = sqlite3.connect('vmc_tap.db');
 
         data_file = request.FILES['datafile'].read().decode('utf-8').splitlines()
-        data, tags, staff = parser.parse_report(data_file)
+        data, tags = parser.parse_report(data_file)
         return_string = ''
         total_duration = 0
         for visit in data:

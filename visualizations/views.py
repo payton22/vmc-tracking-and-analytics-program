@@ -15,6 +15,7 @@ import plotly.graph_objects as go
 
 from django_plotly_dash import DjangoDash
 
+import csv
 
 class emptyList(Exception):
     pass
@@ -41,7 +42,6 @@ class ReportGenerator():
     def generateReport(self):
         app, title = self.state.generateReport()
         return app, title
-
 
 class State:
 
@@ -284,3 +284,12 @@ def exampleGraph(request):
     ], style={'height': '100vh'})
 
     return render(request, 'visualizations/exampleGraph.html')
+
+def genTableFile(header,values):
+    rows = zip(values[0],values[1])
+    with open('table.csv', 'w+', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',')
+        csvwriter.writerow(header)
+        for value in rows:
+            csvwriter.writerow(value)
+        csvfile.close()
