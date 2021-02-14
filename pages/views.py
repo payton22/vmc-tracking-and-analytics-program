@@ -40,7 +40,19 @@ def landingPageView(request):
     return render(request, 'pages/landingPage.html')
 
 def surveyPageView(request):
-    return render(request, 'pages/survey.html')
+    if(request.method == 'GET'):
+        return render(request, 'pages/survey.html')
+    if(request.method == 'POST'):
+        mystr = '';
+        if(len(list(request.POST.items())) != 14):
+            returnrender(request, 'pages/survey.html'); #Did not fill out entire form
+        #Build SQL insert statement
+        insert_statement = '';
+        for a,b in list(request.POST.items()):
+            mystr += a + ',' + b + '<br>';
+
+    #return render(request, 'pages/survey.html')
+    return HttpResponse(mystr);
 
 def homePageView(request):
     return render(request, 'pages/homePage.html')
