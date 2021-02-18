@@ -3,6 +3,7 @@ const nextBtn = document.getElementById('nextBtn');
 const finshBtn = document.getElementById('finishBtn');
 const navigateBtn = document.getElementById('navigateBtn');
 const gpaBtn = document.getElementById('gpaBtn');
+const manualBtn = document.getElementById('manualBtn');
 const content = document.getElementById('content');
 const bullets = [... document.querySelectorAll('.bullet')];
 const tLinks = [... document.querySelectorAll('.tablink')];
@@ -17,17 +18,30 @@ let previousQuoteStep = 0;
 let currentQuoteStep = 10;
 
 navigateBtn.addEventListener('click', () => {
-    const previousTLink = tLinks[currentStep]
-    const currentTLink = tLinks[currentStep - 1];
-    previousTLink.classList.remove('darkTab');
-    currentTLink.classList.add('darkTab');
+    const NavigateLink = tLinks[0]
+    const GPALink = tLinks[1];
+    const ManualLink = tLinks[2];
+    GPALink.classList.remove('darkTab');
+    ManualLink.classList.remove('darkTab');
+    NavigateLink.classList.add('darkTab');
 })
 
 gpaBtn.addEventListener('click', () => {
-    const previousTLink = tLinks[currentStep-1]
-    const currentTLink = tLinks[currentStep];
-    previousTLink.classList.remove('darkTab');
-    currentTLink.classList.add('darkTab');
+    const NavigateLink = tLinks[0]
+    const GPALink = tLinks[1];
+    const ManualLink = tLinks[2];
+    GPALink.classList.add('darkTab');
+    ManualLink.classList.remove('darkTab');
+    NavigateLink.classList.remove('darkTab');
+})
+
+manualBtn.addEventListener('click', () => {
+    const NavigateLink = tLinks[0]
+    const GPALink = tLinks[1];
+    const ManualLink = tLinks[2];
+    GPALink.classList.remove('darkTab');
+    ManualLink.classList.add('darkTab');
+    NavigateLink.classList.remove('darkTab');
 })
 
 nextBtn.addEventListener('click', () => {
@@ -41,7 +55,6 @@ nextBtn.addEventListener('click', () => {
     previousBtn.disabled = false;
     if(currentStep == MAX_STEPS) {
         nextBtn.disabled = true;
-        // nextFile.classList.add('hidden');
         finishBtn.disabled = false;
     }
 })
