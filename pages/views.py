@@ -48,7 +48,7 @@ def homePageView(request):
 
 
 def importPageView(request):
-    if request.method == 'POST':
+    if request.method == 'POST': #This if statement is not needed, the import page will never have a load condition with a 'POST' method. Leaving for reference reasons
         return HttpResponseRedirect('/parse')
     return render(request, 'pages/importPage.html')
 
