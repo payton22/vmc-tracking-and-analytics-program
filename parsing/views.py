@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from . import scanner_parsing
 from . import parser
 from django.http import HttpResponse
@@ -27,6 +28,8 @@ def parse(request):
 
         # return_string += 'This data has been inserted into the database.<br>'
 
-        return HttpResponse(return_string)
+        # return HttpResponse(return_string)
+        messages.success(request, "Document Successfully Uploaded." )
+        return redirect('importPage')
     else:
         return HttpResponse("ERROR, please go to the import page and upload a file.")
