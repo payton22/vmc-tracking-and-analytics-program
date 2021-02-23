@@ -1,6 +1,6 @@
 import sys
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.http import urlsafe_base64_decode
 
@@ -37,28 +37,42 @@ FORMS = [('SelectReportType', SelectReportType),
 # Temporarily store wizard choices if the user wants to save a "preset"
 preset_storage = {}
 
-def landingPageView(request):
-    return render(request, 'pages/landingPage.html')
+# def landingPageView(request):
+#     return render(request, 'pages/landingPage.html')
 
 def surveyPageView(request):
     return render(request, 'pages/survey.html')
 
 def homePageView(request):
-    return render(request, 'pages/homePage.html')
+    if request.user.is_authenticated:
+        return render(request, 'pages/homePage.html')
+    else: 
+        return redirect('login')
 
 
 def importPageView(request):
-    if request.method == 'POST': #This if statement is not needed, the import page will never have a load condition with a 'POST' method. Leaving for reference reasons
-        return HttpResponseRedirect('/parse')
-    return render(request, 'pages/importPage.html')
+    # if request.method == 'POST': #This if statement is not needed, the import page will never have a load condition with a 'POST' method. Leaving for reference reasons
+    #     return HttpResponseRedirect('/parse')
+    # return render(request, 'pages/importPage.html')
+
+    if request.user.is_authenticated:
+        return render(request, 'pages/importPage.html')
+    else: 
+        return redirect('login')
 
 
 def vmcAdminPageView(request):
-    return render(request, "pages/vmcAdminPage.html")
+    if request.user.is_authenticated:
+        return render(request, "pages/vmcAdminPage.html")
+    else: 
+        return redirect('login')
 
 
 def visPageView(request):
-    return render(request, 'pages/visualizationsPage.html')
+    if request.user.is_authenticated:
+        return render(request, 'pages/visualizationsPage.html')
+    else: 
+        return redirect('login')
 
 
 def changePassView(request, emailAddress):
@@ -148,13 +162,11 @@ def viewAccountsList(request):
 
 def accessAccounts():
     users = CustomUser.objects.all()
-
     return users
 
 
 def accessIndividualAccount(emailAddress):
     user = CustomUser.objects.get(pk=emailAddress)
-
     return user
 
 
@@ -168,14 +180,19 @@ def flatten(sqlList):
 
 
 def accountsView(request):
-    accountsList = accessAccounts()
-    emails = []
 
-    for user in accountsList:
-        emails.append(user.email)
-    print('made it here')
 
-    return render(request, 'pages/viewAccountsList.html', {'emails': emails})
+    if request.user.is_authenticated:
+        accountsList = accessAccounts()
+        emails = []
+    
+        for user in accountsList:
+            emails.append(user.email)
+        print('made it here')
+    
+        return render(request, 'pages/viewAccountsList.html', {'emails': emails})
+    else: 
+        return redirect('login')
 
 
 def otherAccountOptions(request, emailAddress):
@@ -523,7 +540,11 @@ def saveChoices(request, name):
 
 
 def reportsView(request):
-    return render(request, 'pages/reportsPage.html')
+    if request.user.is_authenticated:
+        return render(request, 'pages/reportsPage.html')
+    else: 
+        return redirect('login')
+    
 
 def viewPresets(request):
     presets = ReportPresets.objects.filter(user=request.user)
