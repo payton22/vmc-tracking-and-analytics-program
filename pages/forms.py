@@ -16,6 +16,7 @@ DEMOGRAPHICS = [('Ethnicity', 'Ethnicity'),
                 ('Services', 'Services')]
 
 HIST_TIME_CHOICES = [('Average visitors by time', 'Average visitors by time'),
+                     ('Average visitors by day', 'Average visitors by day'),
                      ('Total visitors by day', 'Total visitors by day'),
                      ('Total visitors by year', 'Total visitors by year')]
 YES_NO = [('Yes', 'Yes'),

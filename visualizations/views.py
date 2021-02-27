@@ -316,7 +316,11 @@ class Histogram(State):
                 substr += location
 
         #conn_string_sql = "SELECT this_time, COUNT(this_time) FROM (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS this_time, SUBSTR(check_in_time,1,2) + CASE(SUBSTR(check_in_time,7,2)) WHEN 'PM' THEN '12' ELSE '0' END AS sorting FROM visits) AS ctime GROUP BY this_time ORDER BY sorting;"
-        conn_string_sql = "SELECT cat_hours.hour_display, IFNULL(SUM(c_visits.visit_count), 0)/10.00 FROM cat_hours LEFT JOIN (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS hour_display, 1 AS visit_count, check_in_date FROM visits WHERE check_in_date BETWEEN '2021-01-01' AND '2021-02-28') AS c_visits ON cat_hours.hour_display = c_visits.hour_display GROUP BY cat_hours.hour_display ORDER BY cat_hours.ordering;"
+        if self.selection == 'Average visitors by time':
+            conn_string_sql = "SELECT cat_hours.hour_display, round(IFNULL(SUM(c_visits.visit_count), 0)/(julianday('"+ self.to_time.strftime('%Y-%m-%d') + "') - julianday('" + self.from_time.strftime('%Y-%m-%d') + "')), 2) FROM cat_hours LEFT JOIN (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS hour_display, 1 AS visit_count, check_in_date FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '"+ self.from_time.strftime('%Y-%m-%d') +"' AND '" + self.to_time.strftime('%Y-%m-%d') + "') AS c_visits ON cat_hours.hour_display = c_visits.hour_display GROUP BY cat_hours.hour_display ORDER BY cat_hours.ordering;"
+        elif self.selection == 'Average visitors by day':
+            # Parts of this query was referenced from StackOverflow: https://stackoverflow.com/questions/4319302/format-date-as-day-of-week
+            conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, round(count(check_in_date)/(julianday('" + self.to_time.strftime('%Y-%m-%d') + "' - julianday('" + self.from_time.strftime + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime('%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
         #conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
          #   '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
           #  '%Y-%m-%d') + "\' group by " + self.group_by + ";"
@@ -373,7 +377,7 @@ class Histogram(State):
             layout = Layout(title=title)
 
         fig = go.Figure()
-        fig.add_trace(go.Histogram(histfunc="sum", y=y_axis, x=x_axis, name="count"))
+        fig.add_trace(go.Histogram(histfunc="sum", y=y_axis, x=x_axis, name="count", marker=dict(color=self.bar_color.lower())))
         fig.update_layout(bargap=0)
        # fig.update_layout(bargap=0)
 
