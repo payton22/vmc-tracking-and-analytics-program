@@ -7,6 +7,7 @@ import random
 from pages import views as pageViews
 from visualizations.models import ReportPresets
 from datetime import datetime
+from pages.views import TimeFrame
 import sqlite3
 
 import dash
@@ -19,6 +20,8 @@ from django_plotly_dash import DjangoDash
 
 import csv
 
+
+data_storage = {}
 
 class emptyList(Exception):
     pass
@@ -46,8 +49,8 @@ class ReportGenerator():
         self.state = state
 
     def generateReport(self):
-        app, title = self.state.generateReport()
-        return app, title
+        app, title, validDates = self.state.generateReport()
+        return app, title, validDates
 
 
 class State:
@@ -71,6 +74,13 @@ class State:
 
     def checkGraphType(self, data):
         pass
+
+    def checkInvalidQuery(self, results):
+        if not results:
+            return False
+        else:
+            return True
+
 
 
 class BarGraph(State):
@@ -196,10 +206,11 @@ class BarGraph(State):
 
         # print('conn_results_rotated: ', conn_results_rotated)
 
-        if conn_results_rotated == []:
+        validDates = self.checkInvalidQuery(conn_results_rotated)
+
+        if not validDates:
             x_axis = [1, 2, 3, 4, 5, 6, 7, 8]
             y_axis = [1, 2, 3, 4, 5, 6, 7, 8]
-        # raise emptyList("List is empty")
         else:
             x_axis = conn_results_rotated[0];
             y_axis = conn_results_rotated[1];
@@ -207,8 +218,7 @@ class BarGraph(State):
             #    x_axis.append(tuple[0])
             #   y_axis.append(tuple[1])
 
-            print('x_axis: ', x_axis)
-            print(y_axis)
+
 
         # If autoscaling is not enabled by the user, we need to set the max count of the y-axis
         if self.autoscale != 'Yes':
@@ -251,7 +261,7 @@ class BarGraph(State):
                 dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
             ], style={'height': '70vh', 'width': '70vw'})
 
-        return app, title
+        return app, title, validDates
 
 
 class Histogram(State):
@@ -355,6 +365,8 @@ class Histogram(State):
 
         title = self.title
 
+
+
         # conn_string_sql = "SELECT this_time, COUNT(this_time) FROM (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS this_time, SUBSTR(check_in_time,1,2) + CASE(SUBSTR(check_in_time,7,2)) WHEN 'PM' THEN '12' ELSE '0' END AS sorting FROM visits) AS ctime GROUP BY this_time ORDER BY sorting;"
         if self.selection == 'Average visitors by time':
             conn_string_sql = "SELECT cat_hours.hour_display, round(IFNULL(SUM(c_visits.visit_count), 0)/(julianday('" + self.to_time.strftime(
@@ -372,8 +384,8 @@ class Histogram(State):
             conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, count(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
                 '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
         elif self.selection == 'Total visitors by year':
-            conn_string_sql = "SELECT check_in_date, COUNT(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
-                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY check_in_date;"
+            conn_string_sql = "SELECT SUBSTR(check_in_date,1,4), COUNT(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY SUBSTR(check_in_date,1,4);"
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
@@ -427,6 +439,9 @@ class Histogram(State):
         fig.add_trace(
             go.Histogram(histfunc="sum", y=y_axis, x=x_axis, name="count", marker=dict(color=self.bar_color.lower())))
         fig.update_layout(bargap=0)
+
+        if self.selection == 'Total visitors by year':
+            fig.update_xaxes(type='category')
         # fig.update_layout(bargap=0)
 
         # Now implement the custom scaling if enabled
@@ -1023,10 +1038,46 @@ class ScatterPlot(State):
 
 def getReport(request):
     data = pageViews.preset_storage
+    inner_dict = data['form_data']
+    graph_type_dict = inner_dict[0]
+    graph_type = graph_type_dict['graphType']
+    valid_dates = False
+    first_query = True
     reportGenerator = ReportGenerator(request, data)
-    app, title = reportGenerator.generateReport()
+    app, title, validDates = reportGenerator.generateReport()
 
-    return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
+    if valid_dates:
+        return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
+
+    while not valid_dates:
+        global data_storage
+        data_storage = data
+        app, title, valid_dates = reportGenerator.generateReport()
+        first_query = False
+        if valid_dates:
+            return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
+        elif request.method == 'POST':
+            form = TimeFrame(request.POST)
+            from_time = request.POST.get('from_time')
+            to_time = request.POST.get('to_time')
+
+            from_time = datetime.strptime(from_time, '%m/%d/%Y')
+            to_time = datetime.strptime(to_time, '%m/%d/%Y')
+
+            data = barGraphQueryCorrection(data, from_time, to_time)
+            #return render(request, 'visualizations/queryCorrection.html', context={'form': form})
+        else:
+            form = TimeFrame()
+            return render(request, 'visualizations/queryCorrection.html', context={'form': form})
+
+def barGraphQueryCorrection(data, new_from_time, new_to_time):
+    inner_dict = data['form_data']
+    date_subdict = inner_dict[2]
+    date_subdict['from_time'] = new_from_time
+    date_subdict['to_time'] = new_to_time
+
+    return data
+
 
 # Convert bar graph preset data back into dictionary format to prepare send it to the report generator
 def getBarGraphPreset(presetModel, from_time, to_time):
@@ -1140,7 +1191,7 @@ def presetReport(request, preset_name, from_time, to_time):
 
     reportGenerator = ReportGenerator(request, data_dict)
 
-    app, title = reportGenerator.generateReport()
+    app, title, validDates = reportGenerator.generateReport()
 
     return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
 
