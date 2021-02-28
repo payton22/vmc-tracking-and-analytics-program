@@ -5,7 +5,9 @@ from plotly.graph_objs import Figure
 from plotly.graph_objs import Layout
 import random
 from pages import views as pageViews
-import sqlite3;
+from visualizations.models import ReportPresets
+from datetime import datetime
+import sqlite3
 
 import dash
 import dash_core_components as dcc
@@ -16,6 +18,7 @@ import plotly.graph_objects as go
 from django_plotly_dash import DjangoDash
 
 import csv
+
 
 class emptyList(Exception):
     pass
@@ -36,12 +39,16 @@ class ReportGenerator():
         self.state = self.barGraph
         self.state.findState()
 
+        # TODO remove this later
+        print(data)
+
     def setState(self, state):
         self.state = state
 
     def generateReport(self):
         app, title = self.state.generateReport()
         return app, title
+
 
 class State:
 
@@ -64,7 +71,6 @@ class State:
 
     def checkGraphType(self, data):
         pass
-
 
 
 class BarGraph(State):
@@ -127,6 +133,11 @@ class BarGraph(State):
     def determineLocationsToTrack(self):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
+        self.select_all = self.location_dict['select_all']
+        if self.select_all:
+            self.all_locations = True
+        else:
+            self.all_locations = False
 
     def generateReport(self):
         self.determineSelection()
@@ -136,6 +147,20 @@ class BarGraph(State):
 
         conn = sqlite3.connect('vmc_tap.db');
         conn_results = []
+
+        if self.all_locations:
+            self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+        else:
+            loc_str = ''
+            for loc in self.location_list:
+                if loc != self.location_list[-1]:
+                    loc_str += loc + ', '
+                else:
+                    loc_str += loc
+
+            self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
         title = self.title
 
@@ -215,7 +240,8 @@ class BarGraph(State):
 
             x_list.append('<b>Grand Total</b>')
             y_list.append(total)
-            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))])
+            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
+                              layout=Layout(title=title))
 
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '40vh'}),
@@ -226,6 +252,7 @@ class BarGraph(State):
             ], style={'height': '70vh', 'width': '70vw'})
 
         return app, title
+
 
 class Histogram(State):
     def __init__(self, reportGenerator, request, data):
@@ -256,10 +283,10 @@ class Histogram(State):
 
         # Convert selection into query '*' for SQL
         if self.selection == 'Average visitors by time':
-            #self.selection = 'check_in_time'
+            # self.selection = 'check_in_time'
             self.group_by = 'location'
         elif self.selection == 'Usage by Date':
-            #self.selection = '*'
+            # self.selection = '*'
             self.group_by = 'check_in_date'
         elif self.selection == 'Classification':
             self.group_by = 'classification'
@@ -274,27 +301,24 @@ class Histogram(State):
         self.from_time = self.date_subdict['from_time']
         self.to_time = self.date_subdict['to_time']
 
-        if self.selection == 'Average visitors by time':
-            self.index = 4
-            self.time_subdict = self.inner_dict[3]
-            self.start_time = self.time_subdict['from_time']
-            self.end_time = self.time_subdict['to_time']
-        else:
-            self.index = 3
 
     def determineStyleSettings(self):
-        self.style_dict = self.inner_dict[self.index]
+        self.style_dict = self.inner_dict[3]
         self.bar_color = self.style_dict['select_bar_color']
         self.autoscale = self.style_dict['autoscale']
         if self.autoscale == 'No':
             self.max_count = self.style_dict['max_count']
             self.increment_by = self.style_dict['increment_by']
 
-        self.index += 1
 
     def determineLocationsToTrack(self):
-        self.location_dict = self.inner_dict[self.index]
+        self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
+        self.select_all = self.location_dict['select_all']
+        if self.select_all:
+            self.all_locations = True
+        else:
+            self.all_locations = False
 
     def generateReport(self):
         self.determineSelection()
@@ -315,16 +339,41 @@ class Histogram(State):
             else:
                 substr += location
 
-        #conn_string_sql = "SELECT this_time, COUNT(this_time) FROM (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS this_time, SUBSTR(check_in_time,1,2) + CASE(SUBSTR(check_in_time,7,2)) WHEN 'PM' THEN '12' ELSE '0' END AS sorting FROM visits) AS ctime GROUP BY this_time ORDER BY sorting;"
+        if self.all_locations:
+            self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+        else:
+            loc_str = ''
+            for loc in self.location_list:
+                if loc != self.location_list[-1]:
+                    loc_str += loc + ', '
+                else:
+                    loc_str += loc
+
+            self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+
+        title = self.title
+
+        # conn_string_sql = "SELECT this_time, COUNT(this_time) FROM (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS this_time, SUBSTR(check_in_time,1,2) + CASE(SUBSTR(check_in_time,7,2)) WHEN 'PM' THEN '12' ELSE '0' END AS sorting FROM visits) AS ctime GROUP BY this_time ORDER BY sorting;"
         if self.selection == 'Average visitors by time':
-            conn_string_sql = "SELECT cat_hours.hour_display, round(IFNULL(SUM(c_visits.visit_count), 0)/(julianday('"+ self.to_time.strftime('%Y-%m-%d') + "') - julianday('" + self.from_time.strftime('%Y-%m-%d') + "')), 2) FROM cat_hours LEFT JOIN (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS hour_display, 1 AS visit_count, check_in_date FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '"+ self.from_time.strftime('%Y-%m-%d') +"' AND '" + self.to_time.strftime('%Y-%m-%d') + "') AS c_visits ON cat_hours.hour_display = c_visits.hour_display GROUP BY cat_hours.hour_display ORDER BY cat_hours.ordering;"
+            conn_string_sql = "SELECT cat_hours.hour_display, round(IFNULL(SUM(c_visits.visit_count), 0)/(julianday('" + self.to_time.strftime(
+                '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
+                '%Y-%m-%d') + "')), 2) FROM cat_hours LEFT JOIN (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS hour_display, 1 AS visit_count, check_in_date FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+                '%Y-%m-%d') + "' AND '" + self.to_time.strftime(
+                '%Y-%m-%d') + "') AS c_visits ON cat_hours.hour_display = c_visits.hour_display GROUP BY cat_hours.hour_display ORDER BY cat_hours.ordering;"
         elif self.selection == 'Average visitors by day':
             # Parts of this query was referenced from StackOverflow: https://stackoverflow.com/questions/4319302/format-date-as-day-of-week
-            conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, round(count(check_in_date)/(julianday('" + self.to_time.strftime('%Y-%m-%d') + "' - julianday('" + self.from_time.strftime + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime('%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
-        #conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
-         #   '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-          #  '%Y-%m-%d') + "\' group by " + self.group_by + ";"
-        print('location_list: ', self.location_list)
+            conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, round(count(check_in_date)/(julianday('" + self.to_time.strftime(
+                '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
+                '%Y-%m-%d') + "')), 2) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
+        elif self.selection == 'Total visitors by day':
+            conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, count(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
+        elif self.selection == 'Total visitors by year':
+            conn_string_sql = "SELECT check_in_date, COUNT(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY check_in_date;"
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
@@ -354,18 +403,16 @@ class Histogram(State):
             x_axis = x_axis[::-1]
             x_axis = list(x_axis)
 
-           # x_axis = ['Time1', 'Time2', 'Time3', 'Time4']
-
-
+            # x_axis = ['Time1', 'Time2', 'Time3', 'Time4']
 
             y_axis = conn_results_rotated[1]
             y_axis = y_axis[::-1]
             y_axis = list(y_axis)
 
-            #y_axis = ["220", "100", "330", "410"]
-            #for tuple in conn_results:
-             #   x_axis.append(tuple[0])
-              #  y_axis.append(tuple[1])
+            # y_axis = ["220", "100", "330", "410"]
+            # for tuple in conn_results:
+            #   x_axis.append(tuple[0])
+            #  y_axis.append(tuple[1])
 
             print('x_axis: ', x_axis)
             print(y_axis)
@@ -377,9 +424,10 @@ class Histogram(State):
             layout = Layout(title=title)
 
         fig = go.Figure()
-        fig.add_trace(go.Histogram(histfunc="sum", y=y_axis, x=x_axis, name="count", marker=dict(color=self.bar_color.lower())))
+        fig.add_trace(
+            go.Histogram(histfunc="sum", y=y_axis, x=x_axis, name="count", marker=dict(color=self.bar_color.lower())))
         fig.update_layout(bargap=0)
-       # fig.update_layout(bargap=0)
+        # fig.update_layout(bargap=0)
 
         # Now implement the custom scaling if enabled
         if self.autoscale != 'Yes':
@@ -403,7 +451,8 @@ class Histogram(State):
 
             x_list.append('<b>Grand Total</b>')
             y_list.append(total)
-            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))])
+            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
+                              layout=Layout(title=title))
 
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '40vh'}),
@@ -426,7 +475,6 @@ class PieChart(State):
 
         if graph_type['graphType'] == 'Pie Chart':
             self.reportGenerator.setState(self)
-
 
     # Check the graph type from the wizard, make corresponding variable conversions
     # for SQL querying
@@ -469,10 +517,14 @@ class PieChart(State):
         elif self.style_selection == 'Count':
             self.textinfo = 'value'
 
-
     def determineLocationsToTrack(self):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
+        self.select_all = self.location_dict['select_all']
+        if self.select_all:
+            self.all_locations = True
+        else:
+            self.all_locations = False
 
     def generateReport(self):
         self.determineSelection()
@@ -483,6 +535,20 @@ class PieChart(State):
         conn = sqlite3.connect('vmc_tap.db');
         conn_results = []
 
+        if self.all_locations:
+            self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+        else:
+            loc_str = ''
+            for loc in self.location_list:
+                if loc != self.location_list[-1]:
+                    loc_str += loc + ', '
+                else:
+                    loc_str += loc
+
+            self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+
         title = self.title
 
         substr = ''
@@ -492,6 +558,20 @@ class PieChart(State):
                 substr += location + '\' or location = \''
             else:
                 substr += location
+
+        if self.all_locations:
+            self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+        else:
+            loc_str = ''
+            for loc in self.location_list:
+                if loc != self.location_list[-1]:
+                    loc_str += loc + ', '
+                else:
+                    loc_str += loc
+
+            self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
         conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
             '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
@@ -553,7 +633,8 @@ class PieChart(State):
 
             x_list.append('<b>Grand Total</b>')
             y_list.append(total)
-            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))])
+            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
+                              layout=Layout(title=title))
 
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '80vh', 'width': '80vw'}),
@@ -564,6 +645,8 @@ class PieChart(State):
             ], style={'height': '70vh', 'width': '70vw'})
 
         return app, title
+
+
 # Select count from visits where date >= from_date and date <= to_date group by location
 
 class IndividualStatistic(State):
@@ -576,7 +659,6 @@ class IndividualStatistic(State):
 
         if graph_type['graphType'] == 'Pie Chart':
             self.reportGenerator.setState(self)
-
 
     # Check the graph type from the wizard, make corresponding variable conversions
     # for SQL querying
@@ -615,10 +697,14 @@ class IndividualStatistic(State):
         self.header_font_size = self.style_dict['header_font_size']
         self.statistic_font_size = self.style_dict['statistic_font_size']
 
-
     def determineLocationsToTrack(self):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
+        self.select_all = self.location_dict['select_all']
+        if self.select_all:
+            self.all_locations = True
+        else:
+            self.all_locations = False
 
     def generateReport(self):
         self.determineSelection()
@@ -629,15 +715,32 @@ class IndividualStatistic(State):
         conn = sqlite3.connect('vmc_tap.db');
         conn_results = []
 
+        if self.all_locations:
+            self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+        else:
+            loc_str = ''
+            for loc in self.location_list:
+                if loc != self.location_list[-1]:
+                    loc_str += loc + ', '
+                else:
+                    loc_str += loc
+
+            self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+
         if self.subselection == 'Total Count':
-            title = 'Total count of visitors from ' + self.from_time.strftime('%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
+            title = 'Total count of visitors from ' + self.from_time.strftime(
+                '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Daily average':
-            title = 'Daily average visitors from ' + self.from_time.strftime('%m/%d/%d') + ' to ' + self.to_time.strftime('%m/%d/%y')
+            title = 'Daily average visitors from ' + self.from_time.strftime(
+                '%m/%d/%d') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Monthly average':
             title = 'Monthly average visitors from ' + self.from_time.strftime(
                 '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Yearly average':
-            title = 'Yearly average visitors from ' + self.from_time.strftime('%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
+            title = 'Yearly average visitors from ' + self.from_time.strftime(
+                '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
 
         # The max size of a location list is 2. If this is true, then show "all locations in the title"
         if len(self.location_list) == 2:
@@ -656,15 +759,17 @@ class IndividualStatistic(State):
             else:
                 substr += location
 
-
         if self.subselection == 'Total Count':
             conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
                 '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
                 '%Y-%m-%d') + "\' group by " + self.group_by + ";"
-        #print('location_list: ', self.location_list)
+        # print('location_list: ', self.location_list)
         elif self.subselection == 'Daily average':
-            #conn_string_sql = "select major, avg(count(*)) from (select check_in_date, count(*) from visits) group by major;"
-            conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (julianday('" + self.to_time.strftime('%Y-%m-%d') + "') - julianday('" + self.from_time.strftime('%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime('%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
+            # conn_string_sql = "select major, avg(count(*)) from (select check_in_date, count(*) from visits) group by major;"
+            conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (julianday('" + self.to_time.strftime(
+                '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
+                '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
+                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
         elif self.subselection == 'Monthly average':
             conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (strftime('%m','" + self.to_time.strftime(
                 '%Y-%m-%d') + "') - strftime('%m', '" + self.from_time.strftime(
@@ -675,8 +780,6 @@ class IndividualStatistic(State):
                 '%Y-%m-%d') + "') - strftime('%Y', '" + self.from_time.strftime(
                 '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
                 '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
-
-
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
@@ -708,7 +811,6 @@ class IndividualStatistic(State):
             #    x_axis.append(tuple[0])
             #   y_axis.append(tuple[1])
 
-
         header = ['Row Labels', 'Count of Location']
         x_list = list(x_axis)
         y_list = list(y_axis)
@@ -722,20 +824,24 @@ class IndividualStatistic(State):
         x_list.append('<b>Grand Total</b>')
         y_list.append(total)
 
-
-
         layout = Layout(title=title)
-        table = go.Figure(data=[go.Table(header=dict(values=header, height=int(self.header_font_size)*3, font=dict(color=self.header_font_color, size=int(self.header_font_size))), cells=dict(values=values, height=int(self.statistic_font_size)*3, font=dict(color=self.statistic_font_color, size=int(self.statistic_font_size))))], layout=layout)
+        table = go.Figure(data=[go.Table(header=dict(values=header, height=int(self.header_font_size) * 3,
+                                                     font=dict(color=self.header_font_color,
+                                                               size=int(self.header_font_size))),
+                                         cells=dict(values=values, height=int(self.statistic_font_size) * 3,
+                                                    font=dict(color=self.statistic_font_color,
+                                                              size=int(self.statistic_font_size))))],
+                          layout=Layout(title=title))
 
         app.layout = html.Div(children=[dcc.Graph(id='table', figure=table, style={'height': '70vh'})
                                         ], style={'height': '80vh', 'width': '70vw'})
-
 
         # graph = [Bar(x=x_axis,y=y_axis)]
         # layout = Layout(title='Length of Visits',xaxis=dict(title='Length (min)'),yaxis=dict(title='# of Visits'))
         # fig = Figure(data=graph,layout=layout)
         # plot_div = plot(fig,output_type='div',show_link=False,link_text="")
         return app, title
+
 
 class ScatterPlot(State):
     def __init__(self, reportGenerator, request, data):
@@ -747,7 +853,6 @@ class ScatterPlot(State):
 
         if graph_type['graphType'] == 'Line and/or Scatter':
             self.reportGenerator.setState(self)
-
 
     # Check the graph type from the wizard, make corresponding variable conversions
     # for SQL querying
@@ -793,11 +898,14 @@ class ScatterPlot(State):
         elif self.style_dict['display_as'] == 'Dots and Lines':
             self.mode = 'lines+markers'
 
-
-
     def determineLocationsToTrack(self):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
+        self.select_all = self.location_dict['select_all']
+        if self.select_all:
+            self.all_locations = True
+        else:
+            self.all_locations = False
 
     def generateReport(self):
         self.determineSelection()
@@ -807,6 +915,20 @@ class ScatterPlot(State):
 
         conn = sqlite3.connect('vmc_tap.db');
         conn_results = []
+
+        if self.all_locations:
+            self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+        else:
+            loc_str = ''
+            for loc in self.location_list:
+                if loc != self.location_list[-1]:
+                    loc_str += loc + ', '
+                else:
+                    loc_str += loc
+
+            self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
         title = self.title
 
@@ -860,7 +982,9 @@ class ScatterPlot(State):
         else:
             layout = Layout(title=title)
 
-        fig = go.Figure(data=[go.Scatter(x=x_axis, y=y_axis, mode=self.mode, marker=dict(color=self.bar_color.lower()))], layout=layout)
+        fig = go.Figure(
+            data=[go.Scatter(x=x_axis, y=y_axis, mode=self.mode, marker=dict(color=self.bar_color.lower()))],
+            layout=layout)
 
         if self.autoscale != 'Yes':
             fig.update_yaxes(dtick=self.increment_by)
@@ -883,7 +1007,8 @@ class ScatterPlot(State):
 
             x_list.append('<b>Grand Total</b>')
             y_list.append(total)
-            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))])
+            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
+                              layout=Layout(title=title))
 
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '80vh', 'width': '80vw'}),
@@ -898,11 +1023,124 @@ class ScatterPlot(State):
 
 def getReport(request):
     data = pageViews.preset_storage
-    print('Data: ', data)
     reportGenerator = ReportGenerator(request, data)
     app, title = reportGenerator.generateReport()
 
-    print('get report title: ', title)
+    return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
+
+# Convert bar graph preset data back into dictionary format to prepare send it to the report generator
+def getBarGraphPreset(presetModel, from_time, to_time):
+    from_time = datetime.strptime(from_time, '%m-%d-%Y')
+    to_time = datetime.strptime(to_time, '%m-%d-%Y')
+    report_data = {}
+    report_data['form_data'] = []
+    inner_list = report_data['form_data']
+    inner_list.append({'graphType': 'Bar Graph'})
+    inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
+    inner_list.append({'from_time': from_time, 'to_time': to_time})
+    if presetModel.autoscale == 'Yes':
+        inner_list.append({'select_bar_color': presetModel.select_bar_color, 'autoscale': presetModel.autoscale,
+                           'max_count': None, 'increment_by': None})
+    else:
+        inner_list.append({'select_bar_color': presetModel.select_bar_color, 'autoscale': presetModel.autoscale,
+                           'max_count': presetModel.max_count, 'increment_by': presetModel.increment_by})
+
+    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
+
+    return report_data
+
+# Convert histogram preset data back into dictionary format to prepare send it to the report generator
+def getHistogramPreset(presetModel, from_time, to_time):
+    from_time = datetime.strptime(from_time, '%m-%d-%Y')
+    to_time = datetime.strptime(to_time, '%m-%d-%Y')
+    report_data = {}
+    report_data['form_data'] = []
+    inner_list = report_data['form_data']
+    inner_list.append({'graphType': 'Histogram'})
+    inner_list.append({'time_units': presetModel.time_units, 'include_table': presetModel.include_table})
+    inner_list.append({'from_time': from_time, 'to_time': to_time})
+    if presetModel.autoscale == 'Yes':
+        inner_list.append({'select_bar_color': presetModel.select_bar_color, 'autoscale': presetModel.autoscale,
+                           'max_count': None, 'increment_by': None})
+    else:
+        inner_list.append({'select_bar_color': presetModel.select_bar_color, 'autoscale': presetModel.autoscale,
+                           'max_count': presetModel.max_count, 'increment_by': presetModel.increment_by})
+
+    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
+
+    return report_data
+
+def getLineScatterPreset(presetModel, from_time, to_time):
+    from_time = datetime.strptime(from_time, '%m-%d-%Y')
+    to_time = datetime.strptime(to_time, '%m-%d-%Y')
+    report_data = {}
+    report_data['form_data'] = []
+    inner_list = report_data['form_data']
+    inner_list.append({'graphType': 'Line and/or Scatter'})
+    inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
+    inner_list.append({'from_time': from_time, 'to_time': to_time})
+    if presetModel.autoscale == 'Yes':
+        inner_list.append({'autoscale': presetModel.autoscale, 'max_count': None,
+                           'increment_by': None, 'select_dot_color': presetModel.dot_color, 'display_as':presetModel.display_options})
+    else:
+        inner_list.append({'autoscale': presetModel.autoscale, 'max_count': presetModel.max_count,
+                           'increment_by': presetModel.increment_by, 'select_dot_color': presetModel.dot_color,
+                           'display_as': presetModel.display_options})
+
+    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
+
+    return report_data
+
+def getPieChartPreset(presetModel, from_time, to_time):
+    from_time = datetime.strptime(from_time, '%m-%d-%Y')
+    to_time = datetime.strptime(to_time, '%m-%d-%Y')
+    report_data = {}
+    report_data['form_data'] = []
+    inner_list = report_data['form_data']
+    inner_list.append({'graphType': 'Pie Chart'})
+    inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
+    inner_list.append({'from_time': from_time, 'to_time': to_time})
+    inner_list.append({'Data_units': presetModel.data_units})
+    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
+
+    return report_data
+
+def getIndividualStatisticPreset(presetModel, from_time, to_time):
+    from_time = datetime.strptime(from_time, '%m-%d-%Y')
+    to_time = datetime.strptime(to_time, '%m-%d-%Y')
+    report_data = {}
+    report_data['form_data'] = []
+    inner_list = report_data['form_data']
+    inner_list.append({'graphType': 'Individual Statistic'})
+    inner_list.append({'selection': presetModel.selection, 'count_options': presetModel.count_options})
+    inner_list.append({'from_time': from_time, 'to_time': to_time})
+    inner_list.append({'header_font_color': presetModel.header_font_color,
+                       'statistic_font_color': presetModel.statistic_font_color,
+                       'header_font_size': presetModel.header_font_size,
+                       'statistic_font_size': presetModel.statistic_font_size})
+
+    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
+
+    return report_data
+
+
+
+def presetReport(request, preset_name, from_time, to_time):
+    preset = ReportPresets.objects.get(pk=preset_name)
+    if preset.graph_type == 'Bar Graph':
+        data_dict = getBarGraphPreset(preset, from_time, to_time)
+    elif preset.graph_type == 'Histogram':
+        data_dict = getHistogramPreset(preset, from_time, to_time)
+    elif preset.graph_type == 'Line and/or Scatter':
+        data_dict = getLineScatterPreset(preset, from_time, to_time)
+    elif preset.graph_type == 'Pie Chart':
+        data_dict = getPieChartPreset(preset, from_time, to_time)
+    elif preset.graph_type == 'Individual Statistic':
+        data_dict = getIndividualStatisticPreset(preset, from_time, to_time)
+
+    reportGenerator = ReportGenerator(request, data_dict)
+
+    app, title = reportGenerator.generateReport()
 
     return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
 
@@ -958,8 +1196,9 @@ def exampleGraph(request):
 
     return render(request, 'visualizations/exampleGraph.html')
 
-def genTableFile(header,values):
-    rows = zip(values[0],values[1])
+
+def genTableFile(header, values):
+    rows = zip(values[0], values[1])
     with open('table.csv', 'w+', newline='') as csvfile:
         csvwriter = csv.writer(csvfile, delimiter=',')
         csvwriter.writerow(header)

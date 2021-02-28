@@ -1,10 +1,12 @@
 from django.db import models
 
 
+
 # Database tables for saving user report preferences
 # Visit period is not included (the user will generally select
 # new dates for the same graph preferences)
 from login.models import CustomUser
+
 
 
 class ReportPresets(models.Model):
@@ -77,6 +79,10 @@ class ReportPresets(models.Model):
                          ('Months', 'Months'),
                          ('Years', 'Years')]
 
+    LINE_DISP_CHOICES = [('Dots', 'Dots'),
+                         ('Lines', 'Lines'),
+                         ('Dots and Lines', 'Dots and Lines')]
+
     # Required for all report types
     graph_type = models.CharField(choices=GRAPH_CHOICES, max_length=50)
 
@@ -87,7 +93,8 @@ class ReportPresets(models.Model):
     time_units = models.CharField(choices=HIST_TIME_CHOICES, null=True, max_length=50)
 
     # Required for everything except Individual Statistic
-    locations = models.CharField(max_length=50, null=True)
+    locations = models.CharField(max_length=500, null=True)
+    select_all = models.BooleanField()
     include_table = models.CharField(choices=YES_NO, max_length=50, null=True)
 
     # Required for Bar Graph and Histogram
@@ -102,7 +109,8 @@ class ReportPresets(models.Model):
     hist_data = models.CharField(max_length=50, null=True)
 
     # Required for Line Graph only
-    line_color = models.CharField(choices=COLOR_CHOICES, max_length=50, null=True)
+    dot_color = models.CharField(choices=COLOR_CHOICES, max_length=50, null=True)
+    display_options = models.CharField(choices=LINE_DISP_CHOICES, max_length=50, null=True)
 
     # Required for Pie Chart only
     data_units = models.CharField(choices=PIE_DATA_OPTIONS, max_length=50, null=True)
@@ -113,9 +121,9 @@ class ReportPresets(models.Model):
 
     # Required for Individual Statistic only
     count_options = models.CharField(choices=COUNT_OPTIONS, max_length=50, null=True)
-    label_color = models.CharField(choices=COLOR_CHOICES, max_length=50, null=True)
+    header_font_color = models.CharField(choices=COLOR_CHOICES, max_length=50, null=True)
     statistic_font_color = models.CharField(choices=COLOR_CHOICES, max_length=50, null=True)
-    label_font_size = models.IntegerField(choices=FONT_CHOICES, null=True)
+    header_font_size = models.IntegerField(choices=FONT_CHOICES, null=True)
     statistic_font_size = models.IntegerField(choices=FONT_CHOICES, null=True)
 
     preset_name = models.CharField(max_length=100, primary_key=True)
