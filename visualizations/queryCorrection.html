@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    <form action="" method="post" class="h-50 justify-content-center"> {% csrf_token %}
+    <form action="{% url 'visualizations:getReport' %}" method="post" class="h-50 justify-content-center"> {% csrf_token %}
             <div class="row flex-column">
                 {{ form }}
             </div>

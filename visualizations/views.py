@@ -21,8 +21,6 @@ from django_plotly_dash import DjangoDash
 import csv
 
 
-data_storage = {}
-
 class emptyList(Exception):
     pass
 
@@ -47,6 +45,9 @@ class ReportGenerator():
 
     def setState(self, state):
         self.state = state
+
+    def setData(self, data):
+        self.data = data
 
     def generateReport(self):
         app, title, validDates = self.state.generateReport()
@@ -406,6 +407,8 @@ class Histogram(State):
 
         # print('conn_results_rotated: ', conn_results_rotated)
 
+        validDates = self.checkInvalidQuery(conn_results_rotated)
+
         if conn_results_rotated == []:
             x_axis = [1, 2, 3, 4, 5, 6, 7, 8]
             y_axis = [1, 2, 3, 4, 5, 6, 7, 8]
@@ -477,7 +480,7 @@ class Histogram(State):
                 dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
             ], style={'height': '70vh', 'width': '70vw'})
 
-        return app, title
+        return app, title, validDates
 
 
 class PieChart(State):
@@ -612,6 +615,8 @@ class PieChart(State):
 
         # print('conn_results_rotated: ', conn_results_rotated)
 
+        validDates = self.checkInvalidQuery(conn_results_rotated)
+
         if conn_results_rotated == []:
             x_axis = [1, 2, 3, 4, 5, 6, 7, 8]
             y_axis = [1, 2, 3, 4, 5, 6, 7, 8]
@@ -659,7 +664,7 @@ class PieChart(State):
                 dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
             ], style={'height': '70vh', 'width': '70vw'})
 
-        return app, title
+        return app, title, validDates
 
 
 # Select count from visits where date >= from_date and date <= to_date group by location
@@ -815,6 +820,8 @@ class IndividualStatistic(State):
 
         # print('conn_results_rotated: ', conn_results_rotated)
 
+        validDates = self.checkInvalidQuery(conn_results_rotated)
+
         if conn_results_rotated == []:
             x_axis = [1, 2, 3, 4, 5, 6, 7, 8]
             y_axis = [1, 2, 3, 4, 5, 6, 7, 8]
@@ -855,7 +862,7 @@ class IndividualStatistic(State):
         # layout = Layout(title='Length of Visits',xaxis=dict(title='Length (min)'),yaxis=dict(title='# of Visits'))
         # fig = Figure(data=graph,layout=layout)
         # plot_div = plot(fig,output_type='div',show_link=False,link_text="")
-        return app, title
+        return app, title, validDates
 
 
 class ScatterPlot(State):
@@ -979,6 +986,8 @@ class ScatterPlot(State):
 
         # print('conn_results_rotated: ', conn_results_rotated)
 
+        validDates = self.checkInvalidQuery(conn_results_rotated)
+
         if conn_results_rotated == []:
             x_axis = [1, 2, 3, 4, 5, 6, 7, 8]
             y_axis = [1, 2, 3, 4, 5, 6, 7, 8]
@@ -1033,7 +1042,7 @@ class ScatterPlot(State):
                 dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
             ], style={'height': '70vh', 'width': '70vw'})
 
-        return app, title
+        return app, title, validDates
 
 
 def getReport(request):
@@ -1041,42 +1050,47 @@ def getReport(request):
     inner_dict = data['form_data']
     graph_type_dict = inner_dict[0]
     graph_type = graph_type_dict['graphType']
-    valid_dates = False
-    first_query = True
     reportGenerator = ReportGenerator(request, data)
-    app, title, validDates = reportGenerator.generateReport()
+    app, title, valid_dates = reportGenerator.generateReport()
 
     if valid_dates:
         return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
+    elif request.method == 'POST':
+        form = TimeFrame(request.POST)
+        from_time = request.POST.get('from_time')
+        to_time = request.POST.get('to_time')
 
-    while not valid_dates:
-        global data_storage
-        data_storage = data
+        from_time = datetime.strptime(from_time, '%m/%d/%Y')
+        to_time = datetime.strptime(to_time, '%m/%d/%Y')
+        if graph_type == 'Bar Graph':
+            data = dateQueryCorrection(data, from_time, to_time)
+        elif graph_type == 'Histogram':
+            data = dateQueryCorrection(data, from_time, to_time)
+        elif graph_type == 'Line and/or Scatter':
+            data = dateQueryCorrection(data, from_time, to_time)
+        elif graph_type == 'Pie Chart':
+            data = dateQueryCorrection(data, from_time, to_time)
+        elif graph_type == 'Individual Statistic':
+            data = dateQueryCorrection(data, from_time, to_time)
+        reportGenerator.setData(data)
         app, title, valid_dates = reportGenerator.generateReport()
-        first_query = False
         if valid_dates:
             return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
-        elif request.method == 'POST':
-            form = TimeFrame(request.POST)
-            from_time = request.POST.get('from_time')
-            to_time = request.POST.get('to_time')
-
-            from_time = datetime.strptime(from_time, '%m/%d/%Y')
-            to_time = datetime.strptime(to_time, '%m/%d/%Y')
-
-            data = barGraphQueryCorrection(data, from_time, to_time)
-            #return render(request, 'visualizations/queryCorrection.html', context={'form': form})
         else:
             form = TimeFrame()
             return render(request, 'visualizations/queryCorrection.html', context={'form': form})
+    else:
+        form = TimeFrame()
+        return render(request, 'visualizations/queryCorrection.html', context={'form': form})
 
-def barGraphQueryCorrection(data, new_from_time, new_to_time):
+def dateQueryCorrection(data, new_from_time, new_to_time):
     inner_dict = data['form_data']
     date_subdict = inner_dict[2]
     date_subdict['from_time'] = new_from_time
     date_subdict['to_time'] = new_to_time
 
     return data
+
 
 
 # Convert bar graph preset data back into dictionary format to prepare send it to the report generator
@@ -1191,9 +1205,14 @@ def presetReport(request, preset_name, from_time, to_time):
 
     reportGenerator = ReportGenerator(request, data_dict)
 
-    app, title, validDates = reportGenerator.generateReport()
+    app, title, valid_dates = reportGenerator.generateReport()
 
-    return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
+    if valid_dates:
+        return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
+    else:
+        form = TimeFrame()
+        pageViews.preset_storage = data_dict
+        return render(request, 'visualizations/queryCorrection.html', context={'form': form})
 
 
 def callback_size(dropdown_color, dropdown_size):
