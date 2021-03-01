@@ -253,6 +253,7 @@ class BarGraph(State):
             y_list.append(total)
             table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
                               layout=Layout(title=title))
+            table.update_layout(height=(200+len(x_list)*23))
 
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '40vh'}),
@@ -471,6 +472,7 @@ class Histogram(State):
             y_list.append(total)
             table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
                               layout=Layout(title=title))
+            table.update_layout(height=(200 + len(x_list) * 23))
 
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '40vh'}),
@@ -659,6 +661,7 @@ class PieChart(State):
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '80vh', 'width': '80vw'}),
                                             ], style={'height': '40vh', 'width': '70vw'})
+            table.update_layout(height=(200 + len(x_list) * 23))
         else:
             app.layout = html.Div(children=[
                 dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
@@ -855,6 +858,8 @@ class IndividualStatistic(State):
                                                               size=int(self.statistic_font_size))))],
                           layout=Layout(title=title))
 
+        table.update_layout(height=(200 + len(x_list) * 23))
+
         app.layout = html.Div(children=[dcc.Graph(id='table', figure=table, style={'height': '70vh'})
                                         ], style={'height': '80vh', 'width': '70vw'})
 
@@ -1033,6 +1038,7 @@ class ScatterPlot(State):
             y_list.append(total)
             table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
                               layout=Layout(title=title))
+            table.update_layout(height=(200 + len(x_list) * 23))
 
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '80vh', 'width': '80vw'}),
@@ -1057,27 +1063,30 @@ def getReport(request):
         return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
     elif request.method == 'POST':
         form = TimeFrame(request.POST)
-        from_time = request.POST.get('from_time')
-        to_time = request.POST.get('to_time')
+        if form.is_valid():
+            from_time = request.POST.get('from_time')
+            to_time = request.POST.get('to_time')
 
-        from_time = datetime.strptime(from_time, '%m/%d/%Y')
-        to_time = datetime.strptime(to_time, '%m/%d/%Y')
-        if graph_type == 'Bar Graph':
-            data = dateQueryCorrection(data, from_time, to_time)
-        elif graph_type == 'Histogram':
-            data = dateQueryCorrection(data, from_time, to_time)
-        elif graph_type == 'Line and/or Scatter':
-            data = dateQueryCorrection(data, from_time, to_time)
-        elif graph_type == 'Pie Chart':
-            data = dateQueryCorrection(data, from_time, to_time)
-        elif graph_type == 'Individual Statistic':
-            data = dateQueryCorrection(data, from_time, to_time)
-        reportGenerator.setData(data)
-        app, title, valid_dates = reportGenerator.generateReport()
-        if valid_dates:
-            return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
+            from_time = datetime.strptime(from_time, '%m/%d/%Y')
+            to_time = datetime.strptime(to_time, '%m/%d/%Y')
+            if graph_type == 'Bar Graph':
+                data = dateQueryCorrection(data, from_time, to_time)
+            elif graph_type == 'Histogram':
+                data = dateQueryCorrection(data, from_time, to_time)
+            elif graph_type == 'Line and/or Scatter':
+                data = dateQueryCorrection(data, from_time, to_time)
+            elif graph_type == 'Pie Chart':
+                data = dateQueryCorrection(data, from_time, to_time)
+            elif graph_type == 'Individual Statistic':
+                data = dateQueryCorrection(data, from_time, to_time)
+            reportGenerator.setData(data)
+            app, title, valid_dates = reportGenerator.generateReport()
+            if valid_dates:
+                return render(request, 'visualizations/getReport.html', context={'graphTitle': title})
+            else:
+                form = TimeFrame()
+                return render(request, 'visualizations/queryCorrection.html', context={'form': form})
         else:
-            form = TimeFrame()
             return render(request, 'visualizations/queryCorrection.html', context={'form': form})
     else:
         form = TimeFrame()

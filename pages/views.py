@@ -75,7 +75,7 @@ def changePassView(request, emailAddress):
         # If the user's current password is correct
         if form.check_entry():
 
-            # If the user is changing their own password
+            # If the user changing their own password
             if user.email == request.user.email:
                 # Set password with new value, save
                 request.user.set_password(request.POST.get('pass'))
@@ -574,22 +574,27 @@ def deletePreset(request, name):
 def createReportFromPreset(request, name):
     if request.method == 'POST':
         form = TimeFrame(request.POST)
-        from_time = request.POST.get('from_time')
-        to_time = request.POST.get('to_time')
 
-        from_time = datetime.strptime(from_time, '%m/%d/%Y')
-        to_time = datetime.strptime(to_time, '%m/%d/%Y')
+        if form.is_valid():
+            from_time = request.POST.get('from_time')
+            to_time = request.POST.get('to_time')
 
-        from_time = from_time.strftime('%m-%d-%Y')
-        to_time = to_time.strftime('%m-%d-%Y')
-        # Generate report here
+            from_time = datetime.strptime(from_time, '%m/%d/%Y')
+            to_time = datetime.strptime(to_time, '%m/%d/%Y')
+
+            from_time = from_time.strftime('%m-%d-%Y')
+            to_time = to_time.strftime('%m-%d-%Y')
+
+            # Generate report here
+            return render(request, 'pages/presetReportGenerated.html', {'preset_name': name,
+                                                                        'from_time': from_time, 'to_time': to_time,
+                                                                        'form': form})
+        else:
+            return render(request, 'pages/createReportFromPreset.html', {'form': form})
 
         # from_time = from_time.strftime('%m/%d/%Y')
         # to_time = to_time.stftime('%m/%d/%Y')
 
-        return render(request, 'pages/presetReportGenerated.html', {'preset_name': name,
-                                                                    'from_time': from_time, 'to_time': to_time,
-                                                                    'form': form})
     else:
         form = TimeFrame()
         return render(request, 'pages/createReportFromPreset.html', {'name': name, 'form': form})

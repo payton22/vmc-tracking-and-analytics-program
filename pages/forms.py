@@ -139,6 +139,12 @@ class TimeFrame(forms.Form):
                                                                                'autocomplete': 'off',
                                                                                'name': 'to_time'}))
 
+    def clean(self):
+        data = self.cleaned_data
+
+        if data.get('from_time') > data.get('to_time'):
+            raise forms.ValidationError(
+                    'The starting date you entered is later than the ending date.')
 
 class HistogramHours(forms.Form):
     from_time = forms.TimeField(input_formats=['%H:%M %p'],
