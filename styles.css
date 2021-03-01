@@ -101,9 +101,9 @@ img.portfolio {
 
 .profile {
 	width: 75%;
-	margin-bottom: 2rem;
+	margin-bottom: 3rem;
 }
 
-p {
-  margin: 35px;
+.description-text {
+	margin: 35px;
 }
