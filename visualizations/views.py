@@ -1,3 +1,6 @@
+import os
+
+from django.http import HttpResponse
 from django.shortcuts import render
 from plotly.offline import plot
 from plotly.graph_objs import Bar
@@ -8,6 +11,7 @@ from pages import views as pageViews
 from visualizations.models import ReportPresets
 from datetime import datetime
 from pages.views import TimeFrame
+from django.views.static import serve
 import sqlite3
 
 import dash
@@ -242,8 +246,9 @@ class BarGraph(State):
             header = ['Row Labels', 'Count of Location']
             x_list = list(x_axis)
             y_list = list(y_axis)
-            values = [x_list, y_list]
-            print('values: ', values)
+
+
+
 
             total = 0
             for count in y_axis:
@@ -251,9 +256,24 @@ class BarGraph(State):
 
             x_list.append('<b>Grand Total</b>')
             y_list.append(total)
+
+            values = [x_list, y_list]
             table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
                               layout=Layout(title=title))
             table.update_layout(height=(200+len(x_list)*23))
+
+            new_x_list = []
+
+            for str in x_list:
+                temp_new_string = str.replace('<b>', '')
+                new_string = temp_new_string.replace('</b>', '')
+                new_x_list.append(new_string)
+
+
+
+            values = [new_x_list, y_list]
+
+            genTableFile(header, values)
 
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '40vh'}),
@@ -474,6 +494,17 @@ class Histogram(State):
                               layout=Layout(title=title))
             table.update_layout(height=(200 + len(x_list) * 23))
 
+            new_x_list = []
+
+            for str in x_list:
+                temp_new_string = str.replace('<b>', '')
+                new_string = temp_new_string.replace('</b>', '')
+                new_x_list.append(new_string)
+
+            values = [new_x_list, y_list]
+
+            genTableFile(header, values)
+
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '40vh'}),
                                             ], style={'height': '40vh', 'width': '70vw'})
@@ -662,6 +693,17 @@ class PieChart(State):
                 , dcc.Graph(id='figure', figure=fig, style={'height': '80vh', 'width': '80vw'}),
                                             ], style={'height': '40vh', 'width': '70vw'})
             table.update_layout(height=(200 + len(x_list) * 23))
+
+            new_x_list = []
+
+            for str in x_list:
+                temp_new_string = str.replace('<b>', '')
+                new_string = temp_new_string.replace('</b>', '')
+                new_x_list.append(new_string)
+
+            values = [new_x_list, y_list]
+
+            genTableFile(header, values)
         else:
             app.layout = html.Div(children=[
                 dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
@@ -860,6 +902,17 @@ class IndividualStatistic(State):
 
         table.update_layout(height=(200 + len(x_list) * 23))
 
+        new_x_list = []
+
+        for str in x_list:
+            temp_new_string = str.replace('<b>', '')
+            new_string = temp_new_string.replace('</b>', '')
+            new_x_list.append(new_string)
+
+        values = [new_x_list, y_list]
+
+        genTableFile(header, values)
+
         app.layout = html.Div(children=[dcc.Graph(id='table', figure=table, style={'height': '70vh'})
                                         ], style={'height': '80vh', 'width': '70vw'})
 
@@ -1043,6 +1096,18 @@ class ScatterPlot(State):
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '80vh', 'width': '80vw'}),
                                             ], style={'height': '40vh', 'width': '70vw'})
+
+            new_x_list = []
+
+            for str in x_list:
+                temp_new_string = str.replace('<b>', '')
+                new_string = temp_new_string.replace('</b>', '')
+                new_x_list.append(new_string)
+
+            values = [new_x_list, y_list]
+
+            genTableFile(header, values)
+
         else:
             app.layout = html.Div(children=[
                 dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
@@ -1278,9 +1343,20 @@ def exampleGraph(request):
 
 def genTableFile(header, values):
     rows = zip(values[0], values[1])
-    with open('table.csv', 'w+', newline='') as csvfile:
+    with open(os.path.join(os.getcwd(), 'table.csv'), 'w+', newline='') as csvfile:
         csvwriter = csv.writer(csvfile, delimiter=',')
         csvwriter.writerow(header)
         for value in rows:
             csvwriter.writerow(value)
         csvfile.close()
+
+def downloadFile(request):
+    path = os.path.join(os.getcwd(), 'table.csv')
+
+    file = open(path, 'r')
+    response = HttpResponse(file, content_type='application/force-download')
+    response['Content-Disposition'] = 'attachment; filename="%s"' % 'table.csv'
+
+    os.remove(path)
+
+    return response
