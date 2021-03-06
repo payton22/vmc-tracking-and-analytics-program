@@ -144,6 +144,7 @@ class BarGraph(State):
         if self.autoscale == 'No':
             self.max_count = self.style_dict['max_count']
             self.increment_by = self.style_dict['increment_by']
+        self.show_multiple_bars = self.style_dict['show_multiple_bars_by_location']
 
     def determineLocationsToTrack(self):
         self.location_dict = self.inner_dict[4]
@@ -160,6 +161,14 @@ class BarGraph(State):
         self.determineStyleSettings()
         self.determineLocationsToTrack()
 
+        if self.show_multiple_bars == 'No':
+            app, title, validDates = self.generateSingleBars()
+            return app, title, validDates
+        elif self.show_multiple_bars == 'Yes':
+            app, title, validDates = self.generateGroupedBars()
+            return app, title, validDates
+
+    def generateSingleBars(self):
         conn = sqlite3.connect('vmc_tap.db');
         conn_results = []
 
@@ -186,6 +195,7 @@ class BarGraph(State):
                 substr += location + '\' or location = \''
             else:
                 substr += location
+
 
         conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
             '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
@@ -284,6 +294,147 @@ class BarGraph(State):
             ], style={'height': '70vh', 'width': '70vw'})
 
         return app, title, validDates
+
+    def generateGroupedBars(self):
+
+        conn = sqlite3.connect('vmc_tap.db');
+        conn_results = []
+
+        if self.all_locations:
+            self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+        else:
+            loc_str = ''
+            for loc in self.location_list:
+                if loc != self.location_list[-1]:
+                    loc_str += loc + ', '
+                else:
+                    loc_str += loc
+
+            self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+
+        title = self.title
+
+        substr = ''
+
+        for i, location in enumerate(self.location_list):
+            if i != (len(self.location_list) - 1):
+                substr += location + '\' or location = \''
+            else:
+                substr += location
+
+        conn_string_sql = []
+
+        for location in self.location_list:
+            conn_string_sql.append("select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + location + "\') and check_in_date >= \'" + self.from_time.strftime(
+            '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
+            '%Y-%m-%d') + "\' group by " + self.group_by + ";")
+
+
+        print('location_list: ', self.location_list)
+
+        # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
+
+        print('conn_string_sql', conn_string_sql)
+        #       print('conn.execute: ', conn.execute(conn_string_sql))
+
+        location_results = []
+
+        for i, location in enumerate(self.location_list):
+            conn_results = []
+            for d in conn.execute(conn_string_sql[i]):
+                conn_results.append(d)
+            # Rotates 2D array to work w/ plotly
+            conn_results_rotated = list(zip(*conn_results[::-1]))
+            location_results.append(conn_results_rotated)
+
+        conn.close()
+
+        print('Conn results_rotated:', conn_results_rotated)
+
+        app = DjangoDash('Graph')  # replaces dash.Dash
+
+        # print('conn_results_rotated: ', conn_results_rotated)
+
+        # TODO perform query validity checks for grouped bar graphs
+        #validDates = self.checkInvalidQuery(conn_results_rotated)
+
+        y_axis = []
+        x_axis = []
+        # TODO remove later (only temporary)
+        validDates = True
+        #if not validDates:
+        for i, location in enumerate(self.location_list):
+            #x_axis.append([1, 2, 3, 4, 5, 6, 7, 8])
+            #y_axis.append([1, 2, 3, 4, 5, 6, 7, 8])
+        #else:
+            x_axis.append(location_results[i][0])
+            y_axis.append(location_results[i][1])
+            # for tuple in conn_results:
+            #    x_axis.append(tuple[0])
+            #   y_axis.append(tuple[1])
+
+        # If autoscaling is not enabled by the user, we need to set the max count of the y-axis
+        if self.autoscale != 'Yes':
+            layout = go.Layout(title=title, yaxis=dict(range=[0, self.max_count]))
+        else:
+            layout = Layout(title=title)
+
+        #fig = go.Figure(data=[go.Bar(x=x_axis, y=y_axis, marker=dict(color=self.bar_color.lower()))], layout=layout)
+
+        data_list = []
+        for i, location in enumerate(self.location_list):
+            data_list.append(go.Bar(name=location, x=x_axis[i], y=y_axis[i]))
+
+        fig = go.Figure(data=data_list, layout=layout)
+        # Now implement the custom scaling if enabled
+        if self.autoscale != 'Yes':
+            fig.update_yaxes(dtick=self.increment_by)
+        # graph = [Bar(x=x_axis,y=y_axis)]
+        # layout = Layout(title='Length of Visits',xaxis=dict(title='Length (min)'),yaxis=dict(title='# of Visits'))
+        # fig = Figure(data=graph,layout=layout)
+        # plot_div = plot(fig,output_type='div',show_link=False,link_text="")
+
+        # Dash instance for includng a table
+        if self.include_table == 'Yes':
+            header = ['Row Labels', 'Count of Location']
+            x_list = list(x_axis)
+            y_list = list(y_axis)
+
+            total = 0
+            for count in y_axis:
+                total += count
+
+            x_list.append('<b>Grand Total</b>')
+            y_list.append(total)
+
+            values = [x_list, y_list]
+            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
+                              layout=Layout(title=title))
+            table.update_layout(height=(200 + len(x_list) * 23))
+
+            new_x_list = []
+
+            for str in x_list:
+                temp_new_string = str.replace('<b>', '')
+                new_string = temp_new_string.replace('</b>', '')
+                new_x_list.append(new_string)
+
+            values = [new_x_list, y_list]
+
+            genTableFile(header, values)
+
+            app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
+                , dcc.Graph(id='figure', figure=fig, style={'height': '40vh'}),
+                                            ], style={'height': '40vh', 'width': '70vw'})
+        else:
+            app.layout = html.Div(children=[
+                dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
+            ], style={'height': '70vh', 'width': '70vw'})
+
+        return app, title, validDates
+
 
 
 class Histogram(State):

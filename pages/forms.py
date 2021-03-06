@@ -208,6 +208,8 @@ class CustomizeBarGraph(forms.Form):
     increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'increment_by'}),
                                       label='Increment by:', required=False)
 
+    show_multiple_bars_by_location = forms.ChoiceField(choices=Y_N_CHOICES, widget=forms.RadioSelect(attrs={'id': 'grouped_graph'}))
+
     def clean(self):
         data = self.cleaned_data
         print(data.get('max_count', '1'))
@@ -237,6 +239,8 @@ class CustomizeLineGraph(CustomizeBarGraph):
     increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'line_increment'}),
                                       label='Increment by:', required=False)
 
+    show_multiple_bars_by_location = None
+
 
 # In the wizard, this is used if the user wants to create a histogram.
 # The user selects different time periods to track attendance.
@@ -263,6 +267,8 @@ class HistogramDetails(CustomizeBarGraph):
     # Integer field for allowing user to customize incrementation
     increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'hist_increment'}),
                                       label='Increment by:', required=False)
+
+    show_multiple_bars_by_location = None
 
 
 # Wizard form that allows the user to customize the pie chart
@@ -299,6 +305,8 @@ class CustomizeScatterPlot(CustomizeBarGraph):
                                       label='Increment by:', required=False)
 
     display_as = forms.ChoiceField(choices=OPTIONS)
+
+    show_multiple_bars_by_location = None
 
 
 # Individual statistic counting/tracking options
