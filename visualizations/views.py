@@ -267,7 +267,9 @@ class BarGraph(State):
             x_list.append('<b>Grand Total</b>')
             y_list.append(total)
 
+
             values = [x_list, y_list]
+
             table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
                               layout=Layout(title=title))
             table.update_layout(height=(200+len(x_list)*23))
