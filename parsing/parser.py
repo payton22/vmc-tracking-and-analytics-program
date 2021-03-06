@@ -20,14 +20,14 @@ class Data:
     check_out_date = ''
     check_out_time = ''
     duration = ''
-    #staff_name = ''
-    #staff_id = ''
-    #staff_email = ''
+    staff_name = ''
+    staff_id = ''
+    staff_email = ''
 
     def get_insert_statement(self):
         insert_val_list = [self.student_name, self.student_email, self.student_id, self.services, self.location,
         datetime.strptime(self.check_in_date, '%m/%d/%y').strftime('%Y-%m-%d'), self.check_in_time,
-        datetime.strptime(self.check_out_date, '%m/%d/%y').strftime('%Y-%m-%d'), self.check_out_time, self.duration]
+        datetime.strptime(self.check_out_date, '%m/%d/%y').strftime('%Y-%m-%d'), self.check_out_time, self.duration, self.staff_name, self.staff_email, self.staff_id]
         input_val_string = ''
         for i in insert_val_list:
             input_val_string = input_val_string + '\'' + i + '\','

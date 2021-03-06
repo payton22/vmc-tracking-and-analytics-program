@@ -43,16 +43,41 @@ def surveyPageView(request):
     if(request.method == 'GET'):
         return render(request, 'pages/survey.html')
     if(request.method == 'POST'):
-        mystr = '';
+        #mystr = '';
         if(len(list(request.POST.items())) != 14):
             returnrender(request, 'pages/survey.html'); #Did not fill out entire form
-        #Build SQL insert statement
-        insert_statement = '';
-        for a,b in list(request.POST.items()):
-            mystr += a + ',' + b + '<br>';
+        #Connect to DB
+        import sqlite3
+        conn = sqlite3.connect('vmc_tap.db');
 
+	#Check if student exists
+        #student_exists = [];
+        get_student = "SELECT COUNT(student_id) FROM demographics WHERE student_id = " + str(request.POST["student_id"]) + ";";
+        for d in conn.execute(get_student):
+            student_exists = d[0];
+        mystr = '@' + str(student_exists) + '@';
+        
+        query_names = ['student_name', 'student_id', 'benefit_chapter', 'is_stem', 'currently_live', 'employment', 'work_hours', 'dependents', 'marital_status', 'gender', 'parent_education', 'break_in_attendance'];
+        query_values = [request.POST["first_name"] + ' ' + request.POST["last_name"]];
+        query_values.extend([request.POST[a] for a in query_names if a != 'student_name']);
+        #Student not not yet exist
+        if(student_exists == 0):
+            sql_statement = "INSERT INTO demographics (" + ",".join(query_names) + ") VALUES (" + ",".join(['\'' + str(a) + '\'' for a in query_values]) + ");";
+
+        #Student does exist
+        else:
+            query_commas = [', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',' '];
+            sql_statement = "UPDATE demographics SET student_name = '" + request.POST["first_name"] + ' ' + request.POST["last_name"] + "', ";
+            for i, name in enumerate(query_names):
+                if(name != 'student_name'):
+                    sql_statement += name + ' = \'' + query_values[i] + '\'' + query_commas[i];
+            sql_statement += 'WHERE student_id = ' + str(request.POST["student_id"]) + ';';
+        conn.execute(sql_statement);
+        conn.commit();
+
+        conn.close();
     #return render(request, 'pages/survey.html')
-    return HttpResponse(mystr);
+    return HttpResponse('Survey data recorded.');
 
 def homePageView(request):
     return render(request, 'pages/homePage.html')

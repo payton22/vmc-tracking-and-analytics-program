@@ -28,7 +28,7 @@ def rebuild_db(request):
     #conn.execute(
     #    'CREATE TABLE visits(student_name TEXT, student_email TEXT, student_id INTEGER, student_alt_id TEXT, classification TEXT, major TEXT, assigned_staff TEXT, care_unit TEXT, services TEXT, course_name TEXT, course_number TEXT, location TEXT, check_in_date DATE, check_in_time TEXT, check_out_date DATE, check_out_time TEXT, check_in_duration REAL, staff_name TEXT,staff_id TEXT, staff_email TEXT)');
     conn.execute(
-        'CREATE TABLE visits(student_name TEXT, student_email TEXT, student_id INTEGER, services TEXT, location TEXT, check_in_date DATE, check_in_time TEXT, check_out_date DATE, check_out_time TEXT, check_in_duration REAL)');
+        'CREATE TABLE visits(student_name TEXT, student_email TEXT, student_id INTEGER, services TEXT, location TEXT, check_in_date DATE, check_in_time TEXT, check_out_date DATE, check_out_time TEXT, check_in_duration REAL, staff_name TEXT, staff_email TEXT, staff_id TEXT)');
 
     #conn.execute(
     #    'CREATE TABLE demographics(student_name TEXT, student_email TEXT, student_id INTEGER, student_alt_id TEXT, classification TEXT, cumulative_gpa REAL, assigned_staff TEXT, cell_phone TEXT, home_phone TEXT, gender TEXT, ethnicity TEXT, date_of_birth TEXT, address TEXT, additional_address TEXT, city TEXT, state TEXT, zip TEXT, term_credit_hours REAL, term_gpa REAL, total_credit_hours_earned REAL, sms_opt_out INTEGER, datetime_opt_out TEXT, can_be_sent_messages INTEGER)');
