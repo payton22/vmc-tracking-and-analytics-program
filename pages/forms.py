@@ -5,15 +5,23 @@ from visualizations.models import ReportPresets
 
 # Making this global because it will be reused among multiple
 # "reports' forms
-DEMOGRAPHICS = [('Ethnicity', 'Ethnicity'),
-                ('Career', 'Career'),
-                ('Benefit Chapter', 'Benefit Chapter'),
-                ('Usage by Date', 'Usage by Date'),
-                ('College', 'College'),
-                ('Total Usage by Location', 'Total Usage by Location'),
-                ('Classification', 'Classification'),
-                ('Major', 'Major'),
-                ('Services', 'Services')]
+DEMOGRAPHICS = [('--- Not yet implemented ---', (
+    ('GPA', 'GPA'),
+    ('Benefit Chapter', 'Benefit Chapter'),
+    ('Residential Distance from Campus', 'Residential Distance from Campus'),
+    ('Employment', 'Employment'),
+    ('Weekly Hours Worked', 'Weekly Hours Worked'),
+    ('Number of Dependents', 'Number of Dependents'),
+    ('Marital Status', 'Marital Status'),
+    ('Gender Identity', 'Gender Identity'),
+    ('Parent Education', 'Parent Education'),
+    ('Break in University Attendance', 'Break in University Attendance'))),
+                ('--- Currently implemented and functional ---',
+                 (('Usage by Date', 'Usage by Date'),
+                  ('Total Usage by Location', 'Total Usage by Location'),
+                  ('Classification', 'Classification'),
+                  ('Major', 'Major'),
+                  ('Services', 'Services')))]
 
 HIST_TIME_CHOICES = [('Average visitors by time', 'Average visitors by time'),
                      ('Average visitors by day', 'Average visitors by day'),
@@ -144,16 +152,19 @@ class TimeFrame(forms.Form):
 
         if data.get('from_time') > data.get('to_time'):
             raise forms.ValidationError(
-                    'The starting date you entered is later than the ending date.')
+                'The starting date you entered is later than the ending date.')
+
 
 class HistogramHours(forms.Form):
     from_time = forms.TimeField(input_formats=['%H:%M %p'],
                                 widget=forms.TimeInput(format='%H:%M %p',
-                                                       attrs={'name': 'timepicker', 'class': 'timepicker form-control timepicker-input'}))
+                                                       attrs={'name': 'timepicker',
+                                                              'class': 'timepicker form-control timepicker-input'}))
 
     to_time = forms.TimeField(input_formats=['%H:%M %p'],
                               widget=forms.TimeInput(format='%H:%M %p',
-                                                     attrs={'name': 'timepicker', 'class': 'timepicker form-control timepicker-input'}))
+                                                     attrs={'name': 'timepicker',
+                                                            'class': 'timepicker form-control timepicker-input'}))
 
 
 # Used for selecting between different places that visitors attend in the VMC
@@ -208,7 +219,8 @@ class CustomizeBarGraph(forms.Form):
     increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'increment_by'}),
                                       label='Increment by:', required=False)
 
-    show_multiple_bars_by_location = forms.ChoiceField(choices=Y_N_CHOICES, widget=forms.RadioSelect(attrs={'id': 'grouped_graph'}))
+    show_multiple_bars_by_location = forms.ChoiceField(choices=Y_N_CHOICES,
+                                                       widget=forms.RadioSelect(attrs={'id': 'grouped_graph'}))
 
     def clean(self):
         data = self.cleaned_data

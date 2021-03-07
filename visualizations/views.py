@@ -225,8 +225,10 @@ class BarGraph(State):
             x_axis = [1, 2, 3, 4, 5, 6, 7, 8]
             y_axis = [1, 2, 3, 4, 5, 6, 7, 8]
         else:
-            x_axis = conn_results_rotated[0];
-            y_axis = conn_results_rotated[1];
+            x_axis = conn_results_rotated[0]
+            y_axis = conn_results_rotated[1]
+            x_axis = x_axis[::-1]
+            y_axis = y_axis[::-1]
             # for tuple in conn_results:
             #    x_axis.append(tuple[0])
             #   y_axis.append(tuple[1])
@@ -332,6 +334,7 @@ class BarGraph(State):
         #       print('conn.execute: ', conn.execute(conn_string_sql))
 
         location_results = []
+        valid_dates = []
 
         for i, location in enumerate(self.location_list):
             conn_results = []
@@ -340,6 +343,7 @@ class BarGraph(State):
             # Rotates 2D array to work w/ plotly
             conn_results_rotated = list(zip(*conn_results[::-1]))
             location_results.append(conn_results_rotated)
+            valid_dates.append(self.checkInvalidQuery(conn_results_rotated))
 
         conn.close()
 
@@ -347,22 +351,22 @@ class BarGraph(State):
 
         app = DjangoDash('Graph')  # replaces dash.Dash
 
-        # print('conn_results_rotated: ', conn_results_rotated)
-
-        # TODO perform query validity checks for grouped bar graphs
-        # validDates = self.checkInvalidQuery(conn_results_rotated)
 
         y_axis = []
         x_axis = []
-        # TODO remove later (only temporary)
         validDates = True
-        # if not validDates:
         for i, location in enumerate(self.location_list):
-            # x_axis.append([1, 2, 3, 4, 5, 6, 7, 8])
-            # y_axis.append([1, 2, 3, 4, 5, 6, 7, 8])
-            # else:
-            x_axis.append(location_results[i][0])
-            y_axis.append(location_results[i][1])
+            if not valid_dates[i]:
+                validDates = False
+                x_axis.append([1, 2, 3, 4, 5, 6, 7, 8])
+                y_axis.append([1, 2, 3, 4, 5, 6, 7, 8])
+            else:
+                x_results = location_results[i][0]
+                y_results = location_results[i][1]
+                x_results = x_results[::-1]
+                y_results = y_results[::-1]
+                x_axis.append(x_results)
+                y_axis.append(y_results)
             # for tuple in conn_results:
             #    x_axis.append(tuple[0])
             #   y_axis.append(tuple[1])
@@ -431,10 +435,11 @@ class BarGraph(State):
 
             new_x_list = []
 
-            for str in flattened_x_list:
-                temp_new_string = str.replace('<b>', '')
-                new_string = temp_new_string.replace('</b>', '')
-                new_x_list.append(new_string)
+            for value in flattened_x_list:
+                if isinstance(value, str):
+                    temp_new_string = value.replace('<b>', '')
+                    new_string = temp_new_string.replace('</b>', '')
+                    new_x_list.append(new_string)
 
             values = [new_x_list, flattened_y_list]
 
@@ -816,8 +821,10 @@ class PieChart(State):
             y_axis = [1, 2, 3, 4, 5, 6, 7, 8]
         # raise emptyList("List is empty")
         else:
-            x_axis = conn_results_rotated[0];
-            y_axis = conn_results_rotated[1];
+            x_axis = conn_results_rotated[0]
+            y_axis = conn_results_rotated[1]
+            x_axis = x_axis[::-1]
+            y_axis = y_axis[::-1]
             # for tuple in conn_results:
             #    x_axis.append(tuple[0])
             #   y_axis.append(tuple[1])
@@ -1033,8 +1040,10 @@ class IndividualStatistic(State):
             y_axis = [1, 2, 3, 4, 5, 6, 7, 8]
         # raise emptyList("List is empty")
         else:
-            x_axis = conn_results_rotated[0];
-            y_axis = conn_results_rotated[1];
+            x_axis = conn_results_rotated[0]
+            y_axis = conn_results_rotated[1]
+            x_axis = x_axis[::-1]
+            y_axis = y_axis[::-1]
             # for tuple in conn_results:
             #    x_axis.append(tuple[0])
             #   y_axis.append(tuple[1])
@@ -1212,8 +1221,10 @@ class ScatterPlot(State):
             y_axis = [1, 2, 3, 4, 5, 6, 7, 8]
         # raise emptyList("List is empty")
         else:
-            x_axis = conn_results_rotated[0];
-            y_axis = conn_results_rotated[1];
+            x_axis = conn_results_rotated[0]
+            y_axis = conn_results_rotated[1]
+            x_axis = x_axis[::-1]
+            y_axis = y_axis[::-1]
             # for tuple in conn_results:
             #    x_axis.append(tuple[0])
             #   y_axis.append(tuple[1])
