@@ -87,7 +87,6 @@ class State:
             return True
 
 
-
 class BarGraph(State):
     def __init__(self, reportGenerator, request, data):
         super(BarGraph, self).__init__(reportGenerator, request, data)
@@ -196,7 +195,6 @@ class BarGraph(State):
             else:
                 substr += location
 
-
         conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
             '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
             '%Y-%m-%d') + "\' group by " + self.group_by + ";"
@@ -233,8 +231,6 @@ class BarGraph(State):
             #    x_axis.append(tuple[0])
             #   y_axis.append(tuple[1])
 
-
-
         # If autoscaling is not enabled by the user, we need to set the max count of the y-axis
         if self.autoscale != 'Yes':
             layout = go.Layout(title=title, yaxis=dict(range=[0, self.max_count]))
@@ -257,9 +253,6 @@ class BarGraph(State):
             x_list = list(x_axis)
             y_list = list(y_axis)
 
-
-
-
             total = 0
             for count in y_axis:
                 total += count
@@ -267,12 +260,11 @@ class BarGraph(State):
             x_list.append('<b>Grand Total</b>')
             y_list.append(total)
 
-
             values = [x_list, y_list]
 
             table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
                               layout=Layout(title=title))
-            table.update_layout(height=(200+len(x_list)*23))
+            table.update_layout(height=(200 + len(x_list) * 23))
 
             new_x_list = []
 
@@ -280,8 +272,6 @@ class BarGraph(State):
                 temp_new_string = str.replace('<b>', '')
                 new_string = temp_new_string.replace('</b>', '')
                 new_x_list.append(new_string)
-
-
 
             values = [new_x_list, y_list]
 
@@ -329,10 +319,10 @@ class BarGraph(State):
         conn_string_sql = []
 
         for location in self.location_list:
-            conn_string_sql.append("select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + location + "\') and check_in_date >= \'" + self.from_time.strftime(
-            '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-            '%Y-%m-%d') + "\' group by " + self.group_by + ";")
-
+            conn_string_sql.append(
+                "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + location + "\') and check_in_date >= \'" + self.from_time.strftime(
+                    '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
+                    '%Y-%m-%d') + "\' group by " + self.group_by + ";")
 
         print('location_list: ', self.location_list)
 
@@ -360,17 +350,17 @@ class BarGraph(State):
         # print('conn_results_rotated: ', conn_results_rotated)
 
         # TODO perform query validity checks for grouped bar graphs
-        #validDates = self.checkInvalidQuery(conn_results_rotated)
+        # validDates = self.checkInvalidQuery(conn_results_rotated)
 
         y_axis = []
         x_axis = []
         # TODO remove later (only temporary)
         validDates = True
-        #if not validDates:
+        # if not validDates:
         for i, location in enumerate(self.location_list):
-            #x_axis.append([1, 2, 3, 4, 5, 6, 7, 8])
-            #y_axis.append([1, 2, 3, 4, 5, 6, 7, 8])
-        #else:
+            # x_axis.append([1, 2, 3, 4, 5, 6, 7, 8])
+            # y_axis.append([1, 2, 3, 4, 5, 6, 7, 8])
+            # else:
             x_axis.append(location_results[i][0])
             y_axis.append(location_results[i][1])
             # for tuple in conn_results:
@@ -383,7 +373,7 @@ class BarGraph(State):
         else:
             layout = Layout(title=title)
 
-        #fig = go.Figure(data=[go.Bar(x=x_axis, y=y_axis, marker=dict(color=self.bar_color.lower()))], layout=layout)
+        # fig = go.Figure(data=[go.Bar(x=x_axis, y=y_axis, marker=dict(color=self.bar_color.lower()))], layout=layout)
 
         data_list = []
         for i, location in enumerate(self.location_list):
@@ -401,29 +391,52 @@ class BarGraph(State):
         # Dash instance for includng a table
         if self.include_table == 'Yes':
             header = ['Row Labels', 'Count of Location']
-            x_list = list(x_axis)
-            y_list = list(y_axis)
+            x_list = []
+            y_list = []
 
-            total = 0
-            for count in y_axis:
-                total += count
+            for i, location in enumerate(self.location_list):
+                x_list.append(list(x_axis[i]))
+                y_list.append(list(y_axis[i]))
 
-            x_list.append('<b>Grand Total</b>')
-            y_list.append(total)
+            # x_list = list(x_axis)
+            # y_list = list(y_axis)
 
-            values = [x_list, y_list]
+            running_total = 0
+            print('y_list', y_list)
+            for i, location in enumerate(self.location_list):
+                x_list[i].insert(0, '<b>Location<b>')
+                y_list[i].insert(0, '<b>' + location + '<b>')
+                loc_subtotal = 0
+                for count in y_list[i]:
+                    if isinstance(count, int):
+                        loc_subtotal += count
+
+                x_list[i].append('<b>Total for location<b>')
+                y_list[i].append(loc_subtotal)
+                running_total += loc_subtotal
+
+            # --- Referenced from Stack Overflow https://stackabuse.com/python-how-to-flatten-list-of-lists/
+            # Last visited 3/6/2021
+            flattened_x_list = [value for loc in x_list for value in loc]
+            flattened_y_list = [value for loc in y_list for value in loc]
+            # End of reference -----------------------------------------------------------------------------
+
+            flattened_x_list.append('<b>Grand Total</b>')
+            flattened_y_list.append(running_total)
+
+            values = [flattened_x_list, flattened_y_list]
             table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
                               layout=Layout(title=title))
-            table.update_layout(height=(200 + len(x_list) * 23))
+            table.update_layout(height=(200 + len(flattened_x_list) * 25))
 
             new_x_list = []
 
-            for str in x_list:
+            for str in flattened_x_list:
                 temp_new_string = str.replace('<b>', '')
                 new_string = temp_new_string.replace('</b>', '')
                 new_x_list.append(new_string)
 
-            values = [new_x_list, y_list]
+            values = [new_x_list, flattened_y_list]
 
             genTableFile(header, values)
 
@@ -436,7 +449,6 @@ class BarGraph(State):
             ], style={'height': '70vh', 'width': '70vw'})
 
         return app, title, validDates
-
 
 
 class Histogram(State):
@@ -486,7 +498,6 @@ class Histogram(State):
         self.from_time = self.date_subdict['from_time']
         self.to_time = self.date_subdict['to_time']
 
-
     def determineStyleSettings(self):
         self.style_dict = self.inner_dict[3]
         self.bar_color = self.style_dict['select_bar_color']
@@ -494,7 +505,6 @@ class Histogram(State):
         if self.autoscale == 'No':
             self.max_count = self.style_dict['max_count']
             self.increment_by = self.style_dict['increment_by']
-
 
     def determineLocationsToTrack(self):
         self.location_dict = self.inner_dict[4]
@@ -539,8 +549,6 @@ class Histogram(State):
                 '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
         title = self.title
-
-
 
         # conn_string_sql = "SELECT this_time, COUNT(this_time) FROM (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS this_time, SUBSTR(check_in_time,1,2) + CASE(SUBSTR(check_in_time,7,2)) WHEN 'PM' THEN '12' ELSE '0' END AS sorting FROM visits) AS ctime GROUP BY this_time ORDER BY sorting;"
         if self.selection == 'Average visitors by time':
@@ -1310,6 +1318,7 @@ def getReport(request):
         form = TimeFrame()
         return render(request, 'visualizations/queryCorrection.html', context={'form': form})
 
+
 def dateQueryCorrection(data, new_from_time, new_to_time):
     inner_dict = data['form_data']
     date_subdict = inner_dict[2]
@@ -1317,7 +1326,6 @@ def dateQueryCorrection(data, new_from_time, new_to_time):
     date_subdict['to_time'] = new_to_time
 
     return data
-
 
 
 # Convert bar graph preset data back into dictionary format to prepare send it to the report generator
@@ -1341,6 +1349,7 @@ def getBarGraphPreset(presetModel, from_time, to_time):
 
     return report_data
 
+
 # Convert histogram preset data back into dictionary format to prepare send it to the report generator
 def getHistogramPreset(presetModel, from_time, to_time):
     from_time = datetime.strptime(from_time, '%m-%d-%Y')
@@ -1362,6 +1371,7 @@ def getHistogramPreset(presetModel, from_time, to_time):
 
     return report_data
 
+
 def getLineScatterPreset(presetModel, from_time, to_time):
     from_time = datetime.strptime(from_time, '%m-%d-%Y')
     to_time = datetime.strptime(to_time, '%m-%d-%Y')
@@ -1373,7 +1383,8 @@ def getLineScatterPreset(presetModel, from_time, to_time):
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     if presetModel.autoscale == 'Yes':
         inner_list.append({'autoscale': presetModel.autoscale, 'max_count': None,
-                           'increment_by': None, 'select_dot_color': presetModel.dot_color, 'display_as':presetModel.display_options})
+                           'increment_by': None, 'select_dot_color': presetModel.dot_color,
+                           'display_as': presetModel.display_options})
     else:
         inner_list.append({'autoscale': presetModel.autoscale, 'max_count': presetModel.max_count,
                            'increment_by': presetModel.increment_by, 'select_dot_color': presetModel.dot_color,
@@ -1382,6 +1393,7 @@ def getLineScatterPreset(presetModel, from_time, to_time):
     inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
 
     return report_data
+
 
 def getPieChartPreset(presetModel, from_time, to_time):
     from_time = datetime.strptime(from_time, '%m-%d-%Y')
@@ -1396,6 +1408,7 @@ def getPieChartPreset(presetModel, from_time, to_time):
     inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
 
     return report_data
+
 
 def getIndividualStatisticPreset(presetModel, from_time, to_time):
     from_time = datetime.strptime(from_time, '%m-%d-%Y')
@@ -1414,7 +1427,6 @@ def getIndividualStatisticPreset(presetModel, from_time, to_time):
     inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
 
     return report_data
-
 
 
 def presetReport(request, preset_name, from_time, to_time):
@@ -1502,6 +1514,7 @@ def genTableFile(header, values):
         for value in rows:
             csvwriter.writerow(value)
         csvfile.close()
+
 
 def downloadFile(request):
     path = os.path.join(os.getcwd(), 'table.csv')
