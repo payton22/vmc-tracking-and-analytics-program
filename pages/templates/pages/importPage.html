@@ -10,13 +10,13 @@
     <div class="row justify-content-center mt-5">
         <button id="navigateBtn" class="tablink darkTab" onclick="openForm('Navigate')">Navigate</button>
         <button id="gpaBtn" class="tablink" onclick="openForm('GPA')">GPA</button>
-        <button id="manualBtn" class="tablink" onclick="openForm('Manual')">Manual</button>
+        <button id="manualBtn" class="tablink" onclick="openForm('Manual'); resetRows()">Manual</button>
 
     </div>
     
 
     <div class="row justify-content-center upload-area">
-        <div class="col-md-6">
+        <div class="col-sm-12">
             <div id="Navigate" class="form">
                 <h4 class="text-center">Navigate Data</h4>
                 <form class="col" enctype="multipart/form-data" method="post" action="/parse/" class="">
@@ -57,15 +57,23 @@
                 </form>
             </div>
 
-            <div id="Manual" class="form" style="display:none">
-                <h4 class="text-center">Manual Data</h4>
+            <div id="Manual" class="form" style="display:none;">
+                <h4 class="text-center">Manual Data <button onclick="addRow()" class="btn-sm">+</button><button onclick="removeRow()" class="btn-sm ml-2">-</button></h4>
                 <form class="col" enctype="multipart/form-data" method="post" action="#" class="">
                     {% csrf_token %}
                     <div class="h-100">                        
-                        <div class="h-75 row align-items-center">
-                            <div class="col p-3">
-
-                                <div class="row">                                </div>
+                        <div class="h-75 row align-items-center" >
+                            <div class="col p-3"  id="AddControl">
+                                <div id="zero" class="manualBorder"></div>
+                                <div id="one" class=""></div>
+                                <div id="two" class=""></div>
+                                <div id="three" class=""></div>
+                                <div id="four" class=""></div>
+                                <div id="five" class=""></div>
+                                <div id="six" class=""></div>
+                                <div id="seven" class=""></div>
+                                <div id="eight" class=""></div>
+                                <div id="nine" class=""></div>
                                 <div class="row justify-content-center mt-4">
                                     <button value="submit">Submit</button>
                                 </div>
@@ -86,4 +94,7 @@
     {% endif %}
 
 </div>
+
+
 {% endblock content %}
+

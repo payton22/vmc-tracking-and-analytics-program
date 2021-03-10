@@ -185,3 +185,7 @@ button:hover {
     border: 2px solid black;
     color: white;
 }
+
+.manualBorder {
+    border: 2px solid black;
+}
