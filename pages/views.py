@@ -452,6 +452,7 @@ def saveChoices(request, name):
         autoscale = customization['autoscale']
         max_ct = customization['max_count']
         inc_by = customization['increment_by']
+        mult_bars = customization['show_multiple_bars_by_location']
 
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
@@ -461,7 +462,7 @@ def saveChoices(request, name):
         Preset = ReportPresets(graph_type=graph_type['graphType'], selection=selection, include_table=incl_table,
                                select_bar_color=sel_bar_color, autoscale=autoscale, max_count=max_ct,
                                increment_by=inc_by, locations=loc, select_all=sel_all, user=request.user,
-                               preset_name=name)
+                               multiple_bars=mult_bars, preset_name=name)
         Preset.save()
     elif graph_type['graphType'] == 'Histogram':
         sel_dict = inner_dict[1]

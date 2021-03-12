@@ -250,7 +250,7 @@ class BarGraph(State):
         # plot_div = plot(fig,output_type='div',show_link=False,link_text="")
 
         # Dash instance for includng a table
-        if self.include_table == 'Yes':
+        if self.include_table == 'Yes' and validDates:
             header = ['Row Labels', 'Count of Location']
             x_list = list(x_axis)
             y_list = list(y_axis)
@@ -596,7 +596,7 @@ class Histogram(State):
 
         validDates = self.checkInvalidQuery(conn_results_rotated)
 
-        if conn_results_rotated == []:
+        if not validDates:
             x_axis = [1, 2, 3, 4, 5, 6, 7, 8]
             y_axis = [1, 2, 3, 4, 5, 6, 7, 8]
         # raise emptyList("List is empty")
@@ -643,7 +643,7 @@ class Histogram(State):
         # plot_div = plot(fig,output_type='div',show_link=False,link_text="")
 
         # Dash instance for includng a table
-        if self.include_table == 'Yes':
+        if self.include_table == 'Yes' and validDates:
             header = ['Row Labels', 'Count of Location']
             x_list = list(x_axis)
             y_list = list(y_axis)
@@ -678,6 +678,9 @@ class Histogram(State):
             app.layout = html.Div(children=[
                 dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
             ], style={'height': '70vh', 'width': '70vw'})
+
+
+        print('validDates:', validDates)
 
         return app, title, validDates
 
@@ -841,7 +844,7 @@ class PieChart(State):
         # plot_div = plot(fig,output_type='div',show_link=False,link_text="")
 
         # Dash instance for includng a table
-        if self.include_table == 'Yes':
+        if self.include_table == 'Yes' and validDates:
             header = ['Row Labels', 'Count of Location']
             x_list = list(x_axis)
             y_list = list(y_axis)
@@ -1074,10 +1077,11 @@ class IndividualStatistic(State):
 
         new_x_list = []
 
-        for str in x_list:
-            temp_new_string = str.replace('<b>', '')
-            new_string = temp_new_string.replace('</b>', '')
-            new_x_list.append(new_string)
+        if validDates:
+            for str in x_list:
+                temp_new_string = str.replace('<b>', '')
+                new_string = temp_new_string.replace('</b>', '')
+                new_x_list.append(new_string)
 
         values = [new_x_list, y_list]
 
@@ -1248,7 +1252,7 @@ class ScatterPlot(State):
         # plot_div = plot(fig,output_type='div',show_link=False,link_text="")
 
         # Dash instance for includng a table
-        if self.include_table == 'Yes':
+        if self.include_table == 'Yes' and validDates:
             header = ['Row Labels', 'Count of Location']
             x_list = list(x_axis)
             y_list = list(y_axis)
@@ -1351,9 +1355,10 @@ def getBarGraphPreset(presetModel, from_time, to_time):
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     if presetModel.autoscale == 'Yes':
         inner_list.append({'select_bar_color': presetModel.select_bar_color, 'autoscale': presetModel.autoscale,
-                           'max_count': None, 'increment_by': None})
+                           'show_multiple_bars_by_location': presetModel.multiple_bars,'max_count': None, 'increment_by': None})
     else:
         inner_list.append({'select_bar_color': presetModel.select_bar_color, 'autoscale': presetModel.autoscale,
+                           'show_multiple_bars_by_location': presetModel.multiple_bars,
                            'max_count': presetModel.max_count, 'increment_by': presetModel.increment_by})
 
     inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
