@@ -1,21 +1,13 @@
 {% extends "pages/base.html" %}
 
 
-{% block title %}Preset Report Generated{% endblock title %}
+{% block title %}Preset Report{% endblock title %}
 {% block content %}
     <div class="container fixed-top justify-content-center" style="padding-left: 540px;">
         <div class="row">
-            <h1 class="d-flex">Preset Report Generated!</h1>
+            <h1 class="d-flex">Preset Report</h1>
         </div>
     </div>
 
-    <form action="" method="post" class="h-50 justify-content-center"> {% csrf_token %}
-            <div class="row flex-column">
-            </div>
-            <br>
-            <br>
-            <div class="row flex-column">
-                 <a type="submit" href="{% url 'reports' %}" class="btn btn-lg nav-bg" style="width: 250px;" >Return to Reports</a>
-            </div>
-    </form>
+    <a href="{% url 'visualizations:presetReport' preset_name from_time to_time %}" class="btn btn-lg nav-bg" style="width: 250px;" >Retrieve Report</a>
 {% endblock content %}
