@@ -105,10 +105,23 @@ class SelectReportType(forms.Form):
                ('Individual Statistic', 'Individual Statistic')]
     attributes = {'title': 'I need: '}  # left out form-check-input
     graphType = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(attrs=attributes))
+    custom_title = forms.ChoiceField(choices=YES_NO, widget=forms.RadioSelect(attrs={'id': 'custom_title'}))
+    title = forms.CharField(widget=forms.TextInput(attrs={'id':'title'}), required=False)
 
     def __init__(self, *args, **kwargs):
         super(SelectReportType, self).__init__(*args, **kwargs)
         self.fields['graphType'].label = ''
+
+    def clean(self):
+        data = self.cleaned_data
+
+        if data.get('custom_title') == 'No':
+            return data
+        elif data.get('custom_title') == 'Yes' and data.get('title') != '':
+            return data
+        else:
+            raise forms.ValidationError(
+                'Enter name for \'Title\' or change \'Custom title\' to \'No\'.')
 
 
 # -- Part of the Reports Wizard --

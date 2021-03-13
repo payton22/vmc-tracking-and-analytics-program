@@ -80,6 +80,13 @@ class State:
     def checkGraphType(self, data):
         pass
 
+    def get_custom_title(self):
+        form_dict = self.data['form_data']
+        inner_dict = form_dict[0]
+        custom_title = inner_dict['title']
+
+        return custom_title
+
     def checkInvalidQuery(self, results):
         if not results:
             return False
@@ -185,7 +192,11 @@ class BarGraph(State):
             self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
                 '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
-        title = self.title
+        custom_title = self.get_custom_title()
+        if custom_title == '':
+            title = self.title
+        else:
+            title = custom_title
 
         substr = ''
 
@@ -308,7 +319,11 @@ class BarGraph(State):
             self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
                 '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
-        title = self.title
+        custom_title = self.get_custom_title()
+        if custom_title == '':
+            title = self.title
+        else:
+            title = custom_title
 
         substr = ''
 
@@ -529,8 +544,6 @@ class Histogram(State):
         conn = sqlite3.connect('vmc_tap.db');
         conn_results = []
 
-        title = self.title
-
         substr = ''
 
         for i, location in enumerate(self.location_list):
@@ -553,7 +566,11 @@ class Histogram(State):
             self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
                 '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
-        title = self.title
+        custom_title = self.get_custom_title()
+        if custom_title == '':
+            title = self.title
+        else:
+            title = custom_title
 
         # conn_string_sql = "SELECT this_time, COUNT(this_time) FROM (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS this_time, SUBSTR(check_in_time,1,2) + CASE(SUBSTR(check_in_time,7,2)) WHEN 'PM' THEN '12' ELSE '0' END AS sorting FROM visits) AS ctime GROUP BY this_time ORDER BY sorting;"
         if self.selection == 'Average visitors by time':
@@ -769,7 +786,11 @@ class PieChart(State):
             self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
                 '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
-        title = self.title
+        custom_title = self.get_custom_title()
+        if custom_title == '':
+            title = self.title
+        else:
+            title = custom_title
 
         substr = ''
 
@@ -966,16 +987,16 @@ class IndividualStatistic(State):
                 '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
         if self.subselection == 'Total Count':
-            title = 'Total count of visitors from ' + self.from_time.strftime(
+            new_title = 'Total count of visitors from ' + self.from_time.strftime(
                 '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Daily average':
-            title = 'Daily average visitors from ' + self.from_time.strftime(
+            new_title = 'Daily average visitors from ' + self.from_time.strftime(
                 '%m/%d/%d') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Monthly average':
-            title = 'Monthly average visitors from ' + self.from_time.strftime(
+            new_title = 'Monthly average visitors from ' + self.from_time.strftime(
                 '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Yearly average':
-            title = 'Yearly average visitors from ' + self.from_time.strftime(
+            new_title = 'Yearly average visitors from ' + self.from_time.strftime(
                 '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
 
         # The max size of a location list is 2. If this is true, then show "all locations in the title"
@@ -986,8 +1007,14 @@ class IndividualStatistic(State):
             for location in self.location_list:
                 title2 += location + ' '
 
-        title += '\n' + title2
+        new_title += '\n' + title2
         substr = ''
+
+        custom_title = self.get_custom_title()
+        if custom_title == '':
+            title = new_title
+        else:
+            title = custom_title
 
         for i, location in enumerate(self.location_list):
             if i != (len(self.location_list) - 1):
@@ -1184,7 +1211,11 @@ class ScatterPlot(State):
             self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
                 '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
-        title = self.title
+        custom_title = self.get_custom_title()
+        if custom_title == '':
+            title = self.title
+        else:
+            title = custom_title
 
         substr = ''
 
