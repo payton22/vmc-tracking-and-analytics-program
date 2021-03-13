@@ -24,6 +24,14 @@ from django_plotly_dash import DjangoDash
 
 import csv
 
+import os;
+
+print(os.path.dirname(__file__))
+for module in os.listdir(os.path.dirname(__file__) + '/sql_queries'):
+    if module == '__init__.py' or module[-3:] != '.py':
+        continue
+    exec('from .sql_queries import ' + module[:-3] + ' as ' + module[:-3]);
+del module;
 
 class emptyList(Exception):
     pass
@@ -124,18 +132,9 @@ class BarGraph(State):
         self.include_table = self.selection_dict['include_table']
 
         # Convert selection into query '*' for SQL
-        if self.selection == 'Total Usage by Location':
-            self.selection = '*'
-            self.group_by = 'location'
-        elif self.selection == 'Usage by Date':
-            self.selection = '*'
-            self.group_by = 'check_in_date'
-        elif self.selection == 'Classification':
-            self.group_by = 'classification'
-        elif self.selection == 'Major':
-            self.group_by = 'major'
-        elif self.selection == 'Services':
-            self.group_by = 'services'
+        query_dictionary = {'Benefit Chapter':'benefit_chapter','Total Usage by Location':'total_usage_by_location', 'GPA':'gpa'}
+
+        self.conn_string_sql = eval(query_dictionary[self.selection] + '.get_query()');
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -205,10 +204,11 @@ class BarGraph(State):
                 substr += location + '\' or location = \''
             else:
                 substr += location
-
-        conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
-            '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-            '%Y-%m-%d') + "\' group by " + self.group_by + ";"
+	
+        conn_string_sql = self.conn_string_sql
+        #conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
+        #    '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
+        #    '%Y-%m-%d') + "\' group by " + self.group_by + ";"
         print('location_list: ', self.location_list)
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
@@ -333,14 +333,14 @@ class BarGraph(State):
             else:
                 substr += location
 
-        conn_string_sql = []
+        #conn_string_sql = []
 
-        for location in self.location_list:
-            conn_string_sql.append(
-                "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + location + "\') and check_in_date >= \'" + self.from_time.strftime(
-                    '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-                    '%Y-%m-%d') + "\' group by " + self.group_by + ";")
-
+        #for location in self.location_list:
+         #   conn_string_sql.append(
+         #       "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + location + "\') and check_in_date >= \'" + self.from_time.strftime(
+         #           '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
+         #           '%Y-%m-%d') + "\' group by " + self.group_by + ";")
+        conn_string_sql = self.conn_string_sql;
         print('location_list: ', self.location_list)
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
