@@ -216,24 +216,19 @@ def otherAccountOptions(request, emailAddress):
 
 
 def newAccount(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            import hashlib
-
-            import sqlite3
-
-            first_name = request.POST.get('firstName')
-            last_name = request.POST.get('lastName')
-            email = request.POST.get('email')
-            password = request.POST.get('password')
-
-            CustomUser.objects.create_superuser(email, first_name, last_name, password)
-
-            return render(request, 'pages/accountCreated.html', {'email': email})
-
-        return render(request, 'pages/newAccount.html')
-    else: 
-        return redirect('login')
+    # if request.user.is_authenticated:
+    if request.method == 'POST':
+        import hashlib
+        import sqlite3
+        first_name = request.POST.get('firstName')
+        last_name = request.POST.get('lastName')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        CustomUser.objects.create_superuser(email, first_name, last_name, password)
+        return render(request, 'pages/accountCreated.html', {'email': email})
+    return render(request, 'pages/newAccount.html')
+    # else: 
+        # return redirect('login')
 
 
 def deleteAccount(request, emailAddress):
