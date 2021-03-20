@@ -349,7 +349,7 @@ def pieChartWizard(wizard):
 
 # Branch to scatter plot wizard if user selects 'Scatter Plot' on first page
 def scatterPlotWizard(wizard):
-    return conditionalWizardBranch(wizard, 'Scatter Plot')
+    return conditionalWizardBranch(wizard, 'Line and/or Scatter')
 
 
 # Branch to individual statistic wizard if user selects 'Individual Statistic'

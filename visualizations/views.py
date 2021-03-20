@@ -132,9 +132,17 @@ class BarGraph(State):
         self.include_table = self.selection_dict['include_table']
 
         # Convert selection into query '*' for SQL
-        query_dictionary = {'Benefit Chapter':'benefit_chapter','Total Usage by Location':'total_usage_by_location', 'GPA':'gpa'}
+        self.query_dictionary = {'Benefit Chapter':'benefit_chapter',
+                                 'Residential Distance from Campus': 'dist_from_campus', 'Employment': 'employment',
+                                 'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
+                                 'Marital Status': 'marital_status', 'Gender Identity' : 'gender_identity',
+                                 'Parent Education': 'parent_education',
+                                 'Break in University Attendance': 'break_in_attendance',
+                                 'Total Usage by Location':'total_usage_by_location', 'GPA':'gpa',
+                                 'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
+                                 'Services': 'services'}
 
-        self.conn_string_sql = eval(query_dictionary[self.selection] + '.get_query()');
+        #self.conn_string_sql = eval(self.query_dictionary[self.selection] + '.get_query()');
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -197,26 +205,27 @@ class BarGraph(State):
         else:
             title = custom_title
 
-        substr = ''
+        substr = "\""
 
         for i, location in enumerate(self.location_list):
             if i != (len(self.location_list) - 1):
                 substr += location + '\' or location = \''
             else:
                 substr += location
-	
-        conn_string_sql = self.conn_string_sql
-        #conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
-        #    '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-        #    '%Y-%m-%d') + "\' group by " + self.group_by + ";"
+
+        substr += '"'
+
+        self.conn_string_sql = eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
+            '%Y-%m-%d') + "', '" + self.to_time.strftime(
+            '%Y-%m-%d') + "', " + substr + ")")
         print('location_list: ', self.location_list)
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
-        print('conn_string_sql', conn_string_sql)
+        print('conn_string_sql', self.conn_string_sql)
         #       print('conn.execute: ', conn.execute(conn_string_sql))
 
-        for d in conn.execute(conn_string_sql):
+        for d in conn.execute(self.conn_string_sql):
             conn_results.append(d);
 
         conn.close()
@@ -272,6 +281,8 @@ class BarGraph(State):
 
             x_list.append('<b>Grand Total</b>')
             y_list.append(total)
+
+            print('x_list:', x_list)
 
             values = [x_list, y_list]
 
@@ -333,19 +344,23 @@ class BarGraph(State):
             else:
                 substr += location
 
-        #conn_string_sql = []
+        self.conn_string_sql = []
 
-        #for location in self.location_list:
-         #   conn_string_sql.append(
-         #       "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + location + "\') and check_in_date >= \'" + self.from_time.strftime(
-         #           '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-         #           '%Y-%m-%d') + "\' group by " + self.group_by + ";")
-        conn_string_sql = self.conn_string_sql;
+        for location in self.location_list:
+            loc_str = "'"
+            loc_str += location + "'"
+            self.conn_string_sql.append(eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
+            '%Y-%m-%d') + "', '" + self.to_time.strftime(
+            '%Y-%m-%d') + "', " + loc_str + ")"))
+            #self.conn_string_sql.append(
+             #   "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + location + "\') and check_in_date >= \'" + self.from_time.strftime(
+              #      '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
+               #   '%Y-%m-%d') + "\' group by " + self.group_by + ";")
         print('location_list: ', self.location_list)
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
-        print('conn_string_sql', conn_string_sql)
+        print('conn_string_sql', self.conn_string_sql)
         #       print('conn.execute: ', conn.execute(conn_string_sql))
 
         location_results = []
@@ -353,7 +368,7 @@ class BarGraph(State):
 
         for i, location in enumerate(self.location_list):
             conn_results = []
-            for d in conn.execute(conn_string_sql[i]):
+            for d in conn.execute(self.conn_string_sql[i]):
                 conn_results.append(d)
             # Rotates 2D array to work w/ plotly
             conn_results_rotated = list(zip(*conn_results[::-1]))
@@ -498,19 +513,8 @@ class Histogram(State):
         self.title = self.selection
         self.include_table = self.selection_dict['include_table']
 
-        # Convert selection into query '*' for SQL
-        if self.selection == 'Average visitors by time':
-            # self.selection = 'check_in_time'
-            self.group_by = 'location'
-        elif self.selection == 'Usage by Date':
-            # self.selection = '*'
-            self.group_by = 'check_in_date'
-        elif self.selection == 'Classification':
-            self.group_by = 'classification'
-        elif self.selection == 'Major':
-            self.group_by = 'major'
-        elif self.selection == 'Services':
-            self.group_by = 'services'
+        self.query_dictionary = {'Average visitors by time': 'avg_by_time', 'Average visitors by day': 'avg_by_day',
+                                 'Total visitors by day': 'total_by_day', 'Total visitors by year': 'total_by_year'}
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -544,13 +548,6 @@ class Histogram(State):
         conn = sqlite3.connect('vmc_tap.db');
         conn_results = []
 
-        substr = ''
-
-        for i, location in enumerate(self.location_list):
-            if i != (len(self.location_list) - 1):
-                substr += location + '\' or location = \''
-            else:
-                substr += location
 
         if self.all_locations:
             self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
@@ -572,32 +569,46 @@ class Histogram(State):
         else:
             title = custom_title
 
+        substr = "\""
+
+        for i, location in enumerate(self.location_list):
+            if i != (len(self.location_list) - 1):
+                substr += location + '\' or location = \''
+            else:
+                substr += location
+
+        substr += '"'
+
+        self.conn_string_sql = eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
+            '%Y-%m-%d') + "', '" + self.to_time.strftime(
+            '%Y-%m-%d') + "', " + substr + ")")
+
         # conn_string_sql = "SELECT this_time, COUNT(this_time) FROM (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS this_time, SUBSTR(check_in_time,1,2) + CASE(SUBSTR(check_in_time,7,2)) WHEN 'PM' THEN '12' ELSE '0' END AS sorting FROM visits) AS ctime GROUP BY this_time ORDER BY sorting;"
-        if self.selection == 'Average visitors by time':
-            conn_string_sql = "SELECT cat_hours.hour_display, round(IFNULL(SUM(c_visits.visit_count), 0)/(julianday('" + self.to_time.strftime(
-                '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
-                '%Y-%m-%d') + "')), 2) FROM cat_hours LEFT JOIN (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS hour_display, 1 AS visit_count, check_in_date FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
-                '%Y-%m-%d') + "' AND '" + self.to_time.strftime(
-                '%Y-%m-%d') + "') AS c_visits ON cat_hours.hour_display = c_visits.hour_display GROUP BY cat_hours.hour_display ORDER BY cat_hours.ordering;"
-        elif self.selection == 'Average visitors by day':
+        #if self.selection == 'Average visitors by time':
+         #   conn_string_sql = "SELECT cat_hours.hour_display, round(IFNULL(SUM(c_visits.visit_count), 0)/(julianday('" + self.to_time.strftime(
+          #      '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
+           #     '%Y-%m-%d') + "')), 2) FROM cat_hours LEFT JOIN (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS hour_display, 1 AS visit_count, check_in_date FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+            #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime(
+             #   '%Y-%m-%d') + "') AS c_visits ON cat_hours.hour_display = c_visits.hour_display GROUP BY cat_hours.hour_display ORDER BY cat_hours.ordering;"
+        #if self.selection == 'Average visitors by day':
             # Parts of this query was referenced from StackOverflow: https://stackoverflow.com/questions/4319302/format-date-as-day-of-week
-            conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, round(count(check_in_date)/(julianday('" + self.to_time.strftime(
-                '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
-                '%Y-%m-%d') + "')), 2) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
-                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
-        elif self.selection == 'Total visitors by day':
-            conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, count(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
-                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
-        elif self.selection == 'Total visitors by year':
-            conn_string_sql = "SELECT SUBSTR(check_in_date,1,4), COUNT(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
-                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY SUBSTR(check_in_date,1,4);"
+           # conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, round(count(check_in_date)/(julianday('" + self.to_time.strftime(
+         #       '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
+          #      '%Y-%m-%d') + "')), 2) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+           #     '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
+        #if self.selection == 'Total visitors by day':
+         #   conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, count(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+          #      '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
+       # elif self.selection == 'Total visitors by year':
+        #    conn_string_sql = "SELECT SUBSTR(check_in_date,1,4), COUNT(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+         #       '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY SUBSTR(check_in_date,1,4);"
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
-        print('conn_string_sql', conn_string_sql)
+        print('conn_string_sql', self.conn_string_sql)
         #       print('conn.execute: ', conn.execute(conn_string_sql))
 
-        for d in conn.execute(conn_string_sql):
+        for d in conn.execute(self.conn_string_sql):
             conn_results.append(d);
 
         conn.close()
@@ -723,19 +734,15 @@ class PieChart(State):
         self.title = self.selection
         self.include_table = self.selection_dict['include_table']
 
-        # Convert selection into query '*' for SQL
-        if self.selection == 'Total Usage by Location':
-            self.selection = '*'
-            self.group_by = 'location'
-        elif self.selection == 'Usage by Date':
-            self.selection = '*'
-            self.group_by = 'check_in_date'
-        elif self.selection == 'Classification':
-            self.group_by = 'classification'
-        elif self.selection == 'Major':
-            self.group_by = 'major'
-        elif self.selection == 'Services':
-            self.group_by = 'services'
+        self.query_dictionary = {'Benefit Chapter': 'benefit_chapter',
+                                 'Residential Distance from Campus': 'dist_from_campus', 'Employment': 'employment',
+                                 'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
+                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender_identity',
+                                 'Parent Education': 'parent_education',
+                                 'Break in University Attendance': 'break_in_attendance',
+                                 'Total Usage by Location': 'total_usage_by_location', 'GPA': 'gpa',
+                                 'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
+                                 'Services': 'services'}
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -792,7 +799,7 @@ class PieChart(State):
         else:
             title = custom_title
 
-        substr = ''
+        substr = "\""
 
         for i, location in enumerate(self.location_list):
             if i != (len(self.location_list) - 1):
@@ -800,31 +807,19 @@ class PieChart(State):
             else:
                 substr += location
 
-        if self.all_locations:
-            self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
-                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
-        else:
-            loc_str = ''
-            for loc in self.location_list:
-                if loc != self.location_list[-1]:
-                    loc_str += loc + ', '
-                else:
-                    loc_str += loc
+        substr += '"'
 
-            self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
-                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
-
-        conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
-            '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-            '%Y-%m-%d') + "\' group by " + self.group_by + ";"
+        self.conn_string_sql = eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
+            '%Y-%m-%d') + "', '" + self.to_time.strftime(
+            '%Y-%m-%d') + "', " + substr + ")")
         print('location_list: ', self.location_list)
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
-        print('conn_string_sql', conn_string_sql)
+        print('conn_string_sql', self.conn_string_sql)
         #       print('conn.execute: ', conn.execute(conn_string_sql))
 
-        for d in conn.execute(conn_string_sql):
+        for d in conn.execute(self.conn_string_sql):
             conn_results.append(d);
 
         conn.close()
@@ -940,6 +935,28 @@ class IndividualStatistic(State):
             self.group_by = 'major'
         elif self.selection == 'Services':
             self.group_by = 'services'
+        elif self.selection == 'Benefit Chapter':
+            self.group_by = 'benefit_chapter'
+        elif self.selection == 'Residential Distance from Campus':
+            self.group_by = 'currently_live'
+        elif self.selection == 'Employment':
+            self.group_by = 'employment'
+        elif self.selection == 'Weekly Hours Worked':
+            self.group_by = 'work_hours'
+        elif self.selection == 'Number of Dependents':
+            self.group_by = 'dependents'
+        elif self.selection == 'Martial Status':
+            self.group_by = 'marital_status'
+        elif self.selection == 'Gender Identity':
+            self.group_by = 'gender'
+        elif self.selection == 'Parent Education':
+            self.group_by = 'parent_education'
+        elif self.selection == 'Break in University Attendance':
+            self.group_by = 'break_in_attendance'
+
+
+        self.query_dictionary = {'Total Count': 'ind_total_count', 'Daily average': 'ind_daily_average',
+                                 'Monthly average': 'ind_monthly_avg', 'Yearly average': 'indiv_yearly_avg'}
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -1008,7 +1025,6 @@ class IndividualStatistic(State):
                 title2 += location + ' '
 
         new_title += '\n' + title2
-        substr = ''
 
         custom_title = self.get_custom_title()
         if custom_title == '':
@@ -1016,40 +1032,50 @@ class IndividualStatistic(State):
         else:
             title = custom_title
 
+
+        #if self.subselection == 'Total Count':
+         #   conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
+          #      '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
+           #     '%Y-%m-%d') + "\' group by " + self.group_by + ";"
+        # print('location_list: ', self.location_list)
+        #elif self.subselection == 'Daily average':
+            # conn_string_sql = "select major, avg(count(*)) from (select check_in_date, count(*) from visits) group by major;"
+         #   conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (julianday('" + self.to_time.strftime(
+          #      '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
+           #     '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
+            #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
+        #elif self.subselection == 'Monthly average':
+         #   conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (strftime('%m','" + self.to_time.strftime(
+          #      '%Y-%m-%d') + "') - strftime('%m', '" + self.from_time.strftime(
+           #     '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
+            #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
+        #elif self.subselection == 'Yearly average':
+         #   conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (strftime('%Y','" + self.to_time.strftime(
+          #      '%Y-%m-%d') + "') - strftime('%Y', '" + self.from_time.strftime(
+           #     '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
+            #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
+
+        substr = "\""
+
         for i, location in enumerate(self.location_list):
             if i != (len(self.location_list) - 1):
                 substr += location + '\' or location = \''
             else:
                 substr += location
 
-        if self.subselection == 'Total Count':
-            conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
-                '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-                '%Y-%m-%d') + "\' group by " + self.group_by + ";"
-        # print('location_list: ', self.location_list)
-        elif self.subselection == 'Daily average':
-            # conn_string_sql = "select major, avg(count(*)) from (select check_in_date, count(*) from visits) group by major;"
-            conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (julianday('" + self.to_time.strftime(
-                '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
-                '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
-                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
-        elif self.subselection == 'Monthly average':
-            conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (strftime('%m','" + self.to_time.strftime(
-                '%Y-%m-%d') + "') - strftime('%m', '" + self.from_time.strftime(
-                '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
-                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
-        elif self.subselection == 'Yearly average':
-            conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (strftime('%Y','" + self.to_time.strftime(
-                '%Y-%m-%d') + "') - strftime('%Y', '" + self.from_time.strftime(
-                '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
-                '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
+        substr += '"'
+
+        self.conn_string_sql = eval(self.query_dictionary[self.subselection] + ".get_query('" + self.group_by + "', '" + self.from_time.strftime(
+            '%Y-%m-%d') + "', '" + self.to_time.strftime(
+            '%Y-%m-%d') + "', " + substr + ")")
+        print('location_list: ', self.location_list)
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
-        print('conn_string_sql', conn_string_sql)
+        print('conn_string_sql', self.conn_string_sql)
         #       print('conn.execute: ', conn.execute(conn_string_sql))
 
-        for d in conn.execute(conn_string_sql):
+        for d in conn.execute(self.conn_string_sql):
             conn_results.append(d);
 
         conn.close()
@@ -1145,19 +1171,15 @@ class ScatterPlot(State):
         self.title = self.selection
         self.include_table = self.selection_dict['include_table']
 
-        # Convert selection into query '*' for SQL
-        if self.selection == 'Total Usage by Location':
-            self.selection = '*'
-            self.group_by = 'location'
-        elif self.selection == 'Usage by Date':
-            self.selection = '*'
-            self.group_by = 'check_in_date'
-        elif self.selection == 'Classification':
-            self.group_by = 'classification'
-        elif self.selection == 'Major':
-            self.group_by = 'major'
-        elif self.selection == 'Services':
-            self.group_by = 'services'
+        self.query_dictionary = {'Benefit Chapter': 'benefit_chapter',
+                                 'Residential Distance from Campus': 'dist_from_campus', 'Employment': 'employment',
+                                 'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
+                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender_identity',
+                                 'Parent Education': 'parent_education',
+                                 'Break in University Attendance': 'break_in_attendance',
+                                 'Total Usage by Location': 'total_usage_by_location', 'GPA': 'gpa',
+                                 'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
+                                 'Services': 'services'}
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -1217,7 +1239,7 @@ class ScatterPlot(State):
         else:
             title = custom_title
 
-        substr = ''
+        substr = "\""
 
         for i, location in enumerate(self.location_list):
             if i != (len(self.location_list) - 1):
@@ -1225,17 +1247,19 @@ class ScatterPlot(State):
             else:
                 substr += location
 
-        conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
-            '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-            '%Y-%m-%d') + "\' group by " + self.group_by + ";"
+        substr += '"'
+
+        self.conn_string_sql = eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
+            '%Y-%m-%d') + "', '" + self.to_time.strftime(
+            '%Y-%m-%d') + "', " + substr + ")")
         print('location_list: ', self.location_list)
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
-        print('conn_string_sql', conn_string_sql)
+        print('conn_string_sql', self.conn_string_sql)
         #       print('conn.execute: ', conn.execute(conn_string_sql))
 
-        for d in conn.execute(conn_string_sql):
+        for d in conn.execute(self.conn_string_sql):
             conn_results.append(d);
 
         conn.close()
