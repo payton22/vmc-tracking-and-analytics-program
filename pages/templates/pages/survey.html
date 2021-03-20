@@ -15,6 +15,10 @@
             <h1>UNR Veteran Services Survey</h1>
         </div>
 
+
+        
+        
+
         <!-- Action needs to be filled with a URL for parse/sending to DB table. Currently we are redirecting to the login page-->
         <form id="container" class="container pb-2 form" method="post" action="/survey/">
             {% csrf_token %}
@@ -78,7 +82,7 @@
                 <label for="Not sure">Not sure</label><br>
             </div>
 
-            <div class="w-100 hiddenPanel shadow-lg1 rounded panel-bg">
+            <div class="w-100 shadow-lg1 rounded panel-bg">
                 <h5>Currently Live</h5>
                 <input type="radio" id="On campus" name="currently_live" value="On campus">
                 <label for="On campus">On campus</label><br>
@@ -227,6 +231,21 @@
 
                 <input type="radio" id="Not Sure2" name="break_in_attendance" value="Not Sure">
                 <label for="Not Sure2">Not Sure</label><br>
+            </div>
+
+            <div class="w-100 hiddenPanel shadow-lg rounded panel-bg">
+                <h5>How did you hear about the VMC?</h5>
+                <input type="radio" id="Social Media" name="How did you hear about the VMC?" value="Social Media">
+                <label for="Social Media">Social Media</label><br>
+
+                <input type="radio" id="Website" name="How did you hear about the VMC?" value="Website">
+                <label for="Website">Website</label><br>
+
+                <input type="radio" id="Staff Contact (in person, call or email)" name="How did you hear about the VMC?" value="Staff Contact (in person, call or email)">
+                <label for="Staff Contact (in person, call or email)">Staff Contact (in person, call or email)</label><br>
+
+                <input type="radio" id="Word of Mouth" name="How did you hear about the VMC?" value="Word of Mouth">
+                <label for="Word of Mouth">Word of Mouth</label><br>
             </div>
 
             <div class="text-center w-100 hiddenPanel button-sp">

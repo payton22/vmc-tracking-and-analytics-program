@@ -36,10 +36,6 @@ button:hover {
     color: white;
 }
 
-button:disabled:hover {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
 
 .text-center {
     text-align: center;
@@ -170,7 +166,26 @@ button:disabled:hover {
 }
 
 .upload-area {
-    border: 2px solid #312A34;
-    width: 500px;
-    padding: 50px;
+    padding-top: 1rem;
+    border: 2px solid black;
+}
+
+/* Style the tab buttons */
+.tablink{
+    background-color: #8B7A78;
+    color: black;
+    border: 2px solid black;
+    cursor: pointer;
+    font-size: 17px;
+    width: 25%;
+}
+
+.darkTab {
+    background-color: #645957;
+    border: 2px solid black;
+    color: white;
+}
+
+.manualBorder {
+    border: 2px solid black;
 }

@@ -1,6 +1,6 @@
 import sys
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.http import urlsafe_base64_decode
 
@@ -36,8 +36,8 @@ FORMS = [('SelectReportType', SelectReportType),
 # Temporarily store wizard choices if the user wants to save a "preset"
 preset_storage = {}
 
-def landingPageView(request):
-    return render(request, 'pages/landingPage.html')
+# def landingPageView(request):
+#     return render(request, 'pages/landingPage.html')
 
 def surveyPageView(request):
     if(request.method == 'GET'):
@@ -80,117 +80,141 @@ def surveyPageView(request):
     return HttpResponse('Survey data recorded.');
 
 def homePageView(request):
-    return render(request, 'pages/homePage.html')
+    if request.user.is_authenticated:
+        return render(request, 'pages/homePage.html')
+    else: 
+        return redirect('login')
 
 
 def importPageView(request):
-    if request.method == 'POST':
-        return HttpResponseRedirect('/parse')
-    return render(request, 'pages/importPage.html')
+    # if request.method == 'POST': #This if statement is not needed, the import page will never have a load condition with a 'POST' method. Leaving for reference reasons
+    #     return HttpResponseRedirect('/parse')
+    # return render(request, 'pages/importPage.html')
+
+    if request.user.is_authenticated:
+        return render(request, 'pages/importPage.html')
+    else: 
+        return redirect('login')
 
 
 def vmcAdminPageView(request):
-    return render(request, "pages/vmcAdminPage.html")
+    if request.user.is_authenticated:
+        return render(request, "pages/vmcAdminPage.html")
+    else: 
+        return redirect('login')
 
 
 def visPageView(request):
-    return render(request, 'pages/visualizationsPage.html')
+    if request.user.is_authenticated:
+        return render(request, 'pages/visualizationsPage.html')
+    else: 
+        return redirect('login')
 
 
 def changePassView(request, emailAddress):
-    # Get the info. from the selected account
-    user = accessIndividualAccount(emailAddress)
-    email = user.email
-    # When the user submits the form
-    if request.method == 'POST':
-        # Save the form data
-        form = CurrentPasswordForm(request.POST, user=request.user)
-        # If the user's current password is correct
-        if form.check_entry():
+    if request.user.is_authenticated:
+        # Get the info. from the selected account
+        user = accessIndividualAccount(emailAddress)
+        email = user.email
+        # When the user submits the form
+        if request.method == 'POST':
+            # Save the form data
+            form = CurrentPasswordForm(request.POST, user=request.user)
+            # If the user's current password is correct
+            if form.check_entry():
 
-            # If the user is changing their own password
-            if user.email == request.user.email:
-                # Set password with new value, save
-                request.user.set_password(request.POST.get('pass'))
-                request.user.save()
-                # Stay authenticated
-                update_session_auth_hash(request, request.user)
-            else:
-                # Set password with new value, save
-                user.set_password(request.POST.get('pass'))
-                user.save()
+                # If the user is changing their own password
+                if user.email == request.user.email:
+                    # Set password with new value, save
+                    request.user.set_password(request.POST.get('pass'))
+                    request.user.save()
+                    # Stay authenticated
+                    update_session_auth_hash(request, request.user)
+                else:
+                    # Set password with new value, save
+                    user.set_password(request.POST.get('pass'))
+                    user.save()
 
-            # Change to the page that indicates to the user that
-            # the password was successfully changed
-            return render(request, 'pages/authPassChangeSuccess.html', {'email': email})
-    else:
-        # Blank form (no POST yet)
+                # Change to the page that indicates to the user that
+                # the password was successfully changed
+                return render(request, 'pages/authPassChangeSuccess.html', {'email': email})
+        else:
+            # Blank form (no POST yet)
 
-        form = CurrentPasswordForm(user=request.user)
+            form = CurrentPasswordForm(user=request.user)
 
-    # Render the current page if the user first enters this page
-    # or the user's current password is incorrect
-    return render(request, 'pages/changePassPage.html', {'form': form, 'email': email})
+        # Render the current page if the user first enters this page
+        # or the user's current password is incorrect
+        return render(request, 'pages/changePassPage.html', {'form': form, 'email': email})
+    else: 
+        return redirect('login')
 
 
 def changeEmailView(request, email):
-    # Get the info. from the selected account
-    user = accessIndividualAccount(email)
-    previous_email = email
-    email = user.email
-    # When the user submits the form
-    if request.method == 'POST':
-        # Save the form data
-        form = ChangeEmailForm(request.POST, user=request.user)
-        # If the user's current password is correct
-        # TODO check if all attributes are saved when a copy is created
-        if form.check_entry():
-            if request.user.email == user.email:
-                saved_user = request.user
-                logout(request)
-                user.email = request.POST.get('email_confirm')
-                user.save()
-                saved_user.delete()
-                login(request, user)
-            else:
+    if request.user.is_authenticated:
+        # Get the info. from the selected account
+        user = accessIndividualAccount(email)
+        previous_email = email
+        email = user.email
+        # When the user submits the form
+        if request.method == 'POST':
+            # Save the form data
+            form = ChangeEmailForm(request.POST, user=request.user)
+            # If the user's current password is correct
+            # TODO check if all attributes are saved when a copy is created
+            if form.check_entry():
+                if request.user.email == user.email:
+                    saved_user = request.user
+                    logout(request)
+                    user.email = request.POST.get('email_confirm')
+                    user.save()
+                    saved_user.delete()
+                    login(request, user)
+                else:
 
-                old_user_email = user.email
-                user.email = request.POST.get('email_confirm')
-                user.save()
+                    old_user_email = user.email
+                    user.email = request.POST.get('email_confirm')
+                    user.save()
 
-                old_user_acct = CustomUser.objects.get(pk=old_user_email)
-                old_user_acct.delete()
+                    old_user_acct = CustomUser.objects.get(pk=old_user_email)
+                    old_user_acct.delete()
 
-            # Change to the page that indicates to the user that
-            # the password was successfully changed
-            return render(request, 'pages/emailChangeSuccess.html', {'email': user.email})
-    else:
-        # Blank form (no POST yet)
+                # Change to the page that indicates to the user that
+                # the password was successfully changed
+                return render(request, 'pages/emailChangeSuccess.html', {'email': user.email})
+        else:
+            # Blank form (no POST yet)
 
-        form = ChangeEmailForm(user=request.user)
+            form = ChangeEmailForm(user=request.user)
 
-    # Render the current page if the user first enters this page
-    # or the user's current password is incorrect
-    return render(request, 'pages/changeEmailPage.html', {'form': form, 'email': email})
+        # Render the current page if the user first enters this page
+        # or the user's current password is incorrect
+        return render(request, 'pages/changeEmailPage.html', {'form': form, 'email': email})
+    else: 
+        return redirect('login')
 
 
 def changeProfileView(request):
-    return render(request, 'pages/changeProfilePage.html')
+    if request.user.is_authenticated:
+        return render(request, 'pages/changeProfilePage.html')
+    else: 
+        return redirect('login')
 
 
 def viewAccountsList(request):
-    return render(request, 'pages/viewAccountsList.html')
+    if request.user.is_authenticated:
+        return render(request, 'pages/viewAccountsList.html')
+    else: 
+        return redirect('login')
 
 
 def accessAccounts():
     users = CustomUser.objects.all()
-
     return users
 
 
 def accessIndividualAccount(emailAddress):
     user = CustomUser.objects.get(pk=emailAddress)
-
     return user
 
 
@@ -204,53 +228,69 @@ def flatten(sqlList):
 
 
 def accountsView(request):
-    accountsList = accessAccounts()
-    emails = []
-
-    for user in accountsList:
-        emails.append(user.email)
-    print('made it here')
-
-    return render(request, 'pages/viewAccountsList.html', {'emails': emails})
+    if request.user.is_authenticated:
+        accountsList = accessAccounts()
+        emails = []
+    
+        for user in accountsList:
+            emails.append(user.email)
+        print('made it here')
+    
+        return render(request, 'pages/viewAccountsList.html', {'emails': emails})
+    else: 
+        return redirect('login')
 
 
 def otherAccountOptions(request, emailAddress):
-    userAccount = accessIndividualAccount(emailAddress)
+    if request.user.is_authenticated:
+        userAccount = accessIndividualAccount(emailAddress)
 
-    info = {'accountName': userAccount.email, 'firstName': userAccount.first_name, 'lastName': userAccount.last_name}
-    return render(request, 'pages/individualAccountOption.html', info)
+        info = {'accountName': userAccount.email, 'firstName': userAccount.first_name, 'lastName': userAccount.last_name}
+        return render(request, 'pages/individualAccountOption.html', info)
+    else: 
+        return redirect('login')
 
 
 def newAccount(request):
-    if request.method == 'POST':
-        import hashlib
-        import sqlite3
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            import hashlib
 
-        first_name = request.POST.get('firstName')
-        last_name = request.POST.get('lastName')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+            import sqlite3
 
-        CustomUser.objects.create_superuser(email, first_name, last_name, password)
+            first_name = request.POST.get('firstName')
+            last_name = request.POST.get('lastName')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
 
-        return render(request, 'pages/accountCreated.html', {'email': email})
+            CustomUser.objects.create_superuser(email, first_name, last_name, password)
 
-    return render(request, 'pages/newAccount.html')
+            return render(request, 'pages/accountCreated.html', {'email': email})
+
+        return render(request, 'pages/newAccount.html')
+    else: 
+        return redirect('login')
 
 
 def deleteAccount(request, emailAddress):
-    user = CustomUser.objects.get(pk=emailAddress)
-    user.delete()
+    if request.user.is_authenticated:
+        user = CustomUser.objects.get(pk=emailAddress)
+        user.delete()
 
-    return render(request, 'pages/accountDeleted.html', {'email': emailAddress})
+        return render(request, 'pages/accountDeleted.html', {'email': emailAddress})
+    else: 
+        return redirect('login')    
 
 
 def accountCreated(request, emailAddress):
-    accountList = accessIndividualAccount(emailAddress)
+    if request.user.is_authenticated:
+        accountList = accessIndividualAccount(emailAddress)
 
-    email = accountList.email
+        email = accountList.email
 
-    return render(request, 'pages/individualAccountOption.html', {'email': email})
+        return render(request, 'pages/individualAccountOption.html', {'email': email})
+    else: 
+        return redirect('login') 
 
 
 def PassReset(request):
@@ -289,42 +329,48 @@ def successfullyChangedPass(request):
 
 
 def changeName(request, accountName):
-    # Get the info. from the selected account
-    user = accessIndividualAccount(accountName)
-    email = user.email
-    # When the user submits the form
-    if request.method == 'POST':
-        # Save the form data
-        form = ChangeNameForm(request.POST, user=request.user)
-        # If the user's current password is correct
-        if form.check_entry():
-            # Change the user's first and last name
-            user.first_name = request.POST.get('first_name')
-            user.last_name = request.POST.get('last_name')
-            user.save()
+    if request.user.is_authenticated:
+        # Get the info. from the selected account
+        user = accessIndividualAccount(accountName)
+        email = user.email
+        # When the user submits the form
+        if request.method == 'POST':
+            # Save the form data
+            form = ChangeNameForm(request.POST, user=request.user)
+            # If the user's current password is correct
+            if form.check_entry():
+                # Change the user's first and last name
+                user.first_name = request.POST.get('first_name')
+                user.last_name = request.POST.get('last_name')
+                user.save()
 
-            return render(request, 'pages/nameChangeSuccess.html', {'email': email})
-    else:
-        # Blank form (no POST yet)
+                return render(request, 'pages/nameChangeSuccess.html', {'email': email})
+        else:
+            # Blank form (no POST yet)
 
-        form = ChangeNameForm(user=request.user)
+            form = ChangeNameForm(user=request.user)
 
-    # Render the current page if the user first enters this page
-    # or the user's current password is incorrect
-    return render(request, 'pages/changeName.html', {'form': form, 'email': email})
+        # Render the current page if the user first enters this page
+        # or the user's current password is incorrect
+        return render(request, 'pages/changeName.html', {'form': form, 'email': email})
+    else: 
+        return redirect('login')  
 
 
 def profileImageView(request, accountName):
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, user=request.user)
-        user = accessIndividualAccount(accountName)
-        if form.check_entry():
-            user.avatar = request.FILES.get('prof_pic')
-            user.save()
-        return render(request, 'pages/successfullyChangedProfPic.html', {'email': user.email})
-    else:
-        form = UserProfileForm()
-        return render(request, 'pages/changeProfilePic.html', {'form': form, 'email': accountName})
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = UserProfileForm(request.POST, request.FILES, user=request.user)
+            user = accessIndividualAccount(accountName)
+            if form.check_entry():
+                user.avatar = request.FILES.get('prof_pic')
+                user.save()
+            return render(request, 'pages/successfullyChangedProfPic.html', {'email': user.email})
+        else:
+            form = UserProfileForm()
+            return render(request, 'pages/changeProfilePic.html', {'form': form, 'email': accountName})
+    else: 
+        return redirect('login')
 
 
 # Check if the user selects 'Bar Graph'
@@ -433,21 +479,25 @@ class ReportWizardBase(SessionWizardView):
         return self.TEMPLATES[self.steps.current]
 
 def savePreset(request):
-    presets = ReportPresets.objects.filter(user=request.user)
-    if len(presets) <= 14:
-        if request.method == 'POST':
-            form = ReportPresetName(request.POST)
-            if form.check_entry():
-                name = request.POST.get('enter_preset_name')
-                saveChoices(request, name)
-            else:
-                return render(request, 'pages/wizardFiles/savePreset.html',
-                            {'form': form})
+    if request.user.is_authenticated:
+        presets = ReportPresets.objects.filter(user=request.user)
+        if len(presets) <= 14:
+            if request.method == 'POST':
+                form = ReportPresetName(request.POST)
+                if form.check_entry():
+                    name = request.POST.get('enter_preset_name')
+                    saveChoices(request, name)
+                else:
+                    return render(request, 'pages/wizardFiles/savePreset.html',
+                                {'form': form})
+    
+    
+            return render(request, 'pages/WizardFiles/presetSaved.html', {'name': name})
+        else:
+            return render(request, 'pages/sizeLimitReached.html')
+    else: 
+        return redirect('login')
 
-
-        return render(request, 'pages/WizardFiles/presetSaved.html', {'name': name})
-    else:
-        return render(request, 'pages/sizeLimitReached.html')
 
 def saveChoices(request, name):
     global preset_storage
@@ -549,40 +599,56 @@ def saveChoices(request, name):
 
 
 def reportsView(request):
-    return render(request, 'pages/reportsPage.html')
+    if request.user.is_authenticated:
+        return render(request, 'pages/reportsPage.html')
+    else: 
+        return redirect('login')
+    
 
 def viewPresets(request):
-    presets = ReportPresets.objects.filter(user=request.user)
-    pres_names = []
+    if request.user.is_authenticated:
+        presets = ReportPresets.objects.filter(user=request.user)
+        pres_names = []
 
-    for preset in presets:
-        pres_names.append(preset.preset_name)
+        for preset in presets:
+            pres_names.append(preset.preset_name)
 
-    return render(request, 'pages/viewPresets.html', {'pres_names': pres_names})
+        return render(request, 'pages/viewPresets.html', {'pres_names': pres_names})
+    else: 
+        return redirect('login')
 
 def individualPresetOptions(request, name):
-    preset = ReportPresets.objects.get(pk=name)
-    print(preset.selection)
+    if request.user.is_authenticated:
+        preset = ReportPresets.objects.get(pk=name)
+        print(preset.selection)
 
-    return render(request, 'pages/individualPresetOptions.html', {'name': name, 'preset':preset})
+        return render(request, 'pages/individualPresetOptions.html', {'name': name, 'preset':preset})
+    else: 
+        return redirect('login')
 
 def deletePreset(request, name):
-    preset = ReportPresets.objects.get(pk=name)
-    preset.delete()
+    if request.user.is_authenticated:
+        preset = ReportPresets.objects.get(pk=name)
+        preset.delete()
 
-    return render(request, 'pages/deletePreset.html', {'name': name})
+        return render(request, 'pages/deletePreset.html', {'name': name})
+    else: 
+        return redirect('login')
 
 def createReportFromPreset(request, name):
-    if request.method == 'POST':
-        form = TimeFrame(request.POST)
-        from_time = request.POST.get('from_time')
-        to_time = request.POST.get('to_time')
-        # Generate report here
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = TimeFrame(request.POST)
+            from_time = request.POST.get('from_time')
+            to_time = request.POST.get('to_time')
+            # Generate report here
 
-        return render(request, 'pages/presetReportGenerated.html', {'name': name, 'form': form})
-    else:
-        form = TimeFrame()
-        return render(request, 'pages/createReportFromPreset.html', {'name': name, 'form':form})
+            return render(request, 'pages/presetReportGenerated.html', {'name': name, 'form': form})
+        else:
+            form = TimeFrame()
+            return render(request, 'pages/createReportFromPreset.html', {'name': name, 'form':form})
+    else: 
+        return redirect('login')
 
 
 
