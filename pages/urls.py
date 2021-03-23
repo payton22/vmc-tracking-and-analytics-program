@@ -12,6 +12,7 @@ urlpatterns = [
     path('survey/', surveyPageView, name='surveyPage'),
     path('home/', homePageView, name="homePage"),
     path('import/', importPageView, name='importPage'),
+    path('import/gpa', importGPAView, name='importGPA'),
     #path('visualizations/', visPageView, name='visPage'),
     path('vmcadmin/', accountsView, name='vmcAdminPage'),
     path('vmcadmin/changePassword/<str:emailAddress>/', changePassView, name='changePassPage'),

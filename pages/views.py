@@ -88,6 +88,11 @@ def importPageView(request):
         return HttpResponseRedirect('/parse')
     return render(request, 'pages/importPage.html')
 
+def importGPAView(request):
+    if request.method == 'POST':
+        return HttpResponseRedirect('/parse/gpa')
+    return render(request, 'pages/importGPAPage.html')
+
 
 def vmcAdminPageView(request):
     return render(request, "pages/vmcAdminPage.html")
