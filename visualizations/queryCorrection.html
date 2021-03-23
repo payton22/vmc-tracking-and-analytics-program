@@ -1,0 +1,25 @@
+{% extends "pages/base.html" %}
+
+
+{% block title %}Invalid Date Range{% endblock title %}
+{% block content %}
+    <div class="container fixed-top justify-content-center" style="padding-left: 540px;">
+        <div class="row">
+            <h1 class="d-flex">Invalid Date Range</h1>
+            <p>Warning: There were no visits found using the date range and settings you selected. Please
+            select a new date range below or return to the Reports Wizard.</p>
+        </div>
+    </div>
+
+    <form action="{% url 'visualizations:getReport' %}" method="post" class="h-50 justify-content-center"> {% csrf_token %}
+            <div class="row flex-column">
+                {{ form }}
+            </div>
+            <br>
+            <br>
+            <div class="row flex-column">
+                 <button type="submit"  value="create_report_from_preset" class="btn btn-lg nav-bg" style="width: 250px;" >Use New Date Range and Create Report</button>
+                <a class="btn btn-lg nav-bg" href="{% url 'reportsWizard' %}" style="width:250px;">Return to Reports Wizard</a>
+            </div>
+    </form>
+{% endblock content %}

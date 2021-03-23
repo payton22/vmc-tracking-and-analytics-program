@@ -50,6 +50,7 @@ def parse_scanner_data(csvfile):
 
     return visits
 
+
 def parse_scan(data,scan_index,visits):
     scan = data[scan_index]
     #if the scan is a wolfcard, check the previous scan to see if it is a scan in or out
@@ -76,8 +77,8 @@ def parse_scan(data,scan_index,visits):
 
 
 #search for the most recent visit with the associated barcode
-def search_visits(visits,barcode):
-    for i in range(len(visits)-1,-1,-1):
-        if visits[i].barcode == barcode:
-            return i
-    return False
+#def search_visits(visits,barcode):
+#    for i in range(len(visits)-1,-1,-1):
+#        if visits[i].barcode == barcode:
+#            return i
+#    return False

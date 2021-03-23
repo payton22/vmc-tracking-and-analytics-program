@@ -7,6 +7,10 @@ function defaultOff(groupName, max, inc) {
    var max_ct = document.getElementById(max);
    var inc_by = document.getElementById(inc);
 
+   var title_input = document.getElementById('title');
+   if (title_input != null)
+       title_input.disabled = true;
+
    if($('input[name='+ groupName + ']:checked').val() == null ||
    $('input[name=' + groupName + ']:checked').val() == 'Yes') {
        if(max_ct != null || inc_by != null) {
@@ -21,6 +25,17 @@ function defaultOff(groupName, max, inc) {
        }
    }
 }
+
+$('input[name=SelectReportType-custom_title]').change(function(){
+    var title_input = document.getElementById('title');
+
+    if(this.value == 'Yes'){
+        title_input.disabled = false;
+    }
+    else {
+        title_input.disabled = true;
+    }
+});
 
 $('input[name=CustomizeBarGraph-autoscale]').change(function (){
     var max_ct = document.getElementById('max_count');

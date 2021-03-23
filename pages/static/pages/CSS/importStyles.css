@@ -162,3 +162,15 @@ button:disabled:hover {
 .button-sp {
     padding-bottom:30px; 
 }
+
+.upload-btn {
+    height: 35px;
+    text-align: center;
+    padding: 5px;
+}
+
+.upload-area {
+    border: 2px solid #312A34;
+    width: 500px;
+    padding: 50px;
+}
