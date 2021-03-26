@@ -96,6 +96,11 @@ def importPageView(request):
     else: 
         return redirect('login')
 
+def importGPAView(request):
+    if request.method == 'POST':
+        return HttpResponseRedirect('/parse/gpa')
+    return render(request, 'pages/importGPAPage.html')
+
 
 def vmcAdminPageView(request):
     if request.user.is_authenticated:

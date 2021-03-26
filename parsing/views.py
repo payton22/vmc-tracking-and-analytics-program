@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from . import scanner_parsing
 from . import parser
+from . import gpa_parser
 from django.http import HttpResponse
 import csv
 
@@ -77,3 +78,15 @@ def parse(request):
         return redirect('importPage')
     else:
         return HttpResponse("ERROR, please go to the import page and upload a file.")
+
+def parse_gpa(request):
+    if request.method == 'POST' and request.FILES['datafile']:
+        data_file = request.FILES['datafile'].read().decode('utf-8').splitlines()
+        formatted_data = gpa_parser.parse_gpa(data_file)
+        ret_str = ''
+        for student in formatted_data:
+            ret_str = ret_str + student.student_name + ' ' + student.cum_gpa + '<br>'
+        return HttpResponse(ret_str)
+    else:
+        return HttpResponse("ERROR, please go to the import page and upload a file.")
+
