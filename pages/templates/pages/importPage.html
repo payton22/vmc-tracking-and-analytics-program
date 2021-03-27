@@ -4,33 +4,97 @@
 
 {% block content %}
 
-<div class="h-100 row">
-    <form class="col" style="" enctype="multipart/form-data" method="post" action="/parse/" class="border">
-        {% csrf_token %}
-        <div class="h-100">
-            <h1 class="text-center">Document Upload</h1>
+<div class="container h-100">
+    <h1 class="text-center">Document Upload</h1>
 
-            <div class="h-75 row align-items-center">
-                <div class="col upload-area p-3">
-                    <div class="row justify-content-center">
-                        <!-- <p><input type="file" class="col-sm" name="datafile"></p> -->
-                        <input type="file" name="datafile" id="file" class="inputfile hidden" />
-                        <label for="file" id="file" class="upload-button nav-bg w-75 upload-btn">Upload file</label>
+    <div class="row justify-content-center mt-5">
+        <button id="navigateBtn" class="tablink darkTab" onclick="openForm('Navigate')">Navigate</button>
+        <button id="gpaBtn" class="tablink" onclick="openForm('GPA')">GPA</button>
+        <button id="manualBtn" class="tablink" onclick="openForm('Manual'); resetRows()">Manual</button>
+
+    </div>
+    
+
+    <div class="row justify-content-center upload-area">
+        <div class="col-sm-12">
+            <div id="Navigate" class="form">
+                <h4 class="text-center">Navigate Data</h4>
+                <form class="col" enctype="multipart/form-data" method="post" action="/parse/" class="">
+                    {% csrf_token %}
+                    <div class="h-100">                        
+                        <div class="h-75 row align-items-center">
+                            <div class="col p-3">
+                                <div class="row justify-content-center">
+                                    <input type="file" name="datafile" id="file" class="inputfile hidden" />
+                                    <label for="file" id="file" class="upload-button nav-bg w-75 upload-btn">Upload file</label>
+                                </div>
+                                <div class="row justify-content-center mt-4">
+                                    <button value="submit">Submit</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
-                    
-                    <div class="row justify-content-center mt-4">
-                        <button value="submit">Submit</button>
+                </form>
+            </div>
+            
+            <div id="GPA" class="form" style="display:none">
+                <h4 class="text-center">GPA Data</h4>
+                <form class="col" enctype="multipart/form-data" method="post" action="/parse/" class="">
+                    {% csrf_token %}
+                    <div class="h-100">                        
+                        <div class="h-75 row align-items-center">
+                            <div class="col p-3">
+                                <div class="row justify-content-center">
+                                    <input type="file" name="gpadatafile" id="file" class="inputfile hidden" />
+                                    <label for="file" id="file" class="upload-button nav-bg w-75 upload-btn">Upload file</label>
+                                </div>
+                                <div class="row justify-content-center mt-4">
+                                    <button value="submit">Submit</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </form>
+            </div>
+
+            <div id="Manual" class="form" style="display:none;">
+                <h4 class="text-center">Manual Data <button onclick="addRow()" class="btn-sm">+</button><button onclick="removeRow()" class="btn-sm ml-2">-</button></h4>
+                <form class="col" enctype="multipart/form-data" method="post" action="#" class="">
+                    {% csrf_token %}
+                    <div class="h-100">                        
+                        <div class="h-75 row align-items-center" >
+                            <div class="col p-3"  id="AddControl">
+                                <div id="zero" class="manualBorder"></div>
+                                <div id="one" class=""></div>
+                                <div id="two" class=""></div>
+                                <div id="three" class=""></div>
+                                <div id="four" class=""></div>
+                                <div id="five" class=""></div>
+                                <div id="six" class=""></div>
+                                <div id="seven" class=""></div>
+                                <div id="eight" class=""></div>
+                                <div id="nine" class=""></div>
+                                <div class="row justify-content-center mt-4">
+                                    <button value="submit">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-    </form>
+    </div>
+
+    {% if messages %}
+        <h4 class="messages text-center my-5">
+        {% for message in messages %}
+            <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+        {% endfor %}
+        </h4>
+    {% endif %}
+
 </div>
 
 
-
-
-
-
 {% endblock content %}
+

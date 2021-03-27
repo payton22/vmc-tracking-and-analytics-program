@@ -15,6 +15,10 @@
             <h1>UNR Veteran Services Survey</h1>
         </div>
 
+
+        
+        
+
         <!-- Action needs to be filled with a URL for parse/sending to DB table. Currently we are redirecting to the login page-->
         <form id="container" class="container pb-2 form" method="post" action="/survey/">
             {% csrf_token %}
@@ -78,7 +82,7 @@
                 <label for="Not sure">Not sure</label><br>
             </div>
 
-            <div class="w-100 hiddenPanel shadow-lg1 rounded panel-bg">
+            <div class="w-100 shadow-lg1 rounded panel-bg">
                 <h5>Currently Live</h5>
                 <input type="radio" id="On campus" name="currently_live" value="On campus">
                 <label for="On campus">On campus</label><br>
@@ -227,6 +231,21 @@
 
                 <input type="radio" id="Not Sure2" name="break_in_attendance" value="Not Sure">
                 <label for="Not Sure2">Not Sure</label><br>
+            </div>
+
+            <div class="w-100 hiddenPanel shadow-lg rounded panel-bg">
+                <h5>What is the best way to contact you?</h5>
+                <input type="radio" id="Social Media" name="What is the best way to contact you?" value="Social Media">
+                <label for="Social Media">Social Media</label><br>
+
+                <input type="radio" id="Phone" name="What is the best way to contact you?" value="Phone">
+                <label for="Phone">Phone</label><br>
+
+                <input type="radio" id="Email" name="What is the best way to contact you?" value="Email">
+                <label for="Email">Email</label><br>
+
+                <input type="radio" id="Discord" name="What is the best way to contact you?" value="Discord">
+                <label for="Discord">Discord</label><br>
             </div>
 
             <div class="text-center w-100 hiddenPanel button-sp">

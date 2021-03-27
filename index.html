@@ -1,70 +1,104 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>VS-TAP</title>
-        <link rel="stylesheet" href="test.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-    </head>
-    <body class="bg-dark text-white">
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<head>
+	<title>VS-TAP Project Page</title>
+	<!-- CSS Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body data-spy="scroll" data-target="#menu">
 
-        <!-- Navbar -->
-        <nav class="navbar navbar-dark navbar-expand-md fixed-top">
+	<div id="home">
+
+		<!-- Nagivation -->
+		<nav class="navbar navbar-dark navbar-expand-md fixed-top">
 			<div class="container-fluid">
-                    <div class="p-2 ml-5">
-                        <strong>CS 426 Senior Project in Computer Science</strong>
-                    </div>
-                    <div class="p-2 mr-5">
-                        <strong>Spring 2021, at UNR, CSE Department</strong>
-                    </div>
+				<a href="#" class="navbar-brand underline">VS-TAP</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#menu">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="menu">
+					<ul class="navbar-nav ml-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="#home">Home</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#about">Team</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#portfolio">Description</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#advisors">Instructors & Advisors</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="#resources">Resources</a>
+						</li>
+					</ul>
+
+				</div>
 			</div>
 		</nav>
-        <!-- End Navbar -->
+
+		<!-- Start landing page -->
+		<div class="landing">
+			<div class="home-wrap">
+				<div class="home-inner">
+					
+				</div>
+			</div>
+		</div>
+		<!-- Start landing page caption -->
+		<div class="center-block caption text-center text-black">
+			<h3>Veteran Services Tracking and Analytics Program</h3>
+			<a class="btn btn-outline-light my-5" href="#about">Meet the team!</a>
+			<p>CS 426 Senior Project in Computer Science, Spring 2021, at UNR, CSE Department</p>
+		</div>
+		
+	</div> <!---end of home section --->
 
 
+	<!-- Start about section -->
+	<div id="about">
+		
+		<div class="jumbotron">
+			<h3 class="heading">Team #12 VS-TAP</h3>
+			
+			<div class="row">
+				<div class="col-md-3 text-center">
+					<h4>Daniel Hall</h4>
+					<p>Front-end/Website Security/Containerization</p>
+					<img class="profile" src="daniel.png">
+				</div>
+				<div class="col-md-3 text-center">
+					<h4>Jonathon Hewitt</h4>
+					<p>ETL/Data Engineering</p>
+					<img class="profile" src="jonathon.jpg">
+				</div>
+				<div class="col-md-3 text-center">
+					<h4>Payton Knoch</h4>
+					<p>Front-End/Data Analytics/Data Visualizations</p>
+					<img class="profile" src="payton.jpg">
+				</div>
+				<div class="col-md-3 text-center">
+					<h4>Christopher Parks</h4>
+					<p>Back-end/Data Management</p>
+					<img class="profile" src="chris.jpg">
+				</div>
+			</div>
+		</div> 
+		<!-- end of junmbotron -->
+	</div>
+	<!-- end about -->
 
-        <div class="text-center jumbotron bg-dark">
-            <h1>Veteran's Service Tracking and Analytics Program</h1>
-            <h4>VS-TAP</h4>
+	<!-- start of portfolio section -->
+	<div id="portfolio">
+		<div class="padding">
+			
 
-        </div>
-
-        <div class="container-fluid">
-
-            <div class="row justify-content-center">
-                <h3>Team #12 VS-TAP</h3>
-            </div>
-            <div class="row container-fluid">
-                <div class="col-md-4">                    
-                    <h5>Team Members:</h5>
-                    <p>
-                        Daniel Hall <br> 
-                        Jonathon Hewitt <br>
-                        Payton Knoch <br>
-                        Christopher Parks
-                    </p>                    
-                </div>
-
-                <div class="col-md-4">
-                    <h5>Instructors:</h5>
-                    <p>
-                        Devrin Lee <br>
-                        David Feil-Seifer
-                    </p>
-                </div>
-
-                <div class="col-md-4">
-                    <h5>External Advisor:</h5>
-                    <p>Dr. Fred Harris</p>
-                    <h5>Graduate Mentor:</h5>
-                    <p>Nikkolas Irwin</p>
-                </div>
-            </div>
-
-            <div>
-            <h4>Description:</h4>
-            <p>The Veteran Service Tracking and Analytics Program, VS-TAP, is a 
+			<h3 class="heading">Description</h3>
+			<div class="description-text">
+ 				<p>The Veteran Service Tracking and Analytics Program, VS-TAP, is a 
                 project that will add customer tracking and useful analytics to 
                 the Veteran Services (VS) on campus. The main goal of the VS-TAP 
                 project is to automate the data analytic functions that the center 
@@ -82,18 +116,82 @@
                 report generation.   </p>
 
                 <p>Because this project stores and displays sensitive student data, 
-                    user authentication is vital to comply with The Family 
-                    Educational Rights and Privacy Act (FERPA).  The website will 
-                    only be accessible from computers on the University network, and 
-                    users will have to login to accounts created by an administrator 
-                    at the VMC.  User login information is hashed and stored in a 
-                    database.  The admin user has access to create and delete 
-                    accounts, as well as reset other user passwords should they 
-                    forget their password.  </p>
-                </div>
+                user authentication is vital to comply with The Family 
+                Educational Rights and Privacy Act (FERPA).  The website will 
+                only be accessible from computers on the University network, and 
+                users will have to login to accounts created by an administrator 
+                at the VMC.  User login information is hashed and stored in a 
+                database.  The admin user has access to create and delete 
+                accounts, as well as reset other user passwords should they 
+                forget their password.  </p>
+            </div>
+		</div>
+		<!-- end container-fluid -->
+	</div>
+	<!-- end portfolio -->
 
-            <h4>Project related resources:</h4>
-        </div>
+	<!-- Instructors section -->
+	<div id="advisors">
+		<h3 class="heading">Instructors and Advisors</h3>
+		<div class="row padding">
+			<div class="col-md-6">
+				<dir class="card text-center">
+					<!-- <img class="card-img-top" src="6.jpg"> -->
+					<div class="card-body">
+						<h4>Devrin Lee</h4>
+						<p>CS 426 Instructor</p>
+					</div>
+				</dir>
+			</div>
+			<div class="col-md-6">
+				<dir class="card text-center">
+					<div class="card-body">
+						<h4>David Feil-Seifer</h4>
+						<p>CS 426 Instructor</p>
+					</div>
+				</dir>
+			</div>
+			<div class="col-md-6">
+				<dir class="card text-center">
+					<div class="card-body">
+						<h4>Dr. Fred Harris</h4>
+						<p>External Advisor</p>
+					</div>
+				</dir>
+			</div>
+			<div class="col-md-6">
+				<dir class="card text-center">
+					<div class="card-body">
+						<h4>Nikkolas Irwin</h4>
+						<p>Graduate Student Mentor</p>
+					</div>
+				</dir>
+			</div>
+		</div>
+	</div>
+	<!-- end Instructors -->
 
-    </body>
+	<!-- resources -->
+	<div id="resources" class="resources container-fluid">
+		<div class="row">
+			<div class="col">
+				<h3 class="heading">Project related resources</h3>
+				<div class="padding row">
+					<div class="col-md-3">
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	<!-- end resources -->
+
+
+
+<!-- JS Bootstrap -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
 </html>
