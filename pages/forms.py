@@ -5,17 +5,27 @@ from visualizations.models import ReportPresets
 
 # Making this global because it will be reused among multiple
 # "reports' forms
-DEMOGRAPHICS = [('Ethnicity', 'Ethnicity (Coming soon)'),
-                ('Career', 'Career (Coming soon)'),
-                ('Benefit Chapter', 'Benefit Chapter (Coming soon)'),
-                ('Usage by Date', 'Usage by Date'),
-                ('College', 'College (Coming soon)'),
-                ('Total Usage by Location', 'Total Usage by Location'),
-                ('Classification', 'Classification'),
-                ('Major', 'Major'),
-                ('Services', 'Services')]
+DEMOGRAPHICS = [('--- Not yet implemented ---', (
+    ('GPA', 'GPA'),
+    )),
+                ('--- Currently implemented and functional ---',
+                 (('Benefit Chapter', 'Benefit Chapter'),
+                ('Residential Distance from Campus', 'Residential Distance from Campus'),
+                ('Employment', 'Employment'),
+                ('Weekly Hours Worked', 'Weekly Hours Worked'),
+                ('Number of Dependents', 'Number of Dependents'),
+                ('Marital Status', 'Marital Status'),
+                ('Gender Identity', 'Gender Identity'),
+                ('Parent Education', 'Parent Education'),
+                ('Break in University Attendance', 'Break in University Attendance'),
+                  ('Usage by Date', 'Usage by Date'),
+                  ('Total Usage by Location', 'Total Usage by Location'),
+                  ('Classification', 'Classification'),
+                  ('Major', 'Major'),
+                  ('Services', 'Services')))]
 
 HIST_TIME_CHOICES = [('Average visitors by time', 'Average visitors by time'),
+                     ('Average visitors by day', 'Average visitors by day'),
                      ('Total visitors by day', 'Total visitors by day'),
                      ('Total visitors by year', 'Total visitors by year')]
 YES_NO = [('Yes', 'Yes'),
@@ -96,10 +106,23 @@ class SelectReportType(forms.Form):
                ('Individual Statistic', 'Individual Statistic')]
     attributes = {'title': 'I need: '}  # left out form-check-input
     graphType = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(attrs=attributes))
+    custom_title = forms.ChoiceField(choices=YES_NO, widget=forms.RadioSelect(attrs={'id': 'custom_title'}))
+    title = forms.CharField(widget=forms.TextInput(attrs={'id':'title'}), required=False)
 
     def __init__(self, *args, **kwargs):
         super(SelectReportType, self).__init__(*args, **kwargs)
         self.fields['graphType'].label = ''
+
+    def clean(self):
+        data = self.cleaned_data
+
+        if data.get('custom_title') == 'No':
+            return data
+        elif data.get('custom_title') == 'Yes' and data.get('title') != '':
+            return data
+        else:
+            raise forms.ValidationError(
+                'Enter name for \'Title\' or change \'Custom title\' to \'No\'.')
 
 
 # -- Part of the Reports Wizard --
@@ -138,15 +161,24 @@ class TimeFrame(forms.Form):
                                                                                'autocomplete': 'off',
                                                                                'name': 'to_time'}))
 
+    def clean(self):
+        data = self.cleaned_data
+
+        if data.get('from_time') > data.get('to_time'):
+            raise forms.ValidationError(
+                'The starting date you entered is later than the ending date.')
+
 
 class HistogramHours(forms.Form):
     from_time = forms.TimeField(input_formats=['%H:%M %p'],
                                 widget=forms.TimeInput(format='%H:%M %p',
-                                                       attrs={'name': 'timepicker', 'class': 'timepicker form-control timepicker-input'}))
+                                                       attrs={'name': 'timepicker',
+                                                              'class': 'timepicker form-control timepicker-input'}))
 
     to_time = forms.TimeField(input_formats=['%H:%M %p'],
                               widget=forms.TimeInput(format='%H:%M %p',
-                                                     attrs={'name': 'timepicker', 'class': 'timepicker form-control timepicker-input'}))
+                                                     attrs={'name': 'timepicker',
+                                                            'class': 'timepicker form-control timepicker-input'}))
 
 
 # Used for selecting between different places that visitors attend in the VMC
@@ -201,6 +233,9 @@ class CustomizeBarGraph(forms.Form):
     increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'increment_by'}),
                                       label='Increment by:', required=False)
 
+    show_multiple_bars_by_location = forms.ChoiceField(choices=Y_N_CHOICES,
+                                                       widget=forms.RadioSelect(attrs={'id': 'grouped_graph'}))
+
     def clean(self):
         data = self.cleaned_data
         print(data.get('max_count', '1'))
@@ -230,6 +265,8 @@ class CustomizeLineGraph(CustomizeBarGraph):
     increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'line_increment'}),
                                       label='Increment by:', required=False)
 
+    show_multiple_bars_by_location = None
+
 
 # In the wizard, this is used if the user wants to create a histogram.
 # The user selects different time periods to track attendance.
@@ -256,6 +293,8 @@ class HistogramDetails(CustomizeBarGraph):
     # Integer field for allowing user to customize incrementation
     increment_by = forms.IntegerField(widget=forms.NumberInput(attrs={'id': 'hist_increment'}),
                                       label='Increment by:', required=False)
+
+    show_multiple_bars_by_location = None
 
 
 # Wizard form that allows the user to customize the pie chart
@@ -292,6 +331,8 @@ class CustomizeScatterPlot(CustomizeBarGraph):
                                       label='Increment by:', required=False)
 
     display_as = forms.ChoiceField(choices=OPTIONS)
+
+    show_multiple_bars_by_location = None
 
 
 # Individual statistic counting/tracking options

@@ -8,9 +8,14 @@
         <div class="row">
             <h1 class="d-flex">Report: {{ graphTitle }}</h1>
         </div>
-        <div class="row">
+        <div class="row flex-column">
+            <a class="btn btn-lg nav-bg" href="{% url 'visualizations:downloadFile' %}" style="width:250px;">Download Table as CSV</a>
+        </div>
+        <br>
+        <div class="row flex-column">
              {% plotly_direct name="Graph" %}
         </div>
+
     </div>
 
 {% endblock content %}
