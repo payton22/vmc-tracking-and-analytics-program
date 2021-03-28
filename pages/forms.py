@@ -5,11 +5,8 @@ from visualizations.models import ReportPresets
 
 # Making this global because it will be reused among multiple
 # "reports' forms
-DEMOGRAPHICS = [('--- Not yet implemented ---', (
-    ('GPA', 'GPA'),
-    )),
-                ('--- Currently implemented and functional ---',
-                 (('Benefit Chapter', 'Benefit Chapter'),
+DEMOGRAPHICS = [('GPA', 'GPA'),
+                ('Benefit Chapter', 'Benefit Chapter'),
                 ('Residential Distance from Campus', 'Residential Distance from Campus'),
                 ('Employment', 'Employment'),
                 ('Weekly Hours Worked', 'Weekly Hours Worked'),
@@ -22,7 +19,7 @@ DEMOGRAPHICS = [('--- Not yet implemented ---', (
                   ('Total Usage by Location', 'Total Usage by Location'),
                   ('Classification', 'Classification'),
                   ('Major', 'Major'),
-                  ('Services', 'Services')))]
+                  ('Services', 'Services')]
 
 HIST_TIME_CHOICES = [('Average visitors by time', 'Average visitors by time'),
                      ('Average visitors by day', 'Average visitors by day'),
@@ -128,13 +125,44 @@ class SelectReportType(forms.Form):
 # -- Part of the Reports Wizard --
 # If the user selects a bar graph, we want to use this form on the second step
 class BarGraphAxes(forms.Form):
-    selection = forms.ChoiceField(choices=DEMOGRAPHICS)
+    TIME_VS_COMPARISONS = [('Count visits over time', 'Count visits over time'),
+                           ('Compare GPA against demographics', 'Compare GPA against demographics')]
+
+    DEMO = [
+        ('Benefit Chapter', 'Benefit Chapter'),
+        ('Residential Distance from Campus', 'Residential Distance from Campus'),
+        ('Employment', 'Employment'),
+        ('Weekly Hours Worked', 'Weekly Hours Worked'),
+        ('Number of Dependents', 'Number of Dependents'),
+        ('Marital Status', 'Marital Status'),
+        ('Gender Identity', 'Gender Identity'),
+        ('Parent Education', 'Parent Education'),
+        ('Break in University Attendance', 'Break in University Attendance'),
+        ('Classification', 'Classification'),
+        ('Major', 'Major'),
+        ('Services', 'Services')
+    ]
+
+    GPA_COMPARISON = [('Average GPA', 'Average GPA')]
+
+    selection = forms.ChoiceField(choices=DEMOGRAPHICS, required=False)
 
     include_table = forms.ChoiceField(choices=YES_NO, widget=forms.RadioSelect())
+
+    report_type = forms.ChoiceField(choices=TIME_VS_COMPARISONS, initial='Count visits over time', widget=forms.RadioSelect())
+
+    category = forms.ChoiceField(choices=DEMO, required=False)
+
+    gpa_to_compare = forms.ChoiceField(choices=GPA_COMPARISON, required=False)
 
     def __init__(self, *args, **kwargs):
         super(BarGraphAxes, self).__init__(*args, **kwargs)
         self.fields['include_table'].label = 'Include table?'
+
+class PieChartCategories(BarGraphAxes):
+    report_type = None
+    category = None
+    gpa_to_compare = None
 
 
 # Select the reporting time period
