@@ -1,6 +1,9 @@
 import sqlite3
 import csv
 import random
+
+gpa_header = 'Report Name: Count Students in End Term,,,,,,\nReport Description: Count Students in End Term,,,,,,\n,,,,,,\nApplied filters:,"(SELECT Count Students in End Term BY Student By Term Key, ALL OTHER) > 0",,,,,\n,Boolean FIlter Name IN (In),,,,,\n,"Campaign Owner IN (Borthwick-Wong, Emilly)",,,,,\n,Term Name IN (2021 Spring),,,,,\n,,,,,,\n'
+
 def get_students():
     conn = sqlite3.connect('vmc_tap.db')
     cur  = conn.cursor()
@@ -8,15 +11,13 @@ def get_students():
     students = cur.fetchall()
     return students
 
-
-
-
 def gen_gpa_data(filename):
     data = []
     students = get_students()
     for student in students:
         data.append(gen_gpa(student))
     csvfile = open(filename, 'a+')
+    csvfile.write(gpa_header)
     csvwriter = csv.writer(csvfile,delimiter=',')
     csvwriter.writerow(['ID','Name','End Term Cumulitive GPA', 'End Term GPA', 'End Term Attempted Credits', 'End Term Earned Credits', 'End Term % Credit Completion'])
     for point in data:

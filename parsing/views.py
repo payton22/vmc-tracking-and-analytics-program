@@ -85,7 +85,7 @@ def parse_gpa(request):
         formatted_data = gpa_parser.parse_gpa(data_file)
         ret_str = ''
         for student in formatted_data:
-            ret_str = ret_str + student.student_name + ' ' + student.cum_gpa + '<br>'
+            ret_str = ret_str + student.student_name + ' ' + student.cum_gpa + ' ' + student.term + '<br>'
         return HttpResponse(ret_str)
     else:
         return HttpResponse("ERROR, please go to the import page and upload a file.")
