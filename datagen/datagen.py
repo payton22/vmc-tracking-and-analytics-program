@@ -14,18 +14,18 @@ class Data:
     check_in_time = ''
     check_out_date = ''
     check_out_time = ''
-    duration = ''
+    check_in_duration = ''
     staff_name = ''
     staff_id = ''
     staff_email = ''
     tags = ''
     def toList(self):
-        return [self.student_name,self.student_email, self.student_id, self.tags, self.classification, self.major, self.services, self.location, self.check_in_date, self.check_in_time, self.check_out_date, self.check_out_time, self.duration, self.staff_name, self.staff_id, self.staff_email]
+        return [self.student_name,self.student_email, self.student_id, self.tags, self.classification, self.major, self.services, self.location, self.check_in_date, self.check_in_time, self.check_out_date, self.check_out_time, self.check_in_duration, self.staff_name, self.staff_id, self.staff_email]
     def __lt__(self,other):
         return self.check_in_time < other.check_in_time
     def __str__(self):
         div = '\",\"'
-        return '\"'+self.student_name+div+self.student_email+div+self.student_id+div+self.student_alt_id+div+self.tags+div+self.classification+div+self.major+div+self.assigned_staff+div+self.care_unit+div+self.services+div+self.course_name+div+self.course_number+div+self.location+div+self.check_in_date+div+self.check_in_time+div+self.check_out_date+div+self.check_out_time+div+self.duration+div+self.staff_name+div+self.staff_id+div+self.staff_email+'\"'
+        return '\"'+self.student_name+div+self.student_email+div+self.student_id+div+self.student_alt_id+div+self.tags+div+self.classification+div+self.major+div+self.assigned_staff+div+self.care_unit+div+self.services+div+self.course_name+div+self.course_number+div+self.location+div+self.check_in_date+div+self.check_in_time+div+self.check_out_date+div+self.check_out_time+div+self.check_in_duration+div+self.staff_name+div+self.staff_id+div+self.staff_email+'\"'
 
 def gen_new_name(name_list):
     new_name = random.choice(names) + ', ' + random.choice(names)
@@ -76,14 +76,14 @@ def gen_visit(student,date):
     visit = deepcopy(student)
     
     check_in  = gen_time(date)
-    duration  = random.randint(0,120)
-    check_out = check_in + datetime.timedelta(minutes=duration)
+    check_in_duration  = random.randint(0,120)
+    check_out = check_in + datetime.timedelta(minutes=check_in_duration)
 
     visit.check_in_date = date.strftime('%m/%d/%y')
     visit.check_out_date = date.strftime('%m/%d/%y')
     visit.check_in_time = check_in.strftime('%I:%M %p')
     visit.check_out_time = check_out.strftime('%I:%M %p')
-    visit.duration = str(duration)
+    visit.check_in_duration = str(check_in_duration)
     visit.location = gen_location()
     visit.staff_name = gen_staff()
     visit.staff_id = gen_student_id()
@@ -161,7 +161,7 @@ def gen_report(filename,date):
     header = gen_header(date,date+datetime.timedelta(days=30))
     titles = ["Student Name", "Student E-mail", "Student ID", "Tags", "Classification", "Major", "Services", "Location", "Check In Date", "Check In Time", "Check Out Date", "Check Out Time", "Checked In Duration (In Min)", "Staff Name",  "Staff ID", "Staff E-mail"]
     csvfile = open(filename, 'a+')
-    csvwriter = csv.writer(csvfile, delimiter=',')
+    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_ALL)
     csvwriter.writerow(header)
     csvwriter.writerow("\n")
     csvwriter.writerow(titles)
