@@ -20,12 +20,12 @@ class GPAData:
         self.comp_percent = row[6]
         self.term = term
 
-def get_insert_statement(self):
-    insert_val_names = ['student_id','date','end_term_cumulative_gpa','end_term_term_gpa', 'end_term_attempted_credits', 'end_term_earned_credits', 'end_term_credit_completion'];
-    insert_val_list = [self.student_id, self.term, self.cum_gpa, self.term_gpa, self.term_credits, self.earned_credits, self.comp_percent];
-    insert_val_list = ['\"' + str(a) + '\"' for a in insert_val_list];
+    def get_insert_statement(self):
+        insert_val_names = ['student_id','date','end_term_cumulative_gpa','end_term_term_gpa', 'end_term_attempted_credits', 'end_term_earned_credits', 'end_term_credit_completion'];
+        insert_val_list = [self.student_id, self.term, self.cum_gpa, self.term_gpa, self.term_credits, self.earned_credits, self.comp_percent];
+        insert_val_list = ['\"' + str(a) + '\"' for a in insert_val_list];
 
-    return 'INSERT INTO gpa (' + ', '.join(insert_val_names) + ') VALUES (' + ', '.join(insert_val_list) + ');'
+        return 'INSERT INTO gpa (' + ', '.join(insert_val_names) + ') VALUES (' + ', '.join(insert_val_list) + ');'
 
 def remove_header(raw_data):
     term = ''

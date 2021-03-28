@@ -80,6 +80,7 @@ def parse(request):
         return HttpResponse("ERROR, please go to the import page and upload a file.")
 
 def parse_gpa(request):
+    print("We got here!")
     if request.method == 'POST' and request.FILES['datafile']:
         conn = sqlite3.connect('vmc_tap.db');
 
