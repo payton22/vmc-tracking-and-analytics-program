@@ -17,16 +17,24 @@
 
     <div class="row justify-content-center upload-area">
         <div class="col-sm-12">
+
+
+
+
+
+
+
             <div id="Navigate" class="form">
                 <h4 class="text-center">Navigate Data</h4>
+
                 <form class="col" enctype="multipart/form-data" method="post" action="/parse/" class="">
                     {% csrf_token %}
                     <div class="h-100">                        
                         <div class="h-75 row align-items-center">
                             <div class="col p-3">
                                 <div class="row justify-content-center">
-                                    <input type="file" name="datafile" id="file" class="inputfile hidden" />
-                                    <label for="file" id="file" class="upload-button nav-bg w-75 upload-btn">Upload file</label>
+                                    <input type="file" name="datafile" id="navigatefile" class="inputfile hidden" />
+                                    <label for="navigatefile" id="file" class="upload-button nav-bg w-75 upload-btn">Upload file</label>
                                 </div>
                                 <div class="row justify-content-center mt-4">
                                     <button value="submit">Submit</button>
@@ -37,16 +45,17 @@
                 </form>
             </div>
             
+
             <div id="GPA" class="form" style="display:none">
                 <h4 class="text-center">GPA Data</h4>
-                <form class="col" enctype="multipart/form-data" method="post" action="/parse/" class="">
+                <form class="col" enctype="multipart/form-data" method="post" action="/parse/gpa/" class="">
                     {% csrf_token %}
                     <div class="h-100">                        
                         <div class="h-75 row align-items-center">
                             <div class="col p-3">
                                 <div class="row justify-content-center">
-                                    <input type="file" name="gpadatafile" id="file" class="inputfile hidden" />
-                                    <label for="file" id="file" class="upload-button nav-bg w-75 upload-btn">Upload file</label>
+                                    <input type="file" name="datafile" id="gpafile" class="inputfile hidden" />
+                                    <label for="gpafile" id="file" class="upload-button nav-bg w-75 upload-btn">Upload file</label>
                                 </div>
                                 <div class="row justify-content-center mt-4">
                                     <button value="submit">Submit</button>
@@ -56,6 +65,7 @@
                     </div>
                 </form>
             </div>
+
 
             <div id="Manual" class="form" style="display:none;">
                 <h4 class="text-center">Manual Data <button onclick="addRow()" class="btn-sm">+</button><button onclick="removeRow()" class="btn-sm ml-2">-</button></h4>

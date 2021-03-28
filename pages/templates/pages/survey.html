@@ -20,124 +20,124 @@
         
 
         <!-- Action needs to be filled with a URL for parse/sending to DB table. Currently we are redirecting to the login page-->
-        <form id="container" class="container pb-2 form" method="post" action="/">
+        <form id="container" class="container pb-2 form" method="post" action="/survey/">
             {% csrf_token %}
             <div class="w-100 shadow-lg rounded panel-bg">
                 <h5>Personal Info</h5>
                 <div class="row pb-2">
                     <div class="col">
                         <label for="NSHEID">NSHE ID</label><br>
-                        <input type="text" id="NSHEID" placeholder="xxxxxxxxxx">
+                        <input type="text" id="NSHEID" name="student_id" placeholder="xxxxxxxxxx">
                     </div>
                     
                 </div>
                 <div class="row">
                     <div class="col">
                         <label for="First_Name">First Name</label><br>
-                        <input type="text" id="First_Name" placeholder="John">
+                        <input type="text" id="First_Name" name="first_name" placeholder="John">
                     </div>
                     <div class="col">
                         <label for="Last_Name">Last Name</label><br>
-                        <input type="text" id="Last_Name" placeholder="Doe">
+                        <input type="text" id="Last_Name" name="last_name" placeholder="Doe">
                     </div>
                 </div>
             </div>
 
             <div class="w-100 shadow-lg rounded panel-bg">
                 <h5>Benefit Chapter</h5>
-                <input type="radio" id="30" name="Chapter" value="30">
+                <input type="radio" id="30" name="benefit_chapter" value="30">
                 <label for="30">30</label><br>
 
-                <input type="radio" id="31" name="Chapter" value="31">
+                <input type="radio" id="31" name="benefit_chapter" value="31">
                 <label for="31">31</label><br>
 
-                <input type="radio" id="33" name="Chapter" value="33">
+                <input type="radio" id="33" name="benefit_chapter" value="33">
                 <label for="33">33</label><br>
 
-                <input type="radio" id="33TOE" name="Chapter" value="33TOE">
+                <input type="radio" id="33TOE" name="benefit_chapter" value="33TOE">
                 <label for="33TOE">33TOE</label><br>
 
-                <input type="radio" id="35" name="Chapter" value="35">
+                <input type="radio" id="35" name="benefit_chapter" value="35">
                 <label for="35">35</label><br>
 
-                <input type="radio" id="1606" name="Chapter" value="1606">
+                <input type="radio" id="1606" name="benefit_chapter" value="1606">
                 <label for="1606">1606</label><br>
 
-                <input type="radio" id="FRY" name="Chapter" value="FRY">
+                <input type="radio" id="FRY" name="benefit_chapter" value="FRY">
                 <label for="FRY">FRY</label><br>
 
-                <input type="radio" id="N/A" name="Chapter" value="N/A">
+                <input type="radio" id="N/A" name="benefit_chapter" value="N/A">
                 <label for="N/A">N/A</label><br>
             </div>
 
             <div class="w-100 shadow-lg rounded panel-bg">
                 <h5>Stem Scholarship</h5>
-                <input type="radio" id="Yes" name="Stem" value="Yes">
+                <input type="radio" id="Yes" name="is_stem" value="Yes">
                 <label for="Yes">Yes</label><br>
 
-                <input type="radio" id="No" name="Stem" value="No">
+                <input type="radio" id="No" name="is_stem" value="No">
                 <label for="No">No</label><br>
 
-                <input type="radio" id="Not sure" name="Stem" value="Not sure">
+                <input type="radio" id="Not sure" name="is_stem" value="Not sure">
                 <label for="Not sure">Not sure</label><br>
             </div>
 
             <div class="w-100 shadow-lg1 rounded panel-bg">
                 <h5>Currently Live</h5>
-                <input type="radio" id="On campus" name="Live" value="On campus">
+                <input type="radio" id="On campus" name="currently_live" value="On campus">
                 <label for="On campus">On campus</label><br>
 
-                <input type="radio" id="Off campus Less than 2 miles from UNR" name="Live" value="Off campus Less than 2 miles from UNR">
+                <input type="radio" id="Off campus Less than 2 miles from UNR" name="currently_live" value="Off campus Less than 2 miles from UNR">
                 <label for="Off campus Less than 2 miles from UNR">Off campus Less than 2 miles from UNR</label><br>
 
-                <input type="radio" id="Off campus 2-5 miles from UNR" name="Live" value="Off campus 2-5 miles from UNR">
+                <input type="radio" id="Off campus 2-5 miles from UNR" name="currently_live" value="Off campus 2-5 miles from UNR">
                 <label for="Off campus 2-5 miles from UNR">Off campus 2-5 miles from UNR</label><br>
 
-                <input type="radio" id="Off campus 6-10 miles from UNR" name="Live" value="Off campus 6-10 miles from UNR">
+                <input type="radio" id="Off campus 6-10 miles from UNR" name="currently_live" value="Off campus 6-10 miles from UNR">
                 <label for="Off campus 6-10 miles from UNR">Off campus 6-10 miles from UNR</label><br>
 
-                <input type="radio" id="Off campus 11-20 miles from UNR" name="Live" value="Off campus 11-20 miles from UNR">
+                <input type="radio" id="Off campus 11-20 miles from UNR" name="currently_live" value="Off campus 11-20 miles from UNR">
                 <label for="Off campus 11-20 miles from UNR">Off campus 11-20 miles from UNR</label><br>
 
-                <input type="radio" id="Off campus 21-40 miles from UNR" name="Live" value="Off campus 21-40 miles from UNR">
+                <input type="radio" id="Off campus 21-40 miles from UNR" name="currently_live" value="Off campus 21-40 miles from UNR">
                 <label for="Off campus 21-40 miles from UNR">Off campus 21-40 miles from UNR</label><br>
 
-                <input type="radio" id="Off campus 41+ from UNR" name="Live" value="Off campus 41+ from UNR">
+                <input type="radio" id="Off campus 41+ from UNR" name="currently_live" value="Off campus 41+ from UNR">
                 <label for="Off campus 41+ from UNR">Off campus 41+ from UNR</label><br>
             </div>
 
             <div class="w-100 hiddenPanel shadow-lg rounded panel-bg">
                 <h5>Employment</h5>
 
-                <input type="radio" id="On campus2" name="Employment" value="On campus">
+                <input type="radio" id="On campus2" name="employment" value="On campus">
                 <label for="On campus2">On campus</label><br>
 
-                <input type="radio" id="Off campus" name="Employment" value="Off campus">
+                <input type="radio" id="Off campus" name="employment" value="Off campus">
                 <label for="Off campus">Off campus</label><br>
 
-                <input type="radio" id="Not employed" name="Employment" value="Not employed">
+                <input type="radio" id="Not employed" name="employment" value="Not employed">
                 <label for="Not employed">Not employed</label><br>
             </div>
 
             <div class="w-100 hiddenPanel shadow-lg rounded panel-bg">
                 <h5>Number of hours you work per week</h5>
 
-                <input type="radio" id="0-5" name="hours" value="0-5">
+                <input type="radio" id="0-5" name="work_hours" value="0-5">
                 <label for="0-5">0-5</label><br>
 
-                <input type="radio" id="5-10" name="hours" value="5-10">
+                <input type="radio" id="5-10" name="work_hours" value="5-10">
                 <label for="5-10">5-10</label><br>
 
-                <input type="radio" id="10-20" name="hours" value="10-20">
+                <input type="radio" id="10-20" name="work_hours" value="10-20">
                 <label for="10-20">10-20</label><br>
 
-                <input type="radio" id="20-30" name="hours" value="20-30">
+                <input type="radio" id="20-30" name="work_hours" value="20-30">
                 <label for="20-30">20-30</label><br>
 
-                <input type="radio" id="30-40" name="hours" value="30-40">
+                <input type="radio" id="30-40" name="work_hours" value="30-40">
                 <label for="30-40">30-40</label><br>
 
-                <input type="radio" id="40+" name="hours" value="40+">
+                <input type="radio" id="40+" name="work_hours" value="40+">
                 <label for="40+">40+</label><br>
             </div>
 
@@ -163,73 +163,73 @@
             <div class="w-100 hiddenPanel shadow-lg rounded panel-bg">
                 <h5>Marital Status</h5>
 
-                <input type="radio" id="Married" name="Marital Status" value="Married">
+                <input type="radio" id="Married" name="marital_status" value="Married">
                 <label for="Married">Married</label><br>
 
-                <input type="radio" id="Single" name="Marital Status" value="Single">
+                <input type="radio" id="Single" name="marital_status" value="Single">
                 <label for="Single">Single</label><br>
 
-                <input type="radio" id="Widow" name="Marital Status" value="Widow">
+                <input type="radio" id="Widow" name="marital_status" value="Widow">
                 <label for="Widow">Widow</label><br>
 
-                <input type="radio" id="Divorced" name="Marital Status" value="Divorced">
+                <input type="radio" id="Divorced" name="marital_status" value="Divorced">
                 <label for="Divorced">Divorced</label><br>
 
-                <input type="radio" id="Separated" name="Marital Status" value="Separated">
+                <input type="radio" id="Separated" name="marital_status" value="Separated">
                 <label for="Separated">Separated</label><br>
 
-                <input type="radio" id="Living with Partner" name="Marital Status" value="Living with Partner">
+                <input type="radio" id="Living with Partner" name="marital_status" value="Living with Partner">
                 <label for="Living with Partner">Living with Partner</label><br>
             </div>
 
             <div class="w-100 hiddenPanel shadow-lg rounded panel-bg">
                 <h5>Gender Identity</h5>
 
-                <input type="radio" id="Male" name="Gender Identity" value="Male">
+                <input type="radio" id="Male" name="gender" value="Male">
                 <label for="Male">Male</label><br>
 
-                <input type="radio" id="Female" name="Gender Identity" value="Female">
+                <input type="radio" id="Female" name="gender" value="Female">
                 <label for="Female">Female</label><br>
 
-                <input type="radio" id="Identity not listed" name="Gender Identity" value="Identity not listed">
+                <input type="radio" id="Identity not listed" name="gender" value="Identity not listed">
                 <label for="Identity not listed">Identity not listed</label><br>
             </div>
 
             <div class="w-100 hiddenPanel shadow-lg rounded panel-bg">
                 <h5>Parent Education</h5>
 
-                <input type="radio" id="Some High School" name="Parent Education" value="Some High School">
+                <input type="radio" id="Some High School" name="parent_education" value="Some High School">
                 <label for="Some High School">Some High School</label><br>
 
-                <input type="radio" id="GED" name="Parent Education" value="GED">
+                <input type="radio" id="GED" name="parent_education" value="GED">
                 <label for="GED">GED</label><br>
 
-                <input type="radio" id="Graduated High School" name="Parent Education" value="Graduated High School">
+                <input type="radio" id="Graduated High School" name="parent_education" value="Graduated High School">
                 <label for="Graduated High School">Graduated High School</label><br>
 
-                <input type="radio" id="Some College" name="Parent Education" value="Some College">
+                <input type="radio" id="Some College" name="parent_education" value="Some College">
                 <label for="Some College">Some College</label><br>
 
-                <input type="radio" id="Associates Degree" name="Parent Education" value="Associates Degree">
+                <input type="radio" id="Associates Degree" name="parent_education" value="Associates Degree">
                 <label for="Associates Degree">Associates Degree</label><br>
 
-                <input type="radio" id="Bachelors Degree" name="Parent Education" value="Bachelors Degree">
+                <input type="radio" id="Bachelors Degree" name="parent_education" value="Bachelors Degree">
                 <label for="Bachelors Degree">Bachelors Degree</label><br>
 
-                <input type="radio" id="Advanced Degree (PhD or Masters)" name="Parent Education" value="Advanced Degree (PhD or Masters)">
+                <input type="radio" id="Advanced Degree (PhD or Masters)" name="parent_education" value="Advanced Degree (PhD or Masters)">
                 <label for="Advanced Degree (PhD or Masters)">Advanced Degree (PhD or Masters)</label><br>
             </div>
 
             <div class="w-100 hiddenPanel shadow-lg rounded panel-bg">
                 <h5>Break in University Attendance</h5>
 
-                <input type="radio" id="Yes2" name="Break in University Attendance" value="Yes">
+                <input type="radio" id="Yes2" name="break_in_attendance" value="Yes">
                 <label for="Yes2">Yes</label><br>
 
-                <input type="radio" id="No2" name="Break in University Attendance" value="No">
+                <input type="radio" id="No2" name="break_in_attendance" value="No">
                 <label for="No2">No</label><br>
 
-                <input type="radio" id="Not Sure2" name="Break in University Attendance" value="Not Sure">
+                <input type="radio" id="Not Sure2" name="break_in_attendance" value="Not Sure">
                 <label for="Not Sure2">Not Sure</label><br>
             </div>
 
