@@ -1,14 +1,10 @@
-// const previousBtn = document.getElementById('previousBtn');
-// const nextBtn = document.getElementById('nextBtn');
-// const finshBtn = document.getElementById('finishBtn');
 const navigateBtn = document.getElementById('navigateBtn');
 const gpaBtn = document.getElementById('gpaBtn');
 const manualBtn = document.getElementById('manualBtn');
 const content = document.getElementById('content');
-// const bullets = [... document.querySelectorAll('.bullet')];
 const tLinks = [... document.querySelectorAll('.tablink')];
-// const files = [... document.querySelectorAll('.file-input')];
 const quotes = [... document.querySelectorAll('.hidden-content')];
+
 
 
 
