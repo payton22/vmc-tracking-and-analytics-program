@@ -44,8 +44,9 @@ def surveyPageView(request):
         return render(request, 'pages/survey.html')
     if(request.method == 'POST'):
         #mystr = '';
-        if(len(list(request.POST.items())) != 14):
-            returnrender(request, 'pages/survey.html'); #Did not fill out entire form
+        if(len(list(request.POST.items())) != 15):
+            #return HttpResponse(list(request.POST.items()));
+            return render(request, 'pages/survey.html'); #Did not fill out entire form
         #Connect to DB
         import sqlite3
         conn = sqlite3.connect('vmc_tap.db');
@@ -76,8 +77,11 @@ def surveyPageView(request):
         conn.commit();
 
         conn.close();
-    #return render(request, 'pages/survey.html')
-    return HttpResponse('Survey data recorded.');
+    return render(request, 'pages/surveyThanks.html')
+    #return HttpResponse('Survey data recorded.');
+
+#def surveyThanksView(request):
+#    return render(request, 'pages/surveyThanks.html');
 
 def homePageView(request):
     if request.user.is_authenticated:
