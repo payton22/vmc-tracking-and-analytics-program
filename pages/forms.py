@@ -7,6 +7,7 @@ from visualizations.models import ReportPresets
 # "reports' forms
 DEMOGRAPHICS = [('GPA', 'GPA'),
                 ('Benefit Chapter', 'Benefit Chapter'),
+                ('STEM Major', 'STEM Major'),
                 ('Residential Distance from Campus', 'Residential Distance from Campus'),
                 ('Employment', 'Employment'),
                 ('Weekly Hours Worked', 'Weekly Hours Worked'),
@@ -15,6 +16,14 @@ DEMOGRAPHICS = [('GPA', 'GPA'),
                 ('Gender Identity', 'Gender Identity'),
                 ('Parent Education', 'Parent Education'),
                 ('Break in University Attendance', 'Break in University Attendance'),
+                ('Pell Grant', 'Pell Grant'),
+                ('Needs Based Grants/Scholarships', 'Needs Based Grants/Scholarships'),
+                ('Merit Based Grants/Scholarships', 'Merits Based Grants/Scholarships'),
+                ('Federal Work Study', 'Federal Work Study'),
+                ('Military Grants', 'Military Grants'),
+                ('Millennium Scholarship', 'Millennium Scholarship'),
+                ('Nevada Pre-Paid', 'Nevada Pre-Paid'),
+                ('Best Method of Contact', 'Best Method of Contact'),
                   ('Usage by Date', 'Usage by Date'),
                   ('Total Usage by Location', 'Total Usage by Location'),
                   ('Classification', 'Classification'),
@@ -216,11 +225,18 @@ class HistogramHours(forms.Form):
 # for in the report.
 class AttendanceDataForm(forms.Form):
     CHOICES = [('Veteran Services_VMC', 'VMC'),
-               ('Veteran Services_Fitzgerald', 'Fitzgerald')]
+               ('Veteran Services_Fitzgerald', 'Fitzgerald'),
+               ('Event', 'Event')]
 
     attributes = {'title': 'Select Attendance Location:', 'class': 'Locations'}
 
     attendance_data = forms.MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple(attrs=attributes))
+
+    use_custom_event_name = forms.ChoiceField(choices=YES_NO, widget=forms.RadioSelect(attrs={'id':'use_cust_name'}),
+                                              required=False)
+
+    custom_event_name = forms.CharField(widget=forms.TextInput(attrs={'id': 'cust_name'}), required=False)
+
 
     select_all = forms.BooleanField(required=False)
 
@@ -367,6 +383,10 @@ class CustomizeScatterPlot(CustomizeBarGraph):
 # Options are similar to the 'axes' options, except the user may
 # want to keep track of averages or percentages instead of total count
 class IndividualStatisticOptions(BarGraphAxes):
+    report_type = None
+    category = None
+    gpa_to_compare = None
+
     COUNT_OPTIONS = [('Total Count', 'Total Count'),
                      ('Daily average', 'Daily average'),
                      ('Monthly average', 'Monthly average'),

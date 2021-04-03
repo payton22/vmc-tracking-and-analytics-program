@@ -163,6 +163,8 @@ class BarGraph(State):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
         self.select_all = self.location_dict['select_all']
+        self.use_custom_event_name = self.location_dict['use_custom_event_name']
+        self.custom_event_name = self.location_dict['custom_event_name']
         if self.select_all:
             self.all_locations = True
         else:
@@ -231,9 +233,18 @@ class BarGraph(State):
         conn.close()
 
         # Rotates 2D array to work w/ plotly
-        conn_results_rotated = list(zip(*conn_results[::-1]));
-
+        conn_results_rotated = list(zip(*conn_results[::-1]))
         print('Conn results_rotated:', conn_results_rotated)
+
+        if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+            conn_results_rotated[0] = list(conn_results_rotated[0])
+            i = conn_results_rotated[0].index('Event')
+            custom_name = self.custom_event_name
+            conn_results_rotated[0][i] = custom_name
+            conn_results_rotated[0] = tuple(conn_results_rotated[0])
+
+
+        print('Conn results_rotated back into a tuple', conn_results_rotated)
 
         app = DjangoDash('Graph')  # replaces dash.Dash
 
@@ -309,6 +320,7 @@ class BarGraph(State):
                 dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
             ], style={'height': '70vh', 'width': '70vw'})
 
+
         return app, title, validDates
 
     def generateGroupedBars(self):
@@ -372,6 +384,12 @@ class BarGraph(State):
                 conn_results.append(d)
             # Rotates 2D array to work w/ plotly
             conn_results_rotated = list(zip(*conn_results[::-1]))
+            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                conn_results_rotated[0] = list(conn_results_rotated[0])
+                i = conn_results_rotated[0].index('Event')
+                custom_name = self.custom_event_name
+                conn_results_rotated[0][i] = custom_name
+                conn_results_rotated[0] = tuple(conn_results_rotated[0])
             location_results.append(conn_results_rotated)
             valid_dates.append(self.checkInvalidQuery(conn_results_rotated))
 
@@ -411,7 +429,13 @@ class BarGraph(State):
 
         data_list = []
         for i, location in enumerate(self.location_list):
-            data_list.append(go.Bar(name=location, x=x_axis[i], y=y_axis[i]))
+            if location == 'Event' and self.use_custom_event_name == 'Yes':
+                data_list.append(go.Bar(name=self.custom_event_name, x=x_axis[i], y=y_axis[i]))
+            else:
+                data_list.append(go.Bar(name=location, x=x_axis[i], y=y_axis[i]))
+
+
+        print('data_list', data_list)
 
         fig = go.Figure(data=data_list, layout=layout)
         # Now implement the custom scaling if enabled
@@ -436,6 +460,7 @@ class BarGraph(State):
             # y_list = list(y_axis)
 
             running_total = 0
+            print('x_list', x_list)
             print('y_list', y_list)
             for i, location in enumerate(self.location_list):
                 x_list[i].insert(0, '<b>Location<b>')
@@ -452,6 +477,11 @@ class BarGraph(State):
             # --- Referenced from Stack Overflow https://stackabuse.com/python-how-to-flatten-list-of-lists/
             # Last visited 3/6/2021
             flattened_x_list = [value for loc in x_list for value in loc]
+
+            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                i = flattened_x_list.index('Event')
+                flattened_x_list[i] = self.custom_event_name
+
             flattened_y_list = [value for loc in y_list for value in loc]
             # End of reference -----------------------------------------------------------------------------
 
@@ -653,7 +683,7 @@ class Histogram(State):
         else:
             layout = Layout(title=title)
 
-        fig = go.Figure()
+        fig = go.Figure(layout=layout)
         fig.add_trace(
             go.Histogram(histfunc="sum", y=y_axis, x=x_axis, name="count", marker=dict(color=self.bar_color.lower())))
         fig.update_layout(bargap=0)
@@ -765,6 +795,9 @@ class PieChart(State):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
         self.select_all = self.location_dict['select_all']
+        self.use_custom_event_name = self.location_dict['use_custom_event_name']
+        self.custom_event_name = self.location_dict['custom_event_name']
+
         if self.select_all:
             self.all_locations = True
         else:
@@ -826,6 +859,13 @@ class PieChart(State):
 
         # Rotates 2D array to work w/ plotly
         conn_results_rotated = list(zip(*conn_results[::-1]));
+
+        if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+            conn_results_rotated[0] = list(conn_results_rotated[0])
+            i = conn_results_rotated[0].index('Event')
+            custom_name = self.custom_event_name
+            conn_results_rotated[0][i] = custom_name
+            conn_results_rotated[0] = tuple(conn_results_rotated[0])
 
         print('Conn results_rotated:', conn_results_rotated)
 
@@ -975,6 +1015,9 @@ class IndividualStatistic(State):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
         self.select_all = self.location_dict['select_all']
+        self.use_custom_event_name = self.location_dict['use_custom_event_name']
+        self.custom_event_name = self.location_dict['custom_event_name']
+
         if self.select_all:
             self.all_locations = True
         else:
@@ -1081,7 +1124,14 @@ class IndividualStatistic(State):
         conn.close()
 
         # Rotates 2D array to work w/ plotly
-        conn_results_rotated = list(zip(*conn_results[::-1]));
+        conn_results_rotated = list(zip(*conn_results[::-1]))
+
+        if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+            conn_results_rotated[0] = list(conn_results_rotated[0])
+            i = conn_results_rotated[0].index('Event')
+            custom_name = self.custom_event_name
+            conn_results_rotated[0][i] = custom_name
+            conn_results_rotated[0] = tuple(conn_results_rotated[0])
 
         print('Conn results_rotated:', conn_results_rotated)
 
@@ -1205,6 +1255,8 @@ class ScatterPlot(State):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
         self.select_all = self.location_dict['select_all']
+        self.use_custom_event_name = self.location_dict['use_custom_event_name']
+        self.custom_event_name = self.location_dict['custom_event_name']
         if self.select_all:
             self.all_locations = True
         else:
@@ -1265,7 +1317,14 @@ class ScatterPlot(State):
         conn.close()
 
         # Rotates 2D array to work w/ plotly
-        conn_results_rotated = list(zip(*conn_results[::-1]));
+        conn_results_rotated = list(zip(*conn_results[::-1]))
+
+        if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+            conn_results_rotated[0] = list(conn_results_rotated[0])
+            i = conn_results_rotated[0].index('Event')
+            custom_name = self.custom_event_name
+            conn_results_rotated[0][i] = custom_name
+            conn_results_rotated[0] = tuple(conn_results_rotated[0])
 
         print('Conn results_rotated:', conn_results_rotated)
 
@@ -1405,7 +1464,7 @@ def getBarGraphPreset(presetModel, from_time, to_time):
     report_data = {}
     report_data['form_data'] = []
     inner_list = report_data['form_data']
-    inner_list.append({'graphType': 'Bar Graph'})
+    inner_list.append({'graphType': 'Bar Graph', 'title': presetModel.title})
     inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     if presetModel.autoscale == 'Yes':
@@ -1428,7 +1487,7 @@ def getHistogramPreset(presetModel, from_time, to_time):
     report_data = {}
     report_data['form_data'] = []
     inner_list = report_data['form_data']
-    inner_list.append({'graphType': 'Histogram'})
+    inner_list.append({'graphType': 'Histogram', 'title': presetModel.title})
     inner_list.append({'time_units': presetModel.time_units, 'include_table': presetModel.include_table})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     if presetModel.autoscale == 'Yes':
@@ -1449,7 +1508,7 @@ def getLineScatterPreset(presetModel, from_time, to_time):
     report_data = {}
     report_data['form_data'] = []
     inner_list = report_data['form_data']
-    inner_list.append({'graphType': 'Line and/or Scatter'})
+    inner_list.append({'graphType': 'Line and/or Scatter', 'title': presetModel.title})
     inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     if presetModel.autoscale == 'Yes':
@@ -1472,7 +1531,7 @@ def getPieChartPreset(presetModel, from_time, to_time):
     report_data = {}
     report_data['form_data'] = []
     inner_list = report_data['form_data']
-    inner_list.append({'graphType': 'Pie Chart'})
+    inner_list.append({'graphType': 'Pie Chart', 'title': presetModel.title})
     inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     inner_list.append({'Data_units': presetModel.data_units})
@@ -1487,7 +1546,7 @@ def getIndividualStatisticPreset(presetModel, from_time, to_time):
     report_data = {}
     report_data['form_data'] = []
     inner_list = report_data['form_data']
-    inner_list.append({'graphType': 'Individual Statistic'})
+    inner_list.append({'graphType': 'Individual Statistic', 'title': presetModel.title})
     inner_list.append({'selection': presetModel.selection, 'count_options': presetModel.count_options})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     inner_list.append({'header_font_color': presetModel.header_font_color,
