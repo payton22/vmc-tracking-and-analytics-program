@@ -1,0 +1,36 @@
+{% extends "pages/base.html" %}
+
+{% block title %}VS-TAP Import{% endblock title %}
+
+{% block content %}
+
+<div class="h-100 row">
+    <form class="col" style="" enctype="multipart/form-data" method="post" action="/parse/gpa/" class="border">
+        {% csrf_token %}
+        <div class="h-100">
+            <h1 class="text-center">GPA Document Upload</h1>
+
+            <div class="h-75 row align-items-center">
+                <div class="col upload-area p-3">
+                    <div class="row justify-content-center">
+                        <!-- <p><input type="file" class="col-sm" name="datafile"></p> -->
+                        <input type="file" name="datafile" id="file" class="inputfile hidden" />
+                        <label for="file" id="file" class="upload-button nav-bg w-75 upload-btn">Upload file</label>
+                    </div>
+                    
+                    
+                    <div class="row justify-content-center mt-4">
+                        <button value="submit">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+
+{% endblock content %}

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from . import scanner_parsing
 from . import parser
+from . import gpa_parser
 from django.http import HttpResponse
 import csv
 
@@ -28,7 +29,7 @@ def parse(request):
         existing_students = [];
         get_students = "SELECT DISTINCT student_id FROM demographics;";
         for d in conn.execute(get_students):
-                    existing_students.append(d);
+            existing_students.append(d);
 
         for visit in data:
             #return_string += str(visit) + '<br>';
@@ -72,9 +73,25 @@ def parse(request):
         return_string += 'Number of Visits: ' + str(len(data)) + '.<br>'
 
         # return_string += 'This data has been inserted into the database.<br>'
-
-        # return HttpResponse(return_string)
+        conn.close();
         messages.success(request, "Document Successfully Uploaded." )
         return redirect('importPage')
     else:
         return HttpResponse("ERROR, please go to the import page and upload a file.")
+
+def parse_gpa(request):
+    print("We got here!")
+    if request.method == 'POST' and request.FILES['datafile']:
+        conn = sqlite3.connect('vmc_tap.db');
+
+        data_file = request.FILES['datafile'].read().decode('utf-8').splitlines()
+        formatted_data = gpa_parser.parse_gpa(data_file)
+        ret_str = ''
+        for student in formatted_data:
+            ret_str = ret_str + student.student_name + ' ' + student.cum_gpa + ' ' + student.term + '<br>'
+            conn.execute(student.get_insert_statement());
+        conn.commit()
+        return HttpResponse(ret_str)
+    else:
+        return HttpResponse("ERROR, please go to the import page and upload a file.")
+

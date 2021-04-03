@@ -16,7 +16,7 @@ def rebuild_db(request):
     # Store table list
     remove_tables = ['student_barcode'];
 
-    tables = ['visits', 'demographics', 'tags', 'logins', 'cat_hours'];
+    tables = ['visits', 'demographics', 'tags', 'logins', 'cat_hours', 'gpa'];
 
     # Remove tables
     for t in remove_tables:
@@ -33,7 +33,9 @@ def rebuild_db(request):
     #conn.execute(
     #    'CREATE TABLE demographics(student_name TEXT, student_email TEXT, student_id INTEGER, student_alt_id TEXT, classification TEXT, cumulative_gpa REAL, assigned_staff TEXT, cell_phone TEXT, home_phone TEXT, gender TEXT, ethnicity TEXT, date_of_birth TEXT, address TEXT, additional_address TEXT, city TEXT, state TEXT, zip TEXT, term_credit_hours REAL, term_gpa REAL, total_credit_hours_earned REAL, sms_opt_out INTEGER, datetime_opt_out TEXT, can_be_sent_messages INTEGER)');
     conn.execute(
-        'CREATE TABLE demographics(student_name TEXT, student_email TEXT, student_id INTEGER,  classification TEXT, major TEXT, benefit_chapter INTEGER, is_stem INTEGER, currently_live TEXT, employment TEXT, work_hours TEXT, dependents TEXT, marital_status TEXT, gender TEXT, parent_education TEXT, break_in_attendance TEXT, end_term_cumulative_gpa REAL, end_term_term_gpa REAL, end_term_attempted_credits REAL, end_term_earned_credits REAL, end_term_credit_completion REAL)');
+        'CREATE TABLE demographics(student_name TEXT, student_email TEXT, student_id INTEGER,  classification TEXT, major TEXT, benefit_chapter INTEGER, is_stem INTEGER, currently_live TEXT, employment TEXT, work_hours TEXT, dependents TEXT, marital_status TEXT, gender TEXT, parent_education TEXT, break_in_attendance TEXT, pell_grant TEXT, needs_based TEXT, merit_based TEXT, federal_work_study TEXT, military_grants TEXT, millennium_scholarship TEXT, nevada_prepaid TEXT, contact_method TEXT)');
+
+    conn.execute('CREATE TABLE gpa(student_id INTEGER, date DATE, end_term_cumulative_gpa REAL, end_term_term_gpa REAL, end_term_attempted_credits REAL, end_term_earned_credits REAL, end_term_credit_completion REAL)');
 
 
 

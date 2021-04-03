@@ -45,8 +45,9 @@ def surveyPageView(request):
         return render(request, 'pages/survey.html')
     if(request.method == 'POST'):
         #mystr = '';
-        if(len(list(request.POST.items())) != 14):
-            returnrender(request, 'pages/survey.html'); #Did not fill out entire form
+        if(len(list(request.POST.items())) != 22):
+            #return HttpResponse(list(request.POST.items()));
+            return render(request, 'pages/survey.html'); #Did not fill out entire form
         #Connect to DB
         import sqlite3
         conn = sqlite3.connect('vmc_tap.db');
@@ -58,7 +59,7 @@ def surveyPageView(request):
             student_exists = d[0];
         mystr = '@' + str(student_exists) + '@';
         
-        query_names = ['student_name', 'student_id', 'benefit_chapter', 'is_stem', 'currently_live', 'employment', 'work_hours', 'dependents', 'marital_status', 'gender', 'parent_education', 'break_in_attendance'];
+        query_names = ['student_name', 'student_id', 'benefit_chapter', 'is_stem', 'currently_live', 'employment', 'work_hours', 'dependents', 'marital_status', 'gender', 'parent_education', 'break_in_attendance', 'pell_grant', 'needs_based', 'merit_based', 'federal_work_study', 'military_grants', 'millennium_scholarship', 'nevada_prepaid', 'contact_method'];
         query_values = [request.POST["first_name"] + ' ' + request.POST["last_name"]];
         query_values.extend([request.POST[a] for a in query_names if a != 'student_name']);
         #Student not not yet exist
@@ -67,7 +68,7 @@ def surveyPageView(request):
 
         #Student does exist
         else:
-            query_commas = [', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',' '];
+            query_commas = [', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',' '];
             sql_statement = "UPDATE demographics SET student_name = '" + request.POST["first_name"] + ' ' + request.POST["last_name"] + "', ";
             for i, name in enumerate(query_names):
                 if(name != 'student_name'):
@@ -77,8 +78,11 @@ def surveyPageView(request):
         conn.commit();
 
         conn.close();
-    #return render(request, 'pages/survey.html')
-    return HttpResponse('Survey data recorded.');
+    return render(request, 'pages/surveyThanks.html')
+    #return HttpResponse('Survey data recorded.');
+
+#def surveyThanksView(request):
+#    return render(request, 'pages/surveyThanks.html');
 
 def homePageView(request):
     if request.user.is_authenticated:
@@ -96,6 +100,11 @@ def importPageView(request):
         return render(request, 'pages/importPage.html')
     else: 
         return redirect('login')
+
+def importGPAView(request):
+    if request.method == 'POST':
+        return HttpResponseRedirect('/parse/gpa')
+    return render(request, 'pages/importGPAPage.html')
 
 
 def vmcAdminPageView(request):

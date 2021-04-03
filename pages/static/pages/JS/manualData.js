@@ -15,7 +15,8 @@ p.innerHTML = "<div class='row mb-1 justify-content-center' id='" + 'iii' + rows
                     "<input type='text' style='width:100%;' placeholder='Last Name'></input>"+
                 "</div>"+
                 "<div class='col-md-3'>"+
-                    "<input type='text' style='width:100%;' placeholder='Location'></input>"+
+                    "<select name='location' style='width:100%; height:100%'>" + "<option value='' selected disabled>Location</option>" + "<option value='VMC'>VMC</option>" + "<option value='Fitzgerald'>Fitzgerald</option>" + "<option value='Event'>Event</option>" + "</select>" +
+                    // "<input type='text' style='width:100%;' placeholder='Location'></input>"+
                 "</div>"+
             "</div>"+ //here
             "<div class='row' id='" + 'ii' + rows[i] +"'>"+
@@ -47,7 +48,8 @@ function addRow() {
             "<input type='text' style='width:100%;' placeholder='Last Name'></input>"+
         "</div>"+
         "<div class='col-md-3'>"+
-            "<input type='text' style='width:100%;' placeholder='Location'></input>"+
+            "<select name='location' style='width:100%; height:100%'>" + "<option value='' selected disabled>Location</option>" + "<option value='VMC'>VMC</option>" + "<option value='Fitzgerald'>Fitzgerald</option>" + "<option value='Event'>Event</option>" + "</select>" +
+            // "<input type='text' style='width:100%;' placeholder='Location'></input>"+
         "</div>"+
     "</div>"+
     "<div class='row' id='" + 'ii' + rows[i] +"'>"+
