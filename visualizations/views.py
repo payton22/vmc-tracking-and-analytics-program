@@ -236,12 +236,13 @@ class BarGraph(State):
         conn_results_rotated = list(zip(*conn_results[::-1]))
         print('Conn results_rotated:', conn_results_rotated)
 
-        if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
-            conn_results_rotated[0] = list(conn_results_rotated[0])
-            i = conn_results_rotated[0].index('Event')
-            custom_name = self.custom_event_name
-            conn_results_rotated[0][i] = custom_name
-            conn_results_rotated[0] = tuple(conn_results_rotated[0])
+        if conn_results_rotated:
+            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                conn_results_rotated[0] = list(conn_results_rotated[0])
+                i = conn_results_rotated[0].index('Event')
+                custom_name = self.custom_event_name
+                conn_results_rotated[0][i] = custom_name
+                conn_results_rotated[0] = tuple(conn_results_rotated[0])
 
 
         print('Conn results_rotated back into a tuple', conn_results_rotated)
@@ -384,13 +385,14 @@ class BarGraph(State):
                 conn_results.append(d)
             # Rotates 2D array to work w/ plotly
             conn_results_rotated = list(zip(*conn_results[::-1]))
-            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
-                conn_results_rotated[0] = list(conn_results_rotated[0])
-                i = conn_results_rotated[0].index('Event')
-                custom_name = self.custom_event_name
-                conn_results_rotated[0][i] = custom_name
-                conn_results_rotated[0] = tuple(conn_results_rotated[0])
-            location_results.append(conn_results_rotated)
+            if conn_results_rotated:
+                if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                    conn_results_rotated[0] = list(conn_results_rotated[0])
+                    i = conn_results_rotated[0].index('Event')
+                    custom_name = self.custom_event_name
+                    conn_results_rotated[0][i] = custom_name
+                    conn_results_rotated[0] = tuple(conn_results_rotated[0])
+                location_results.append(conn_results_rotated)
             valid_dates.append(self.checkInvalidQuery(conn_results_rotated))
 
         conn.close()
@@ -478,9 +480,10 @@ class BarGraph(State):
             # Last visited 3/6/2021
             flattened_x_list = [value for loc in x_list for value in loc]
 
-            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
-                i = flattened_x_list.index('Event')
-                flattened_x_list[i] = self.custom_event_name
+            if conn_results_rotated[0]:
+                if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                    i = flattened_x_list.index('Event')
+                    flattened_x_list[i] = self.custom_event_name
 
             flattened_y_list = [value for loc in y_list for value in loc]
             # End of reference -----------------------------------------------------------------------------
@@ -860,12 +863,13 @@ class PieChart(State):
         # Rotates 2D array to work w/ plotly
         conn_results_rotated = list(zip(*conn_results[::-1]));
 
-        if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
-            conn_results_rotated[0] = list(conn_results_rotated[0])
-            i = conn_results_rotated[0].index('Event')
-            custom_name = self.custom_event_name
-            conn_results_rotated[0][i] = custom_name
-            conn_results_rotated[0] = tuple(conn_results_rotated[0])
+        if conn_results_rotated:
+            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                conn_results_rotated[0] = list(conn_results_rotated[0])
+                i = conn_results_rotated[0].index('Event')
+                custom_name = self.custom_event_name
+                conn_results_rotated[0][i] = custom_name
+                conn_results_rotated[0] = tuple(conn_results_rotated[0])
 
         print('Conn results_rotated:', conn_results_rotated)
 
@@ -1126,12 +1130,13 @@ class IndividualStatistic(State):
         # Rotates 2D array to work w/ plotly
         conn_results_rotated = list(zip(*conn_results[::-1]))
 
-        if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
-            conn_results_rotated[0] = list(conn_results_rotated[0])
-            i = conn_results_rotated[0].index('Event')
-            custom_name = self.custom_event_name
-            conn_results_rotated[0][i] = custom_name
-            conn_results_rotated[0] = tuple(conn_results_rotated[0])
+        if conn_results_rotated:
+            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                conn_results_rotated[0] = list(conn_results_rotated[0])
+                i = conn_results_rotated[0].index('Event')
+                custom_name = self.custom_event_name
+                conn_results_rotated[0][i] = custom_name
+                conn_results_rotated[0] = tuple(conn_results_rotated[0])
 
         print('Conn results_rotated:', conn_results_rotated)
 
@@ -1319,12 +1324,13 @@ class ScatterPlot(State):
         # Rotates 2D array to work w/ plotly
         conn_results_rotated = list(zip(*conn_results[::-1]))
 
-        if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
-            conn_results_rotated[0] = list(conn_results_rotated[0])
-            i = conn_results_rotated[0].index('Event')
-            custom_name = self.custom_event_name
-            conn_results_rotated[0][i] = custom_name
-            conn_results_rotated[0] = tuple(conn_results_rotated[0])
+        if conn_results_rotated:
+            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                conn_results_rotated[0] = list(conn_results_rotated[0])
+                i = conn_results_rotated[0].index('Event')
+                custom_name = self.custom_event_name
+                conn_results_rotated[0][i] = custom_name
+                conn_results_rotated[0] = tuple(conn_results_rotated[0])
 
         print('Conn results_rotated:', conn_results_rotated)
 
