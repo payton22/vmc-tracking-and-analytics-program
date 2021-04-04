@@ -80,7 +80,6 @@ def parse(request):
         return HttpResponse("ERROR, please go to the import page and upload a file.")
 
 def parse_gpa(request):
-    print("We got here!")
     if request.method == 'POST' and request.FILES['datafile']:
         conn = sqlite3.connect('vmc_tap.db');
 
@@ -90,8 +89,17 @@ def parse_gpa(request):
         for student in formatted_data:
             ret_str = ret_str + student.student_name + ' ' + student.cum_gpa + ' ' + student.term + '<br>'
             conn.execute(student.get_insert_statement());
-        conn.commit()
+        conn.commit();
+        conn.close();
         return HttpResponse(ret_str)
     else:
         return HttpResponse("ERROR, please go to the import page and upload a file.")
+
+def parse_manual(request):
+    if request.method == 'POST':
+        conn = sqlite3.connect('vmc_tap.db');
+
+        conn.close()
+    return HttpResponse(list(request.POST.items()));
+    #return redirect('importPage')
 

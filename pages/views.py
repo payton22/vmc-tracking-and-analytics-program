@@ -248,7 +248,6 @@ def accountsView(request):
     
         for user in accountsList:
             emails.append(user.email)
-        print('made it here')
     
         return render(request, 'pages/viewAccountsList.html', {'emails': emails})
     else: 
@@ -629,7 +628,7 @@ def viewPresets(request):
 def individualPresetOptions(request, name):
     if request.user.is_authenticated:
         preset = ReportPresets.objects.get(pk=name)
-        print(preset.selection)
+        #print(preset.selection)
 
         return render(request, 'pages/individualPresetOptions.html', {'name': name, 'preset':preset})
     else: 
