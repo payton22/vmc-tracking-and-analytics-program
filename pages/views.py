@@ -39,6 +39,11 @@ preset_storage = {}
 # def landingPageView(request):
 #     return render(request, 'pages/landingPage.html')
 
+def manualPageView(request):
+    if(request.method == 'POST'):
+        print(request.POST)
+    return HttpResponse('Survey data recorded.');
+
 def surveyPageView(request):
     if(request.method == 'GET'):
         return render(request, 'pages/survey.html')
