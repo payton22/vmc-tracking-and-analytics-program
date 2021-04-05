@@ -136,12 +136,7 @@ class BarGraph(State):
                                  'Residential Distance from Campus': 'dist_from_campus', 'Employment': 'employment',
                                  'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
                                  'Marital Status': 'marital_status', 'Gender Identity' : 'gender_identity',
-                                 'Parent Education': 'parent_education', 'STEM Major': 'is_stem',
-                                 'Pell Grant': 'pell_grant', 'Needs Based Grants/Scholarships': 'needs_based',
-                                 'Merits Based Grants/Scholarships': 'merit_based',
-                                 'Federal Work Study': 'federal_work_study', 'Military Grants': 'military_grants',
-                                 'Millennium Scholarship': 'millennium_scholarship', 'Nevada Pre-Paid': 'nevada_prepaid',
-                                 'Best Method of Contact': 'contact_method',
+                                 'Parent Education': 'parent_education',
                                  'Break in University Attendance': 'break_in_attendance',
                                  'Total Usage by Location':'total_usage_by_location', 'GPA':'gpa',
                                  'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
@@ -309,13 +304,8 @@ class BarGraph(State):
 
             new_x_list = []
 
-
-            for i, stri in enumerate(x_list):
-                if isinstance(str, int):
-                    replaced_str = str(stri)
-                    x_list[i] = replaced_str
-                    stri = replaced_str
-                temp_new_string = stri.replace('<b>', '')
+            for str in x_list:
+                temp_new_string = str.replace('<b>', '')
                 new_string = temp_new_string.replace('</b>', '')
                 new_x_list.append(new_string)
 
