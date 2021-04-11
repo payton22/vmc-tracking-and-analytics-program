@@ -177,6 +177,7 @@ def changeEmailView(request, email):
                     saved_user = request.user
                     logout(request)
                     user.email = request.POST.get('email_confirm')
+                    user.email += '@unr.edu'
                     user.save()
                     saved_user.delete()
                     login(request, user)
@@ -184,6 +185,7 @@ def changeEmailView(request, email):
 
                     old_user_email = user.email
                     user.email = request.POST.get('email_confirm')
+                    user.email += '@unr.edu'
                     user.save()
 
                     old_user_acct = CustomUser.objects.get(pk=old_user_email)
@@ -269,6 +271,7 @@ def newAccount(request):
         first_name = request.POST.get('firstName')
         last_name = request.POST.get('lastName')
         email = request.POST.get('email')
+        email += '@unr.edu'
         password = request.POST.get('password')
         CustomUser.objects.create_superuser(email, first_name, last_name, password)
         return render(request, 'pages/accountCreated.html', {'email': email})

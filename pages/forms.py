@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.admin.widgets import AdminDateWidget
 from login.models import CustomUser
 from visualizations.models import ReportPresets
+from .CustomFields import *
 
 # Making this global because it will be reused among multiple
 # "reports' forms
@@ -84,10 +85,18 @@ class ChangeEmailForm(CurrentPasswordForm):
                         'name': 'email_addr', 'id': 'NewEmail1'}
     attributes_confirm = {'placeholder': 'email@unr.edu', 'class': 'form-control', 'name': 'email_confirm',
                           'id': 'NewEmail2', 'onchange': 'checkEmailMatch();'}
-    email_addr = forms.EmailField(label='Enter new email:',
-                                  widget=forms.EmailInput(attrs=attributes_email), max_length=50)
-    email_confirm = forms.EmailField(label='Confirm new email:',
-                                     widget=forms.EmailInput(attrs=attributes_confirm), max_length=50)
+    email_addr = forms.CharField(label='Enter new email:',
+                                  widget=forms.TextInput(attrs=attributes_email))
+    email_confirm = forms.CharField(label='Confirm new email:',
+                                     widget=forms.TextInput(attrs=attributes_confirm))
+
+    def clean_email_confirm(self):
+        data = self.cleaned_data['email_confirm']
+
+        if '@' in data:
+            raise ValidationError('Email should not contain "@" and must be a valid UNR email name.')
+
+
 
     def __init__(self, *args, **kwargs):
         super(ChangeEmailForm, self).__init__(*args, **kwargs)

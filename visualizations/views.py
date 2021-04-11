@@ -133,9 +133,9 @@ class BarGraph(State):
 
         # Convert selection into query '*' for SQL
         self.query_dictionary = {'Benefit Chapter':'benefit_chapter',
-                                 'Residential Distance from Campus': 'dist_from_campus', 'Employment': 'employment',
+                                 'Residential Distance from Campus': 'currently_live', 'Employment': 'employment',
                                  'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
-                                 'Marital Status': 'marital_status', 'Gender Identity' : 'gender_identity',
+                                 'Marital Status': 'marital_status', 'Gender Identity' : 'gender',
                                  'Parent Education': 'parent_education', 'STEM Major': 'is_stem',
                                  'Pell Grant': 'pell_grant', 'Needs Based Grants/Scholarships': 'needs_based',
                                  'Merits Based Grants/Scholarships': 'merit_based',
@@ -778,10 +778,17 @@ class PieChart(State):
         self.include_table = self.selection_dict['include_table']
 
         self.query_dictionary = {'Benefit Chapter': 'benefit_chapter',
-                                 'Residential Distance from Campus': 'dist_from_campus', 'Employment': 'employment',
+                                 'Residential Distance from Campus': 'currently_live', 'Employment': 'employment',
                                  'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
-                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender_identity',
+                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender',
                                  'Parent Education': 'parent_education',
+                                 'STEM Major': 'is_stem',
+                                 'Pell Grant': 'pell_grant', 'Needs Based Grants/Scholarships': 'needs_based',
+                                 'Merits Based Grants/Scholarships': 'merit_based',
+                                 'Federal Work Study': 'federal_work_study', 'Military Grants': 'military_grants',
+                                 'Millennium Scholarship': 'millennium_scholarship',
+                                 'Nevada Pre-Paid': 'nevada_prepaid',
+                                 'Best Method of Contact': 'contact_method',
                                  'Break in University Attendance': 'break_in_attendance',
                                  'Total Usage by Location': 'total_usage_by_location', 'GPA': 'gpa',
                                  'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
@@ -978,10 +985,8 @@ class IndividualStatistic(State):
 
         # Convert selection into query '*' for SQL
         if self.selection == 'Total Usage by Location':
-            self.selection = '*'
             self.group_by = 'location'
         elif self.selection == 'Usage by Date':
-            self.selection = '*'
             self.group_by = 'check_in_date'
         elif self.selection == 'Classification':
             self.group_by = 'classification'
@@ -1009,8 +1014,22 @@ class IndividualStatistic(State):
             self.group_by = 'break_in_attendance'
 
 
-        self.query_dictionary = {'Total Count': 'ind_total_count', 'Daily average': 'ind_daily_average',
-                                 'Monthly average': 'ind_monthly_avg', 'Yearly average': 'indiv_yearly_avg'}
+        self.query_dictionary = {'Benefit Chapter': 'benefit_chapter',
+                                 'Residential Distance from Campus': 'currently_live', 'Employment': 'employment',
+                                 'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
+                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender',
+                                 'Parent Education': 'parent_education',
+                                 'STEM Major': 'is_stem',
+                                 'Pell Grant': 'pell_grant', 'Needs Based Grants/Scholarships': 'needs_based',
+                                 'Merits Based Grants/Scholarships': 'merit_based',
+                                 'Federal Work Study': 'federal_work_study', 'Military Grants': 'military_grants',
+                                 'Millennium Scholarship': 'millennium_scholarship',
+                                 'Nevada Pre-Paid': 'nevada_prepaid',
+                                 'Best Method of Contact': 'contact_method',
+                                 'Break in University Attendance': 'break_in_attendance',
+                                 'Total Usage by Location': 'total_usage_by_location', 'GPA': 'gpa',
+                                 'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
+                                 'Services': 'services'}
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -1061,20 +1080,20 @@ class IndividualStatistic(State):
                 '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
         if self.subselection == 'Total Count':
-            new_title = 'Total count of visitors from ' + self.from_time.strftime(
+            new_title = 'Count of ' + self.selection +  ' from ' + self.from_time.strftime(
                 '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Daily average':
-            new_title = 'Daily average visitors from ' + self.from_time.strftime(
+            new_title = 'Count of Daily Average ' + self.selection + ' from ' + self.from_time.strftime(
                 '%m/%d/%d') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Monthly average':
-            new_title = 'Monthly average visitors from ' + self.from_time.strftime(
+            new_title = 'Count of Monthly Average ' + self.selection + ' from ' + self.from_time.strftime(
                 '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Yearly average':
-            new_title = 'Yearly average visitors from ' + self.from_time.strftime(
+            new_title = 'Count of Yearly Average ' + self.selection + ' from ' + self.from_time.strftime(
                 '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
 
         # The max size of a location list is 2. If this is true, then show "all locations in the title"
-        if len(self.location_list) == 2:
+        if len(self.location_list) == 3:
             title2 = ' Locations: All'
         else:
             title2 = ' Locations: '
@@ -1122,10 +1141,30 @@ class IndividualStatistic(State):
 
         substr += '"'
 
-        self.conn_string_sql = eval(self.query_dictionary[self.subselection] + ".get_query('" + self.group_by + "', '" + self.from_time.strftime(
+        if self.subselection == 'Total Count':
+            self.conn_string_sql = eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
             '%Y-%m-%d') + "', '" + self.to_time.strftime(
             '%Y-%m-%d') + "', " + substr + ")")
+        elif self.subselection == 'Daily average':
+            self.conn_string_sql = eval(
+                "ind_daily_avg.get_query('" + self.query_dictionary[self.selection] + "', '" + self.from_time.strftime(
+                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                    '%Y-%m-%d') + "', " + substr + ")")
+        elif self.subselection == 'Monthly average':
+            self.conn_string_sql = eval(
+                "ind_monthly_avg.get_query('" + self.query_dictionary[self.selection] + "', '" + self.from_time.strftime(
+                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                    '%Y-%m-%d') + "', " + substr + ")")
+        elif self.subselection == 'Yearly average':
+            self.conn_string_sql = eval(
+                "ind_yearly_avg.get_query('" + self.query_dictionary[
+                    self.selection] + "', '" + self.from_time.strftime(
+                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                    '%Y-%m-%d') + "', " + substr + ")")
+
+
         print('location_list: ', self.location_list)
+
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
@@ -1237,10 +1276,17 @@ class ScatterPlot(State):
         self.include_table = self.selection_dict['include_table']
 
         self.query_dictionary = {'Benefit Chapter': 'benefit_chapter',
-                                 'Residential Distance from Campus': 'dist_from_campus', 'Employment': 'employment',
+                                 'Residential Distance from Campus': 'currently_live', 'Employment': 'employment',
                                  'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
-                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender_identity',
+                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender',
                                  'Parent Education': 'parent_education',
+                                 'STEM Major': 'is_stem',
+                                 'Pell Grant': 'pell_grant', 'Needs Based Grants/Scholarships': 'needs_based',
+                                 'Merits Based Grants/Scholarships': 'merit_based',
+                                 'Federal Work Study': 'federal_work_study', 'Military Grants': 'military_grants',
+                                 'Millennium Scholarship': 'millennium_scholarship',
+                                 'Nevada Pre-Paid': 'nevada_prepaid',
+                                 'Best Method of Contact': 'contact_method',
                                  'Break in University Attendance': 'break_in_attendance',
                                  'Total Usage by Location': 'total_usage_by_location', 'GPA': 'gpa',
                                  'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
