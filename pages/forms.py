@@ -156,12 +156,24 @@ class BarGraphAxes(forms.Form):
         ('Gender Identity', 'Gender Identity'),
         ('Parent Education', 'Parent Education'),
         ('Break in University Attendance', 'Break in University Attendance'),
+        ('Pell Grant', 'Pell Grant'),
+        ('Needs Based Grants/Scholarships', 'Needs Based Grants/Scholarships'),
+        ('Merits Based Grants/Scholarships', 'Merits Based Grants/Scholarships'),
+        ('Federal Work Study', 'Federal Work Study'),
+        ('Military Grants', 'Military Grants'),
+        ('Millennium Scholarship', 'Millennium Scholarship'),
+        ('Nevada Pre-Paid', 'Nevada Pre-Paid'),
+        ('Best Method of Contact', 'Best Method of Contact'),
         ('Classification', 'Classification'),
         ('Major', 'Major'),
         ('Services', 'Services')
     ]
 
-    GPA_COMPARISON = [('Average GPA', 'Average GPA')]
+    GPA_COMPARISON = [('Average end term GPA', 'Average end term GPA'),
+                      ('Average end term Cumulative GPA', 'Average end term Cumulative GPA'),
+                       ('Average end term Attempted Credits', 'Average end term Attempted Credits'),
+                      ('Average end term Earned Credits', 'Average end term Earned Credits'),
+                      ('Average end term Total Completed Credits', 'Average end term Total Completed Credits')]
 
     selection = forms.ChoiceField(choices=DEMOGRAPHICS, required=False)
 

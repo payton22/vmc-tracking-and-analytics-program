@@ -90,7 +90,7 @@ $('input[name=BarGraphAxes-report_type]').change(function(){
 $('input[name=ScatterPlotAxes-report_type]').change(function(){
     var selection = document.getElementById('id_ScatterPlotAxes-selection')
     var category = document.getElementById('id_ScatterPlotAxes-category')
-    var gpa_to_compare = document.getElementById('id_ScatterPlot-gpa_to_compare')
+    var gpa_to_compare = document.getElementById('id_ScatterPlotAxes-gpa_to_compare')
 
     if(this.value == 'Count visits over time'){
         selection.disabled = false;
