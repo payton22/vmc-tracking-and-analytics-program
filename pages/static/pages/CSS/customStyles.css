@@ -108,6 +108,13 @@ ul li {
     bottom:14%;
 
 }
+
+.act_table {
+    border: 5px solid #062030;
+    border-collapse: collapse;
+    border-radius: 5px;
+
+}
 /*#profileImg{
     width:10%;
     height:auto;

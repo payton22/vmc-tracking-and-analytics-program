@@ -640,12 +640,7 @@ def reportsView(request):
 def viewPresets(request):
     if request.user.is_authenticated:
         presets = ReportPresets.objects.filter(user=request.user)
-        pres_names = []
-
-        for preset in presets:
-            pres_names.append(preset.preset_name)
-
-        return render(request, 'pages/viewPresets.html', {'pres_names': pres_names})
+        return render(request, 'pages/viewPresets.html', {'presets': presets})
     else: 
         return redirect('login')
 
