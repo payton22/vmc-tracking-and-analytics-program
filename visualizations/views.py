@@ -141,7 +141,12 @@ class BarGraph(State):
             self.title = self.category
 
         # Convert selection into query '*' for SQL
-        self.query_dictionary = {'Benefit Chapter': 'benefit_chapter',
+        self.query_dictionary = {'End Term Semester GPA': 'end_term_term_gpa',
+                                 'End Term Cumulative GPA': 'end_term_cumulative_gpa',
+                                 'End Term Attempted Credits': 'end_term_attempted_credits', 'End Term Earned Credits':
+                                     'end_term_earned_credits',
+                                 'End Term Cumulative Completed Credits': 'end_term_credit_completion',
+                                 'Benefit Chapter': 'benefit_chapter',
                                  'Residential Distance from Campus': 'currently_live', 'Employment': 'employment',
                                  'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
                                  'Marital Status': 'marital_status', 'Gender Identity': 'gender',
@@ -157,11 +162,11 @@ class BarGraph(State):
                                  'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
                                  'Services': 'services'}
 
-        self.gpa_dictionary = {'Average end term GPA': 'end_term_term_gpa',
+        self.gpa_dictionary = {'Average end term Semester GPA': 'end_term_term_gpa',
                                'Average end term Cumulative GPA': 'end_term_cumulative_gpa',
                                'Average end term Attempted Credits': 'end_term_attempted_credits',
                                'Average end term Earned Credits': 'end_term_earned_credits',
-                               'Average end term Total Completed Credits': 'end_term_credit_completion'}
+                               'Average end term Cumulative Completed Credits': 'end_term_credit_completion'}
         # self.conn_string_sql = eval(self.query_dictionary[self.selection] + '.get_query()');
 
     # Get the date range for database querying
@@ -309,6 +314,7 @@ class BarGraph(State):
             layout = Layout(title=title)
 
         fig = go.Figure(data=[go.Bar(x=x_axis, y=y_axis, marker=dict(color=self.bar_color.lower()))], layout=layout)
+        fig.update_xaxes(type='category')
 
         # Now implement the custom scaling if enabled
         if self.autoscale != 'Yes':
@@ -351,7 +357,7 @@ class BarGraph(State):
             new_x_list = []
 
             for i, stri in enumerate(x_list):
-                if isinstance(str, int):
+                if isinstance(stri, int) or isinstance(stri, float):
                     replaced_str = str(stri)
                     x_list[i] = replaced_str
                     stri = replaced_str
@@ -420,19 +426,19 @@ class BarGraph(State):
                 loc_str = "'"
                 loc_str += location + "'"
                 self.conn_string_sql.append(
-                eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
-                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
-                    '%Y-%m-%d') + "', " + loc_str + ")"))
+                    eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
+                        '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                        '%Y-%m-%d') + "', " + loc_str + ")"))
         elif self.report_type == 'Compare GPA against demographics':
             for location in self.location_list:
                 loc_str = "'"
                 loc_str += location + "'"
                 self.conn_string_sql.append(eval(
                     self.query_dictionary[self.category] + "_gpa.get_query('" + self.gpa_dictionary[
-                    self.gpa_to_compare] + "', '" + self.from_time.strftime(
+                        self.gpa_to_compare] + "', '" + self.from_time.strftime(
 
-                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
-                    '%Y-%m-%d') + "', " + loc_str + ")"))
+                        '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                        '%Y-%m-%d') + "', " + loc_str + ")"))
 
             # self.conn_string_sql.append(
             #   "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + location + "\') and check_in_date >= \'" + self.from_time.strftime(
@@ -556,7 +562,6 @@ class BarGraph(State):
                     loc_subtotal /= total_values
                     y_list[i].append(round(loc_subtotal, 2))
                     running_total += loc_subtotal
-
 
             # --- Referenced from Stack Overflow https://stackabuse.com/python-how-to-flatten-list-of-lists/
             # Last visited 3/6/2021
@@ -1372,11 +1377,11 @@ class ScatterPlot(State):
                                  'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
                                  'Services': 'services'}
 
-        self.gpa_dictionary = {'Average end term GPA': 'end_term_term_gpa',
+        self.gpa_dictionary = {'Average end term Semester GPA': 'end_term_term_gpa',
                                'Average end term Cumulative GPA': 'end_term_cumulative_gpa',
                                'Average end term Attempted Credits': 'end_term_attempted_credits',
                                'Average end term Earned Credits': 'end_term_earned_credits',
-                               'Average end term Total Completed Credits': 'end_term_credit_completion'}
+                               'Average end term Cumulative Completed Credits': 'end_term_credit_completion'}
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -1432,7 +1437,6 @@ class ScatterPlot(State):
                     loc_str += loc + ', '
                 else:
                     loc_str += loc
-
 
             if self.report_type == 'Count visits over time':
                 self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(

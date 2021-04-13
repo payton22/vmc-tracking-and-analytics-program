@@ -6,7 +6,11 @@ from .CustomFields import *
 
 # Making this global because it will be reused among multiple
 # "reports' forms
-DEMOGRAPHICS = [('GPA', 'GPA'),
+DEMOGRAPHICS = [('End Term Semester GPA', 'End Term Semester GPA'),
+                ('End Term Cumulative GPA', 'End Term Cumulative GPA'),
+                ('End Term Attempted Credits', 'End Term Attempted Credits'),
+                ('End Term Earned Credits', 'End Term Earned Credits'),
+                ('End Term Cumulative Completed Credits', 'End Term Cumulative Completed Credits'),
                 ('Benefit Chapter', 'Benefit Chapter'),
                 ('STEM Major', 'STEM Major'),
                 ('Residential Distance from Campus', 'Residential Distance from Campus'),
@@ -169,11 +173,11 @@ class BarGraphAxes(forms.Form):
         ('Services', 'Services')
     ]
 
-    GPA_COMPARISON = [('Average end term GPA', 'Average end term GPA'),
+    GPA_COMPARISON = [('Average end term Semester GPA', 'Average end term Semester GPA'),
                       ('Average end term Cumulative GPA', 'Average end term Cumulative GPA'),
                        ('Average end term Attempted Credits', 'Average end term Attempted Credits'),
                       ('Average end term Earned Credits', 'Average end term Earned Credits'),
-                      ('Average end term Total Completed Credits', 'Average end term Total Completed Credits')]
+                      ('Average end term Cumulative Completed Credits', 'Average end term Cumulative Completed Credits')]
 
     selection = forms.ChoiceField(choices=DEMOGRAPHICS, required=False)
 
