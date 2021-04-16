@@ -84,7 +84,8 @@ class ReportPresets(models.Model):
                          ('Dots and Lines', 'Dots and Lines')]
 
     # Required for all report types
-    graph_type = models.CharField(choices=GRAPH_CHOICES, max_length=50)
+    graph_type = models.CharField(max_length=50)
+    title = models.CharField(choices=YES_NO, max_length=20)
 
     # Required for all report types except Histogram
     selection = models.CharField(choices=DEMOGRAPHICS, max_length=50, null=True)
@@ -97,7 +98,7 @@ class ReportPresets(models.Model):
 
     # Required for everything except Individual Statistic
     locations = models.CharField(max_length=500, null=True)
-    select_all = models.BooleanField()
+    select_all = models.BooleanField(null=True)
     include_table = models.CharField(choices=YES_NO, max_length=50, null=True)
 
     # Required for Bar Graph and Histogram

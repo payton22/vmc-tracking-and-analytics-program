@@ -1,0 +1,38 @@
+{% extends "pages/base.html" %}
+
+
+{% block title %}Reports{% endblock title %}
+{% block content %}
+    <div class="container fixed-top justify-content-center" style="padding-left: 540px;">
+        <div class="row">
+            <h1 class="d-flex">Select reporting options:</h1>
+        </div>
+        <br>
+        {% for name in pres_names %}
+               {% if forloop.counter0|divisibleby:2 %}
+                <div class="row">
+                    <div class="col-6">
+                        <a href="{% url 'individualPresetOptions' name %}" class="btn btn-lg nav-bg listButtons">{{ name }}</a>
+                    </div>
+                    {% else %}
+                    <div class="col-6">
+                        <a href="{% url 'individualPresetOptions' name %}" class="btn btn-lg nav-bg listButtons">{{ name }}</a>
+                    </div>
+                </div>
+                {% endif %}
+                {% if forloop.last and forloop.counter0|divisibleby:2 %}
+            </div>
+                {% endif %}
+            <br>
+        {% endfor %}
+            <br>
+            <br>
+            <br>
+
+        <div class="row">
+            <div class="col-6">
+                <a href="{% url 'reports' %}" class="btn btn-lg nav-bg">Back</a>
+            </div>
+        </div>
+    </div>
+

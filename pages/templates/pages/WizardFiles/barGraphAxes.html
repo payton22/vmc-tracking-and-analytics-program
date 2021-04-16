@@ -2,17 +2,131 @@
 
 {% block wizform %}
     <div class="row">
-    <h5>Keep track of total count</h5>
     </div>
     <div class="row">
 {{ wizard.management_form }}
 {% if wizard.form.forms %}
     {{ wizard.form.management_form }}
     {% for form in wizard.form.forms %}
-        {{ form }}
+        <h5>Keep track of total count</h5>
+    <table>
+        <tbody>
+            <tr>
+                <th>
+                    <label for="{{ form.selection.id_for_label }}">Selection:</label>
+                </th>
+                <td>
+                    {{ form.selection }}
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+    <h5>------------------------------------------</h5>
+    <table>
+        <tbody>
+            <tr>
+                <th>
+                    <label for="{{ form.include_table.id_for_label }}">Include table?:</label>
+                </th>
+                <td>
+                    {{ form.include_table }}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <label for="{{ form.report_type.id_for_label }}">Report type:</label>
+                </th>
+                <td>
+                    {{ form.report_type }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h5>------------------------------------------</h5>
+    <h5>Compare demographics against GPA data</h5>
+    <table>
+        <tbody>
+            <tr>
+                <th>
+                    <label for="{{ wizard.form.category.id_for_label }}">Category:</label>
+                </th>
+                <td>
+                    {{ wizard.form.category }}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <label for="{{ wizard.form.gpa_to_compare.id_for_label }}">GPA to compare:</label>
+                </th>
+                <td>
+                    {{ wizard.form.gpa_to_compare }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
     {% endfor %}
 {% else %}
-    {{ wizard.form }}
+    <h5>Keep track of total count</h5>
+    <table>
+        <tbody>
+            <tr>
+                <th>
+                    <label for="{{ wizard.form.selection.id_for_label }}">Selection:</label>
+                </th>
+                <td>
+                    {{ wizard.form.selection }}
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+    <h5>------------------------------------------</h5>
+    <table>
+        <tbody>
+            <tr>
+                <th>
+                    <label for="{{ wizard.form.include_table.id_for_label }}">Include table?:</label>
+                </th>
+                <td>
+                    {{ wizard.form.include_table }}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <label for="{{ wizard.form.report_type.id_for_label }}">Report type:</label>
+                </th>
+                <td>
+                    {{ wizard.form.report_type }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h5>------------------------------------------</h5>
+    <h5>Compare demographics against GPA data</h5>
+    <table>
+        <tbody>
+            <tr>
+                <th>
+                    <label for="{{ wizard.form.category.id_for_label }}">Category:</label>
+                </th>
+                <td>
+                    {{ wizard.form.category }}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <label for="{{ wizard.form.gpa_to_compare.id_for_label }}">GPA to compare:</label>
+                </th>
+                <td>
+                    {{ wizard.form.gpa_to_compare }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
 {% endif %}
     </div>
 {% endblock wizform %}

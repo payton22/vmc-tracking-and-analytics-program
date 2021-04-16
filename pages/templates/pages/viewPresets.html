@@ -3,28 +3,48 @@
 
 {% block title %}Reports{% endblock title %}
 {% block content %}
-    <div class="container fixed-top justify-content-center" style="padding-left: 540px;">
+    <div class="container" style="padding-left:150px; top:0%; position:absolute;">
         <div class="row">
             <h1 class="d-flex">Select reporting options:</h1>
         </div>
         <br>
-        {% for name in pres_names %}
-               {% if forloop.counter0|divisibleby:2 %}
-                <div class="row">
-                    <div class="col-6">
-                        <a href="{% url 'individualPresetOptions' name %}" class="btn btn-lg nav-bg listButtons">{{ name }}</a>
-                    </div>
-                    {% else %}
-                    <div class="col-6">
-                        <a href="{% url 'individualPresetOptions' name %}" class="btn btn-lg nav-bg listButtons">{{ name }}</a>
-                    </div>
-                </div>
-                {% endif %}
-                {% if forloop.last and forloop.counter0|divisibleby:2 %}
-            </div>
-                {% endif %}
+        <div class="row">
+            <table class="act_table">
+                <thead>
+                    <tr>
+                        <th class="act_table">Preset Name</th>
+                        <th class="act_table">View Preset</th>
+                        <th class="act_table">Create Report from Preset</th>
+                        <th class="act_table">Delete Preset</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for preset in presets %}
+                    <tr>
+                        <td class="act_table">{{ preset.preset_name }}</td>
+                        <td class="act_table"d>
+                            <a type="button" class="btn btn-lg nav-bg admin-btn-width" href="{% url 'individualPresetOptions' preset.preset_name %}">
+                                View Preset
+                            </a>
+                        </td>
+                        <td class="act_table">
+                            <a type="button" class="btn btn-lg nav-bg admin-btn-width" href="{% url 'createReportFromPreset' preset.preset_name %}">
+                                Create Report with this Preset
+                            </a>
+                        </td>
+                        <td class="act_table">
+                            <button type="button" id="" class="btn btn-lg delete-bg" data-toggle="modal" data-target="#confirmation{{ preset.preset_name }}">
+                                Delete this preset
+                            </button>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
             <br>
-        {% endfor %}
             <br>
             <br>
             <br>
@@ -35,4 +55,33 @@
             </div>
         </div>
     </div>
+
+           <!-- Extra div closers, do not remove or else modal will not display properly -->
+    </div>
+    </div>
+    </div>
+
+     <!-- Modal -->
+    {% for preset in presets %}
+    <div class="modal fade" id="confirmation{{ preset.preset_name }}" tabindex="-1" role="dialog" aria-labelledby="confirmDelete" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDelete">Confirm Delete Preset</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this preset?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary BGroup" data-dismiss="modal">No</button>
+                    <a type="button" href="{% url 'deletePreset' preset.preset_name %} " class="btn btn-primary BGroup">Yes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
 {% endblock content %}
