@@ -164,7 +164,7 @@ def parse_manual(request):
                             this_record[1] = "'" + input_dict.get('fname' + str(i)) + "'";
 
                     elif(f == 'location'):
-                        this_record[2] = "'Veteran Services_" + this_input + "'";
+                        this_record[2] = "'Veteran Services " + this_input + "'";
 
                     elif(f == 'checkintime'):
                         #Ensure the format is correct; if so, split it into a date and time.

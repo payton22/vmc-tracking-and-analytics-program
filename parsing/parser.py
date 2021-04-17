@@ -27,7 +27,7 @@ class Data:
     def get_insert_statement(self):
         insert_val_names = ['student_name','student_email','student_id','services','location','check_in_date', 'check_in_time', 'check_out_date', 'check_out_time', 'check_in_duration', 'staff_name', 
 'staff_email', 'staff_id']
-        insert_val_list = [self.student_name, self.student_email, self.student_id, self.services, self.location,
+        insert_val_list = [self.student_name, self.student_email, self.student_id, self.services, self.location.replace('_',' '),
         datetime.strptime(self.check_in_date, '%m/%d/%y').strftime('%Y-%m-%d'), self.check_in_time,
         datetime.strptime(self.check_out_date, '%m/%d/%y').strftime('%Y-%m-%d'), self.check_out_time, self.check_in_duration, self.staff_name, self.staff_email, self.staff_id];
         insert_val_list = ['\"' + str(a) + '\"' for a in insert_val_list];
