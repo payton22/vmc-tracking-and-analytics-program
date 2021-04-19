@@ -249,9 +249,9 @@ class HistogramHours(forms.Form):
 # User selects one or more checkboxes that correspond to locations to track attendance
 # for in the report.
 class AttendanceDataForm(forms.Form):
-    CHOICES = [('Veteran Services_VMC', 'VMC'),
-               ('Veteran Services_Fitzgerald', 'Fitzgerald'),
-               ('Event', 'Event')]
+    CHOICES = [('Veteran Services VMC', 'VMC'),
+               ('Veteran Services Fitzgerald', 'Fitzgerald'),
+               ('Veteran Services Event', 'Event')]
 
     attributes = {'title': 'Select Attendance Location:', 'class': 'Locations'}
 
