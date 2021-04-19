@@ -33,6 +33,7 @@ for module in os.listdir(os.path.dirname(__file__) + '/sql_queries'):
     exec('from .sql_queries import ' + module[:-3] + ' as ' + module[:-3]);
 del module;
 
+
 class emptyList(Exception):
     pass
 
@@ -128,21 +129,45 @@ class BarGraph(State):
         self.inner_dict = self.data['form_data']
         self.selection_dict = self.inner_dict[1]
         self.selection = self.selection_dict['selection']
-        self.title = self.selection
+
         self.include_table = self.selection_dict['include_table']
+        self.report_type = self.selection_dict['report_type']
+        self.category = self.selection_dict['category']
+        self.gpa_to_compare = self.selection_dict['gpa_to_compare']
+
+        if self.report_type == 'Count visits over time':
+            self.title = self.selection
+        elif self.report_type == 'Compare GPA against demographics':
+            self.title = self.category
 
         # Convert selection into query '*' for SQL
-        self.query_dictionary = {'Benefit Chapter':'benefit_chapter',
-                                 'Residential Distance from Campus': 'dist_from_campus', 'Employment': 'employment',
+        self.query_dictionary = {'End Term Semester GPA': 'end_term_term_gpa',
+                                 'End Term Cumulative GPA': 'end_term_cumulative_gpa',
+                                 'End Term Attempted Credits': 'end_term_attempted_credits', 'End Term Earned Credits':
+                                     'end_term_earned_credits',
+                                 'End Term Cumulative Completed Credits': 'end_term_credit_completion',
+                                 'Benefit Chapter': 'benefit_chapter',
+                                 'Residential Distance from Campus': 'currently_live', 'Employment': 'employment',
                                  'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
-                                 'Marital Status': 'marital_status', 'Gender Identity' : 'gender_identity',
-                                 'Parent Education': 'parent_education',
+                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender',
+                                 'Parent Education': 'parent_education', 'STEM Major': 'is_stem',
+                                 'Pell Grant': 'pell_grant', 'Needs Based Grants/Scholarships': 'needs_based',
+                                 'Merits Based Grants/Scholarships': 'merit_based',
+                                 'Federal Work Study': 'federal_work_study', 'Military Grants': 'military_grants',
+                                 'Millennium Scholarship': 'millennium_scholarship',
+                                 'Nevada Pre-Paid': 'nevada_prepaid',
+                                 'Best Method of Contact': 'contact_method',
                                  'Break in University Attendance': 'break_in_attendance',
-                                 'Total Usage by Location':'total_usage_by_location', 'GPA':'gpa',
+                                 'Total Usage by Location': 'total_usage_by_location', 'GPA': 'gpa',
                                  'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
                                  'Services': 'services'}
 
-        #self.conn_string_sql = eval(self.query_dictionary[self.selection] + '.get_query()');
+        self.gpa_dictionary = {'Average end term Semester GPA': 'end_term_term_gpa',
+                               'Average end term Cumulative GPA': 'end_term_cumulative_gpa',
+                               'Average end term Attempted Credits': 'end_term_attempted_credits',
+                               'Average end term Earned Credits': 'end_term_earned_credits',
+                               'Average end term Cumulative Completed Credits': 'end_term_credit_completion'}
+        # self.conn_string_sql = eval(self.query_dictionary[self.selection] + '.get_query()');
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -163,6 +188,8 @@ class BarGraph(State):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
         self.select_all = self.location_dict['select_all']
+        self.use_custom_event_name = self.location_dict['use_custom_event_name']
+        self.custom_event_name = self.location_dict['custom_event_name']
         if self.select_all:
             self.all_locations = True
         else:
@@ -186,8 +213,12 @@ class BarGraph(State):
         conn_results = []
 
         if self.all_locations:
-            self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
-                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            if self.report_type == 'Count visits over time':
+                self.title = "Count of " + self.title + ", all Locations from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            elif self.report_type == 'Compare GPA against demographics':
+                self.title = self.gpa_to_compare + " by " + self.category + ", all Locations, from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
         else:
             loc_str = ''
             for loc in self.location_list:
@@ -196,8 +227,12 @@ class BarGraph(State):
                 else:
                     loc_str += loc
 
-            self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
-                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            if self.report_type == 'Count visits over time':
+                self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            elif self.report_type == 'Compare GPA against demographics':
+                self.title = self.gpa_to_compare + " by " + self.category + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
         custom_title = self.get_custom_title()
         if custom_title == '':
@@ -215,9 +250,19 @@ class BarGraph(State):
 
         substr += '"'
 
-        self.conn_string_sql = eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
-            '%Y-%m-%d') + "', '" + self.to_time.strftime(
-            '%Y-%m-%d') + "', " + substr + ")")
+        if self.report_type == 'Count visits over time':
+            self.conn_string_sql = eval(
+                self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
+                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                    '%Y-%m-%d') + "', " + substr + ")")
+        elif self.report_type == 'Compare GPA against demographics':
+            self.conn_string_sql = eval(
+                self.query_dictionary[self.category] + "_gpa.get_query('" + self.gpa_dictionary[
+                    self.gpa_to_compare] + "', '" + self.from_time.strftime(
+
+                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                    '%Y-%m-%d') + "', " + substr + ")")
+
         print('location_list: ', self.location_list)
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
@@ -231,9 +276,18 @@ class BarGraph(State):
         conn.close()
 
         # Rotates 2D array to work w/ plotly
-        conn_results_rotated = list(zip(*conn_results[::-1]));
-
+        conn_results_rotated = list(zip(*conn_results[::-1]))
         print('Conn results_rotated:', conn_results_rotated)
+
+        if conn_results_rotated:
+            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                conn_results_rotated[0] = list(conn_results_rotated[0])
+                i = conn_results_rotated[0].index('Event')
+                custom_name = self.custom_event_name
+                conn_results_rotated[0][i] = custom_name
+                conn_results_rotated[0] = tuple(conn_results_rotated[0])
+
+        print('Conn results_rotated back into a tuple', conn_results_rotated)
 
         app = DjangoDash('Graph')  # replaces dash.Dash
 
@@ -260,6 +314,7 @@ class BarGraph(State):
             layout = Layout(title=title)
 
         fig = go.Figure(data=[go.Bar(x=x_axis, y=y_axis, marker=dict(color=self.bar_color.lower()))], layout=layout)
+        fig.update_xaxes(type='category')
 
         # Now implement the custom scaling if enabled
         if self.autoscale != 'Yes':
@@ -275,12 +330,21 @@ class BarGraph(State):
             x_list = list(x_axis)
             y_list = list(y_axis)
 
-            total = 0
-            for count in y_axis:
-                total += count
+            if self.report_type == 'Count visits over time':
+                total = 0
+                for count in y_axis:
+                    total += count
 
-            x_list.append('<b>Grand Total</b>')
-            y_list.append(total)
+                x_list.append('<b>Grand Total</b>')
+                y_list.append(total)
+            elif self.report_type == 'Compare GPA against demographics':
+                total_values = len(y_list)
+                total = 0
+                for count in y_axis:
+                    total += count
+                x_list.append('<b>Total Average<b>')
+                total /= total_values
+                y_list.append(round(total, 2))
 
             print('x_list:', x_list)
 
@@ -292,8 +356,12 @@ class BarGraph(State):
 
             new_x_list = []
 
-            for str in x_list:
-                temp_new_string = str.replace('<b>', '')
+            for i, stri in enumerate(x_list):
+                if isinstance(stri, int) or isinstance(stri, float):
+                    replaced_str = str(stri)
+                    x_list[i] = replaced_str
+                    stri = replaced_str
+                temp_new_string = stri.replace('<b>', '')
                 new_string = temp_new_string.replace('</b>', '')
                 new_x_list.append(new_string)
 
@@ -317,8 +385,12 @@ class BarGraph(State):
         conn_results = []
 
         if self.all_locations:
-            self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
-                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            if self.report_type == 'Count visits over time':
+                self.title = "Count of " + self.title + ", all Locations from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            elif self.report_type == 'Compare GPA against demographics':
+                self.title = self.gpa_to_compare + " by " + self.category + ", all Locations, from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
         else:
             loc_str = ''
             for loc in self.location_list:
@@ -327,8 +399,12 @@ class BarGraph(State):
                 else:
                     loc_str += loc
 
-            self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
-                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            if self.report_type == 'Count visits over time':
+                self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            elif self.report_type == 'Compare GPA against demographics':
+                self.title = self.gpa_to_compare + " by " + self.category + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
         custom_title = self.get_custom_title()
         if custom_title == '':
@@ -345,17 +421,29 @@ class BarGraph(State):
                 substr += location
 
         self.conn_string_sql = []
+        if self.report_type == 'Count visits over time':
+            for location in self.location_list:
+                loc_str = "'"
+                loc_str += location + "'"
+                self.conn_string_sql.append(
+                    eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
+                        '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                        '%Y-%m-%d') + "', " + loc_str + ")"))
+        elif self.report_type == 'Compare GPA against demographics':
+            for location in self.location_list:
+                loc_str = "'"
+                loc_str += location + "'"
+                self.conn_string_sql.append(eval(
+                    self.query_dictionary[self.category] + "_gpa.get_query('" + self.gpa_dictionary[
+                        self.gpa_to_compare] + "', '" + self.from_time.strftime(
 
-        for location in self.location_list:
-            loc_str = "'"
-            loc_str += location + "'"
-            self.conn_string_sql.append(eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
-            '%Y-%m-%d') + "', '" + self.to_time.strftime(
-            '%Y-%m-%d') + "', " + loc_str + ")"))
-            #self.conn_string_sql.append(
-             #   "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + location + "\') and check_in_date >= \'" + self.from_time.strftime(
-              #      '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-               #   '%Y-%m-%d') + "\' group by " + self.group_by + ";")
+                        '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                        '%Y-%m-%d') + "', " + loc_str + ")"))
+
+            # self.conn_string_sql.append(
+            #   "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + location + "\') and check_in_date >= \'" + self.from_time.strftime(
+            #      '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
+            #   '%Y-%m-%d') + "\' group by " + self.group_by + ";")
         print('location_list: ', self.location_list)
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
@@ -372,7 +460,14 @@ class BarGraph(State):
                 conn_results.append(d)
             # Rotates 2D array to work w/ plotly
             conn_results_rotated = list(zip(*conn_results[::-1]))
-            location_results.append(conn_results_rotated)
+            if conn_results_rotated:
+                if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                    conn_results_rotated[0] = list(conn_results_rotated[0])
+                    i = conn_results_rotated[0].index('Event')
+                    custom_name = self.custom_event_name
+                    conn_results_rotated[0][i] = custom_name
+                    conn_results_rotated[0] = tuple(conn_results_rotated[0])
+                location_results.append(conn_results_rotated)
             valid_dates.append(self.checkInvalidQuery(conn_results_rotated))
 
         conn.close()
@@ -380,7 +475,6 @@ class BarGraph(State):
         print('Conn results_rotated:', conn_results_rotated)
 
         app = DjangoDash('Graph')  # replaces dash.Dash
-
 
         y_axis = []
         x_axis = []
@@ -411,7 +505,12 @@ class BarGraph(State):
 
         data_list = []
         for i, location in enumerate(self.location_list):
-            data_list.append(go.Bar(name=location, x=x_axis[i], y=y_axis[i]))
+            if location == 'Event' and self.use_custom_event_name == 'Yes':
+                data_list.append(go.Bar(name=self.custom_event_name, x=x_axis[i], y=y_axis[i]))
+            else:
+                data_list.append(go.Bar(name=location, x=x_axis[i], y=y_axis[i]))
+
+        print('data_list', data_list)
 
         fig = go.Figure(data=data_list, layout=layout)
         # Now implement the custom scaling if enabled
@@ -436,27 +535,52 @@ class BarGraph(State):
             # y_list = list(y_axis)
 
             running_total = 0
+            print('x_list', x_list)
             print('y_list', y_list)
             for i, location in enumerate(self.location_list):
-                x_list[i].insert(0, '<b>Location<b>')
-                y_list[i].insert(0, '<b>' + location + '<b>')
-                loc_subtotal = 0
-                for count in y_list[i]:
-                    if isinstance(count, int):
-                        loc_subtotal += count
+                if self.report_type == 'Count visits over time':
+                    x_list[i].insert(0, '<b>Location<b>')
+                    y_list[i].insert(0, '<b>' + location + '<b>')
+                    loc_subtotal = 0
+                    for count in y_list[i]:
+                        if isinstance(count, int) or isinstance(count, float):
+                            loc_subtotal += count
 
-                x_list[i].append('<b>Total for location<b>')
-                y_list[i].append(loc_subtotal)
-                running_total += loc_subtotal
+                    x_list[i].append('<b>Total for location<b>')
+                    y_list[i].append(loc_subtotal)
+                    running_total += loc_subtotal
+                elif self.report_type == 'Compare GPA against demographics':
+                    total_values = len(y_list[i])
+                    x_list[i].insert(0, '<b>Location<b>')
+                    y_list[i].insert(0, '<b>' + location + '<b>')
+                    loc_subtotal = 0
+                    for count in y_list[i]:
+                        if isinstance(count, int) or isinstance(count, float):
+                            loc_subtotal += count
+
+                    x_list[i].append('<b>Total Average for location<b>')
+                    loc_subtotal /= total_values
+                    y_list[i].append(round(loc_subtotal, 2))
+                    running_total += loc_subtotal
 
             # --- Referenced from Stack Overflow https://stackabuse.com/python-how-to-flatten-list-of-lists/
             # Last visited 3/6/2021
             flattened_x_list = [value for loc in x_list for value in loc]
+
+            if conn_results_rotated[0]:
+                if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                    i = flattened_x_list.index('Event')
+                    flattened_x_list[i] = self.custom_event_name
+
             flattened_y_list = [value for loc in y_list for value in loc]
             # End of reference -----------------------------------------------------------------------------
 
             flattened_x_list.append('<b>Grand Total</b>')
-            flattened_y_list.append(running_total)
+
+            if self.report_type == 'Compare GPA against demographics':
+                running_total /= len(self.location_list)
+
+            flattened_y_list.append(round(running_total, 2))
 
             values = [flattened_x_list, flattened_y_list]
             table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
@@ -548,7 +672,6 @@ class Histogram(State):
         conn = sqlite3.connect('vmc_tap.db');
         conn_results = []
 
-
         if self.all_locations:
             self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
                 '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
@@ -584,24 +707,24 @@ class Histogram(State):
             '%Y-%m-%d') + "', " + substr + ")")
 
         # conn_string_sql = "SELECT this_time, COUNT(this_time) FROM (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS this_time, SUBSTR(check_in_time,1,2) + CASE(SUBSTR(check_in_time,7,2)) WHEN 'PM' THEN '12' ELSE '0' END AS sorting FROM visits) AS ctime GROUP BY this_time ORDER BY sorting;"
-        #if self.selection == 'Average visitors by time':
-         #   conn_string_sql = "SELECT cat_hours.hour_display, round(IFNULL(SUM(c_visits.visit_count), 0)/(julianday('" + self.to_time.strftime(
-          #      '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
-           #     '%Y-%m-%d') + "')), 2) FROM cat_hours LEFT JOIN (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS hour_display, 1 AS visit_count, check_in_date FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
-            #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime(
-             #   '%Y-%m-%d') + "') AS c_visits ON cat_hours.hour_display = c_visits.hour_display GROUP BY cat_hours.hour_display ORDER BY cat_hours.ordering;"
-        #if self.selection == 'Average visitors by day':
-            # Parts of this query was referenced from StackOverflow: https://stackoverflow.com/questions/4319302/format-date-as-day-of-week
-           # conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, round(count(check_in_date)/(julianday('" + self.to_time.strftime(
-         #       '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
-          #      '%Y-%m-%d') + "')), 2) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
-           #     '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
-        #if self.selection == 'Total visitors by day':
-         #   conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, count(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
-          #      '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
-       # elif self.selection == 'Total visitors by year':
+        # if self.selection == 'Average visitors by time':
+        #   conn_string_sql = "SELECT cat_hours.hour_display, round(IFNULL(SUM(c_visits.visit_count), 0)/(julianday('" + self.to_time.strftime(
+        #      '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
+        #     '%Y-%m-%d') + "')), 2) FROM cat_hours LEFT JOIN (SELECT LTRIM(SUBSTR(check_in_time,1,2),'0') || ' ' || SUBSTR(check_in_time,7,2) AS hour_display, 1 AS visit_count, check_in_date FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+        #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime(
+        #   '%Y-%m-%d') + "') AS c_visits ON cat_hours.hour_display = c_visits.hour_display GROUP BY cat_hours.hour_display ORDER BY cat_hours.ordering;"
+        # if self.selection == 'Average visitors by day':
+        # Parts of this query was referenced from StackOverflow: https://stackoverflow.com/questions/4319302/format-date-as-day-of-week
+        # conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, round(count(check_in_date)/(julianday('" + self.to_time.strftime(
+        #       '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
+        #      '%Y-%m-%d') + "')), 2) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+        #     '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
+        # if self.selection == 'Total visitors by day':
+        #   conn_string_sql = "SELECT CASE cast (strftime('%w', check_in_date) AS INTEGER) WHEN 0 THEN 'Sunday' WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday' WHEN 4 THEN 'Thursday' WHEN 5 THEN 'Friday' ELSE 'Saturday' END AS Day, count(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
+        #      '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY strftime('%w',check_in_date);"
+        # elif self.selection == 'Total visitors by year':
         #    conn_string_sql = "SELECT SUBSTR(check_in_date,1,4), COUNT(check_in_date) FROM visits WHERE (location = '" + substr + "') and check_in_date BETWEEN '" + self.from_time.strftime(
-         #       '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY SUBSTR(check_in_date,1,4);"
+        #       '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY SUBSTR(check_in_date,1,4);"
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
 
@@ -653,7 +776,7 @@ class Histogram(State):
         else:
             layout = Layout(title=title)
 
-        fig = go.Figure()
+        fig = go.Figure(layout=layout)
         fig.add_trace(
             go.Histogram(histfunc="sum", y=y_axis, x=x_axis, name="count", marker=dict(color=self.bar_color.lower())))
         fig.update_layout(bargap=0)
@@ -707,7 +830,6 @@ class Histogram(State):
                 dcc.Graph(id='figure', figure=fig, style={'height': '90vh'}),
             ], style={'height': '70vh', 'width': '70vw'})
 
-
         print('validDates:', validDates)
 
         return app, title, validDates
@@ -735,10 +857,17 @@ class PieChart(State):
         self.include_table = self.selection_dict['include_table']
 
         self.query_dictionary = {'Benefit Chapter': 'benefit_chapter',
-                                 'Residential Distance from Campus': 'dist_from_campus', 'Employment': 'employment',
+                                 'Residential Distance from Campus': 'currently_live', 'Employment': 'employment',
                                  'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
-                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender_identity',
+                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender',
                                  'Parent Education': 'parent_education',
+                                 'STEM Major': 'is_stem',
+                                 'Pell Grant': 'pell_grant', 'Needs Based Grants/Scholarships': 'needs_based',
+                                 'Merits Based Grants/Scholarships': 'merit_based',
+                                 'Federal Work Study': 'federal_work_study', 'Military Grants': 'military_grants',
+                                 'Millennium Scholarship': 'millennium_scholarship',
+                                 'Nevada Pre-Paid': 'nevada_prepaid',
+                                 'Best Method of Contact': 'contact_method',
                                  'Break in University Attendance': 'break_in_attendance',
                                  'Total Usage by Location': 'total_usage_by_location', 'GPA': 'gpa',
                                  'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
@@ -765,6 +894,9 @@ class PieChart(State):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
         self.select_all = self.location_dict['select_all']
+        self.use_custom_event_name = self.location_dict['use_custom_event_name']
+        self.custom_event_name = self.location_dict['custom_event_name']
+
         if self.select_all:
             self.all_locations = True
         else:
@@ -826,6 +958,14 @@ class PieChart(State):
 
         # Rotates 2D array to work w/ plotly
         conn_results_rotated = list(zip(*conn_results[::-1]));
+
+        if conn_results_rotated:
+            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                conn_results_rotated[0] = list(conn_results_rotated[0])
+                i = conn_results_rotated[0].index('Event')
+                custom_name = self.custom_event_name
+                conn_results_rotated[0][i] = custom_name
+                conn_results_rotated[0] = tuple(conn_results_rotated[0])
 
         print('Conn results_rotated:', conn_results_rotated)
 
@@ -924,10 +1064,8 @@ class IndividualStatistic(State):
 
         # Convert selection into query '*' for SQL
         if self.selection == 'Total Usage by Location':
-            self.selection = '*'
             self.group_by = 'location'
         elif self.selection == 'Usage by Date':
-            self.selection = '*'
             self.group_by = 'check_in_date'
         elif self.selection == 'Classification':
             self.group_by = 'classification'
@@ -954,9 +1092,22 @@ class IndividualStatistic(State):
         elif self.selection == 'Break in University Attendance':
             self.group_by = 'break_in_attendance'
 
-
-        self.query_dictionary = {'Total Count': 'ind_total_count', 'Daily average': 'ind_daily_average',
-                                 'Monthly average': 'ind_monthly_avg', 'Yearly average': 'indiv_yearly_avg'}
+        self.query_dictionary = {'Benefit Chapter': 'benefit_chapter',
+                                 'Residential Distance from Campus': 'currently_live', 'Employment': 'employment',
+                                 'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
+                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender',
+                                 'Parent Education': 'parent_education',
+                                 'STEM Major': 'is_stem',
+                                 'Pell Grant': 'pell_grant', 'Needs Based Grants/Scholarships': 'needs_based',
+                                 'Merits Based Grants/Scholarships': 'merit_based',
+                                 'Federal Work Study': 'federal_work_study', 'Military Grants': 'military_grants',
+                                 'Millennium Scholarship': 'millennium_scholarship',
+                                 'Nevada Pre-Paid': 'nevada_prepaid',
+                                 'Best Method of Contact': 'contact_method',
+                                 'Break in University Attendance': 'break_in_attendance',
+                                 'Total Usage by Location': 'total_usage_by_location', 'GPA': 'gpa',
+                                 'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
+                                 'Services': 'services'}
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -975,6 +1126,9 @@ class IndividualStatistic(State):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
         self.select_all = self.location_dict['select_all']
+        self.use_custom_event_name = self.location_dict['use_custom_event_name']
+        self.custom_event_name = self.location_dict['custom_event_name']
+
         if self.select_all:
             self.all_locations = True
         else:
@@ -1004,20 +1158,20 @@ class IndividualStatistic(State):
                 '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
         if self.subselection == 'Total Count':
-            new_title = 'Total count of visitors from ' + self.from_time.strftime(
+            new_title = 'Count of ' + self.selection + ' from ' + self.from_time.strftime(
                 '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Daily average':
-            new_title = 'Daily average visitors from ' + self.from_time.strftime(
+            new_title = 'Count of Daily Average ' + self.selection + ' from ' + self.from_time.strftime(
                 '%m/%d/%d') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Monthly average':
-            new_title = 'Monthly average visitors from ' + self.from_time.strftime(
+            new_title = 'Count of Monthly Average ' + self.selection + ' from ' + self.from_time.strftime(
                 '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
         elif self.subselection == 'Yearly average':
-            new_title = 'Yearly average visitors from ' + self.from_time.strftime(
+            new_title = 'Count of Yearly Average ' + self.selection + ' from ' + self.from_time.strftime(
                 '%m/%d/%y') + ' to ' + self.to_time.strftime('%m/%d/%y')
 
         # The max size of a location list is 2. If this is true, then show "all locations in the title"
-        if len(self.location_list) == 2:
+        if len(self.location_list) == 3:
             title2 = ' Locations: All'
         else:
             title2 = ' Locations: '
@@ -1032,28 +1186,27 @@ class IndividualStatistic(State):
         else:
             title = custom_title
 
-
-        #if self.subselection == 'Total Count':
-         #   conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
-          #      '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
-           #     '%Y-%m-%d') + "\' group by " + self.group_by + ";"
+        # if self.subselection == 'Total Count':
+        #   conn_string_sql = "select " + self.group_by + ", count(" + self.selection + ") from visits where (location = \'" + substr + "\') and check_in_date >= \'" + self.from_time.strftime(
+        #      '%Y-%m-%d') + "\' and check_in_date <= \'" + self.to_time.strftime(
+        #     '%Y-%m-%d') + "\' group by " + self.group_by + ";"
         # print('location_list: ', self.location_list)
-        #elif self.subselection == 'Daily average':
-            # conn_string_sql = "select major, avg(count(*)) from (select check_in_date, count(*) from visits) group by major;"
-         #   conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (julianday('" + self.to_time.strftime(
-          #      '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
-           #     '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
-            #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
-        #elif self.subselection == 'Monthly average':
-         #   conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (strftime('%m','" + self.to_time.strftime(
-          #      '%Y-%m-%d') + "') - strftime('%m', '" + self.from_time.strftime(
-           #     '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
-            #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
-        #elif self.subselection == 'Yearly average':
-         #   conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (strftime('%Y','" + self.to_time.strftime(
-          #      '%Y-%m-%d') + "') - strftime('%Y', '" + self.from_time.strftime(
-           #     '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
-            #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
+        # elif self.subselection == 'Daily average':
+        # conn_string_sql = "select major, avg(count(*)) from (select check_in_date, count(*) from visits) group by major;"
+        #   conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (julianday('" + self.to_time.strftime(
+        #      '%Y-%m-%d') + "') - julianday('" + self.from_time.strftime(
+        #     '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
+        #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
+        # elif self.subselection == 'Monthly average':
+        #   conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (strftime('%m','" + self.to_time.strftime(
+        #      '%Y-%m-%d') + "') - strftime('%m', '" + self.from_time.strftime(
+        #     '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
+        #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
+        # elif self.subselection == 'Yearly average':
+        #   conn_string_sql = "SELECT " + self.group_by + ", ROUND(COUNT(" + self.group_by + ") / (strftime('%Y','" + self.to_time.strftime(
+        #      '%Y-%m-%d') + "') - strftime('%Y', '" + self.from_time.strftime(
+        #     '%Y-%m-%d') + "')), 2) FROM visits WHERE check_in_date BETWEEN '" + self.from_time.strftime(
+        #    '%Y-%m-%d') + "' AND '" + self.to_time.strftime('%Y-%m-%d') + "' GROUP BY " + self.group_by + ";"
 
         substr = "\""
 
@@ -1065,9 +1218,29 @@ class IndividualStatistic(State):
 
         substr += '"'
 
-        self.conn_string_sql = eval(self.query_dictionary[self.subselection] + ".get_query('" + self.group_by + "', '" + self.from_time.strftime(
-            '%Y-%m-%d') + "', '" + self.to_time.strftime(
-            '%Y-%m-%d') + "', " + substr + ")")
+        if self.subselection == 'Total Count':
+            self.conn_string_sql = eval(
+                self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
+                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                    '%Y-%m-%d') + "', " + substr + ")")
+        elif self.subselection == 'Daily average':
+            self.conn_string_sql = eval(
+                "ind_daily_avg.get_query('" + self.query_dictionary[self.selection] + "', '" + self.from_time.strftime(
+                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                    '%Y-%m-%d') + "', " + substr + ")")
+        elif self.subselection == 'Monthly average':
+            self.conn_string_sql = eval(
+                "ind_monthly_avg.get_query('" + self.query_dictionary[
+                    self.selection] + "', '" + self.from_time.strftime(
+                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                    '%Y-%m-%d') + "', " + substr + ")")
+        elif self.subselection == 'Yearly average':
+            self.conn_string_sql = eval(
+                "ind_yearly_avg.get_query('" + self.query_dictionary[
+                    self.selection] + "', '" + self.from_time.strftime(
+                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                    '%Y-%m-%d') + "', " + substr + ")")
+
         print('location_list: ', self.location_list)
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
@@ -1081,7 +1254,15 @@ class IndividualStatistic(State):
         conn.close()
 
         # Rotates 2D array to work w/ plotly
-        conn_results_rotated = list(zip(*conn_results[::-1]));
+        conn_results_rotated = list(zip(*conn_results[::-1]))
+
+        if conn_results_rotated:
+            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                conn_results_rotated[0] = list(conn_results_rotated[0])
+                i = conn_results_rotated[0].index('Event')
+                custom_name = self.custom_event_name
+                conn_results_rotated[0][i] = custom_name
+                conn_results_rotated[0] = tuple(conn_results_rotated[0])
 
         print('Conn results_rotated:', conn_results_rotated)
 
@@ -1170,16 +1351,37 @@ class ScatterPlot(State):
         self.selection = self.selection_dict['selection']
         self.title = self.selection
         self.include_table = self.selection_dict['include_table']
+        self.report_type = self.selection_dict['report_type']
+        self.category = self.selection_dict['category']
+        self.gpa_to_compare = self.selection_dict['gpa_to_compare']
 
+        if self.report_type == 'Count visits over time':
+            self.title = self.selection
+        elif self.report_type == 'Compare GPA against demographics':
+            self.title = self.category
+
+        # Convert selection into query '*' for SQL
         self.query_dictionary = {'Benefit Chapter': 'benefit_chapter',
-                                 'Residential Distance from Campus': 'dist_from_campus', 'Employment': 'employment',
+                                 'Residential Distance from Campus': 'currently_live', 'Employment': 'employment',
                                  'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
-                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender_identity',
-                                 'Parent Education': 'parent_education',
+                                 'Marital Status': 'marital_status', 'Gender Identity': 'gender',
+                                 'Parent Education': 'parent_education', 'STEM Major': 'is_stem',
+                                 'Pell Grant': 'pell_grant', 'Needs Based Grants/Scholarships': 'needs_based',
+                                 'Merits Based Grants/Scholarships': 'merit_based',
+                                 'Federal Work Study': 'federal_work_study', 'Military Grants': 'military_grants',
+                                 'Millennium Scholarship': 'millennium_scholarship',
+                                 'Nevada Pre-Paid': 'nevada_prepaid',
+                                 'Best Method of Contact': 'contact_method',
                                  'Break in University Attendance': 'break_in_attendance',
                                  'Total Usage by Location': 'total_usage_by_location', 'GPA': 'gpa',
                                  'Usage by Date': 'usage_by_date', 'Classification': 'classification', 'Major': 'major',
                                  'Services': 'services'}
+
+        self.gpa_dictionary = {'Average end term Semester GPA': 'end_term_term_gpa',
+                               'Average end term Cumulative GPA': 'end_term_cumulative_gpa',
+                               'Average end term Attempted Credits': 'end_term_attempted_credits',
+                               'Average end term Earned Credits': 'end_term_earned_credits',
+                               'Average end term Cumulative Completed Credits': 'end_term_credit_completion'}
 
     # Get the date range for database querying
     def determineDateRange(self):
@@ -1205,6 +1407,8 @@ class ScatterPlot(State):
         self.location_dict = self.inner_dict[4]
         self.location_list = self.location_dict['attendance_data']
         self.select_all = self.location_dict['select_all']
+        self.use_custom_event_name = self.location_dict['use_custom_event_name']
+        self.custom_event_name = self.location_dict['custom_event_name']
         if self.select_all:
             self.all_locations = True
         else:
@@ -1216,12 +1420,16 @@ class ScatterPlot(State):
         self.determineStyleSettings()
         self.determineLocationsToTrack()
 
-        conn = sqlite3.connect('vmc_tap.db');
+        conn = sqlite3.connect('vmc_tap.db')
         conn_results = []
 
         if self.all_locations:
-            self.title = "Count of " + self.title + ", All Locations, from " + self.from_time.strftime(
-                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            if self.report_type == 'Count visits over time':
+                self.title = "Count of " + self.title + ", all Locations from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            elif self.report_type == 'Compare GPA against demographics':
+                self.title = self.gpa_to_compare + " by " + self.category + ", all Locations, from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
         else:
             loc_str = ''
             for loc in self.location_list:
@@ -1230,8 +1438,12 @@ class ScatterPlot(State):
                 else:
                     loc_str += loc
 
-            self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
-                '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            if self.report_type == 'Count visits over time':
+                self.title = "Count of " + self.title + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
+            elif self.report_type == 'Compare GPA against demographics':
+                self.title = self.gpa_to_compare + " by " + self.category + " at location(s):" + loc_str + " from " + self.from_time.strftime(
+                    '%m/%d/%Y') + " to " + self.to_time.strftime('%m/%d/%Y')
 
         custom_title = self.get_custom_title()
         if custom_title == '':
@@ -1249,9 +1461,18 @@ class ScatterPlot(State):
 
         substr += '"'
 
-        self.conn_string_sql = eval(self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
-            '%Y-%m-%d') + "', '" + self.to_time.strftime(
-            '%Y-%m-%d') + "', " + substr + ")")
+        if self.report_type == 'Count visits over time':
+            self.conn_string_sql = eval(
+                self.query_dictionary[self.selection] + ".get_query('" + self.from_time.strftime(
+                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                    '%Y-%m-%d') + "', " + substr + ")")
+        elif self.report_type == 'Compare GPA against demographics':
+            self.conn_string_sql = eval(
+                self.query_dictionary[self.category] + "_gpa.get_query('" + self.gpa_dictionary[
+                    self.gpa_to_compare] + "', '" + self.from_time.strftime(
+
+                    '%Y-%m-%d') + "', '" + self.to_time.strftime(
+                    '%Y-%m-%d') + "', " + substr + ")")
         print('location_list: ', self.location_list)
 
         # conn_string_sql = "select location, count(" + self.selection + ") from visits group by location;"
@@ -1265,7 +1486,15 @@ class ScatterPlot(State):
         conn.close()
 
         # Rotates 2D array to work w/ plotly
-        conn_results_rotated = list(zip(*conn_results[::-1]));
+        conn_results_rotated = list(zip(*conn_results[::-1]))
+
+        if conn_results_rotated:
+            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                conn_results_rotated[0] = list(conn_results_rotated[0])
+                i = conn_results_rotated[0].index('Event')
+                custom_name = self.custom_event_name
+                conn_results_rotated[0][i] = custom_name
+                conn_results_rotated[0] = tuple(conn_results_rotated[0])
 
         print('Conn results_rotated:', conn_results_rotated)
 
@@ -1312,14 +1541,22 @@ class ScatterPlot(State):
             x_list = list(x_axis)
             y_list = list(y_axis)
             values = [x_list, y_list]
-            print('values: ', values)
 
-            total = 0
-            for count in y_axis:
-                total += count
+            if self.report_type == 'Count visits over time':
+                total = 0
+                for count in y_axis:
+                    total += count
 
-            x_list.append('<b>Grand Total</b>')
-            y_list.append(total)
+                x_list.append('<b>Grand Total</b>')
+                y_list.append(total)
+            elif self.report_type == 'Compare GPA against demographics':
+                total_values = len(y_list)
+                total = 0
+                for count in y_axis:
+                    total += count
+                x_list.append('<b>Total Average<b>')
+                total /= total_values
+                y_list.append(round(total, 2))
             table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
                               layout=Layout(title=title))
             table.update_layout(height=(200 + len(x_list) * 23))
@@ -1405,12 +1642,13 @@ def getBarGraphPreset(presetModel, from_time, to_time):
     report_data = {}
     report_data['form_data'] = []
     inner_list = report_data['form_data']
-    inner_list.append({'graphType': 'Bar Graph'})
+    inner_list.append({'graphType': 'Bar Graph', 'title': presetModel.title})
     inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     if presetModel.autoscale == 'Yes':
         inner_list.append({'select_bar_color': presetModel.select_bar_color, 'autoscale': presetModel.autoscale,
-                           'show_multiple_bars_by_location': presetModel.multiple_bars,'max_count': None, 'increment_by': None})
+                           'show_multiple_bars_by_location': presetModel.multiple_bars, 'max_count': None,
+                           'increment_by': None})
     else:
         inner_list.append({'select_bar_color': presetModel.select_bar_color, 'autoscale': presetModel.autoscale,
                            'show_multiple_bars_by_location': presetModel.multiple_bars,
@@ -1428,7 +1666,7 @@ def getHistogramPreset(presetModel, from_time, to_time):
     report_data = {}
     report_data['form_data'] = []
     inner_list = report_data['form_data']
-    inner_list.append({'graphType': 'Histogram'})
+    inner_list.append({'graphType': 'Histogram', 'title': presetModel.title})
     inner_list.append({'time_units': presetModel.time_units, 'include_table': presetModel.include_table})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     if presetModel.autoscale == 'Yes':
@@ -1449,7 +1687,7 @@ def getLineScatterPreset(presetModel, from_time, to_time):
     report_data = {}
     report_data['form_data'] = []
     inner_list = report_data['form_data']
-    inner_list.append({'graphType': 'Line and/or Scatter'})
+    inner_list.append({'graphType': 'Line and/or Scatter', 'title': presetModel.title})
     inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     if presetModel.autoscale == 'Yes':
@@ -1472,7 +1710,7 @@ def getPieChartPreset(presetModel, from_time, to_time):
     report_data = {}
     report_data['form_data'] = []
     inner_list = report_data['form_data']
-    inner_list.append({'graphType': 'Pie Chart'})
+    inner_list.append({'graphType': 'Pie Chart', 'title': presetModel.title})
     inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     inner_list.append({'Data_units': presetModel.data_units})
@@ -1487,7 +1725,7 @@ def getIndividualStatisticPreset(presetModel, from_time, to_time):
     report_data = {}
     report_data['form_data'] = []
     inner_list = report_data['form_data']
-    inner_list.append({'graphType': 'Individual Statistic'})
+    inner_list.append({'graphType': 'Individual Statistic', 'title': presetModel.title})
     inner_list.append({'selection': presetModel.selection, 'count_options': presetModel.count_options})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     inner_list.append({'header_font_color': presetModel.header_font_color,

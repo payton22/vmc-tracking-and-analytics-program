@@ -10,12 +10,13 @@ from django.contrib.auth import update_session_auth_hash, logout, login, tokens
 from formtools.wizard.views import SessionWizardView
 from .forms import *
 from visualizations.models import ReportPresets
+from datetime import datetime
 
 FORMS = [('SelectReportType', SelectReportType),
          ('BarGraphAxes', BarGraphAxes),
          ('LineGraphAxes', BarGraphAxes),
          ('HistogramAxes', HistogramAxes),
-         ('PieChartData', BarGraphAxes),
+         ('PieChartData', PieChartCategories),
          ('ScatterPlotAxes', BarGraphAxes),
          ('IndividualStatisticOptions', IndividualStatisticOptions),
          ('TimeFrame', TimeFrame),
@@ -49,8 +50,9 @@ def surveyPageView(request):
         return render(request, 'pages/survey.html')
     if(request.method == 'POST'):
         #mystr = '';
-        if(len(list(request.POST.items())) != 14):
-            returnrender(request, 'pages/survey.html'); #Did not fill out entire form
+        if(len(list(request.POST.items())) != 22):
+            #return HttpResponse(list(request.POST.items()));
+            return render(request, 'pages/survey.html'); #Did not fill out entire form
         #Connect to DB
         import sqlite3
         conn = sqlite3.connect('vmc_tap.db');
@@ -62,7 +64,7 @@ def surveyPageView(request):
             student_exists = d[0];
         mystr = '@' + str(student_exists) + '@';
         
-        query_names = ['student_name', 'student_id', 'benefit_chapter', 'is_stem', 'currently_live', 'employment', 'work_hours', 'dependents', 'marital_status', 'gender', 'parent_education', 'break_in_attendance'];
+        query_names = ['student_name', 'student_id', 'benefit_chapter', 'is_stem', 'currently_live', 'employment', 'work_hours', 'dependents', 'marital_status', 'gender', 'parent_education', 'break_in_attendance', 'pell_grant', 'needs_based', 'merit_based', 'federal_work_study', 'military_grants', 'millennium_scholarship', 'nevada_prepaid', 'contact_method'];
         query_values = [request.POST["first_name"] + ' ' + request.POST["last_name"]];
         query_values.extend([request.POST[a] for a in query_names if a != 'student_name']);
         #Student not not yet exist
@@ -71,7 +73,7 @@ def surveyPageView(request):
 
         #Student does exist
         else:
-            query_commas = [', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',' '];
+            query_commas = [', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',', ',' '];
             sql_statement = "UPDATE demographics SET student_name = '" + request.POST["first_name"] + ' ' + request.POST["last_name"] + "', ";
             for i, name in enumerate(query_names):
                 if(name != 'student_name'):
@@ -81,8 +83,11 @@ def surveyPageView(request):
         conn.commit();
 
         conn.close();
-    #return render(request, 'pages/survey.html')
-    return HttpResponse('Survey data recorded.');
+    return render(request, 'pages/surveyThanks.html')
+    #return HttpResponse('Survey data recorded.');
+
+#def surveyThanksView(request):
+#    return render(request, 'pages/surveyThanks.html');
 
 def homePageView(request):
     if request.user.is_authenticated:
@@ -177,6 +182,7 @@ def changeEmailView(request, email):
                     saved_user = request.user
                     logout(request)
                     user.email = request.POST.get('email_confirm')
+                    user.email += '@unr.edu'
                     user.save()
                     saved_user.delete()
                     login(request, user)
@@ -184,6 +190,7 @@ def changeEmailView(request, email):
 
                     old_user_email = user.email
                     user.email = request.POST.get('email_confirm')
+                    user.email += '@unr.edu'
                     user.save()
 
                     old_user_acct = CustomUser.objects.get(pk=old_user_email)
@@ -244,7 +251,6 @@ def accountsView(request):
     
         for user in accountsList:
             emails.append(user.email)
-        print('made it here')
     
         return render(request, 'pages/viewAccountsList.html', {'emails': emails})
     else: 
@@ -269,6 +275,7 @@ def newAccount(request):
         first_name = request.POST.get('firstName')
         last_name = request.POST.get('lastName')
         email = request.POST.get('email')
+        email += '@unr.edu'
         password = request.POST.get('password')
         CustomUser.objects.create_superuser(email, first_name, last_name, password)
         return render(request, 'pages/accountCreated.html', {'email': email})
@@ -429,7 +436,7 @@ class ReportWizardBase(SessionWizardView):
                  'LineGraphAxes': 'pages/WizardFiles/barGraphAxes.html',
                  'HistogramAxes': 'pages/WizardFiles/histogramFreq.html',
                  'ScatterPlotAxes': 'pages/WizardFiles/barGraphAxes.html',
-                 'PieChartData': 'pages/WizardFiles/barGraphAxes.html',
+                 'PieChartData': 'pages/WizardFiles/pieChartCategories.html',
                  'IndividualStatisticOptions': 'pages/WizardFiles/individualStatisticOptions.html',
                  'TimeFrame': 'pages/WizardFiles/timeFrame.html',
                  'CustomizeBarGraph': 'pages/WizardFiles/customizeBarGraph.html',
@@ -503,12 +510,23 @@ def savePreset(request):
     else: 
         return redirect('login')
 
+def locationInserter(loc_list):
+    loc_string = ''
+    for location in loc_list:
+        if location != loc_list[-1]:
+            loc_string += location + ','
+        else:
+            loc_string += location
+
+    return loc_string
+
 
 def saveChoices(request, name):
     global preset_storage
     preference = ReportPresets()
     inner_dict = preset_storage['form_data']
     graph_type = inner_dict[0]
+    cust_title = graph_type['title']
 
     if graph_type['graphType'] == 'Bar Graph':
         sel_dict = inner_dict[1]
@@ -519,11 +537,14 @@ def saveChoices(request, name):
         autoscale = customization['autoscale']
         max_ct = customization['max_count']
         inc_by = customization['increment_by']
+        mult_bars = customization['show_multiple_bars_by_location']
 
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
+        loc = locationInserter(loc)
+        sel_all = loc_dict['select_all']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], selection=selection, include_table=incl_table, select_bar_color=sel_bar_color, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, locations=loc, user=request.user, preset_name=name)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, select_all=sel_all, selection=selection, include_table=incl_table, select_bar_color=sel_bar_color, multiple_bars=mult_bars, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, locations=loc, user=request.user, preset_name=name)
         Preset.save()
     elif graph_type['graphType'] == 'Histogram':
         sel_dict = inner_dict[1]
@@ -538,8 +559,10 @@ def saveChoices(request, name):
 
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
+        loc = locationInserter(loc)
+        sel_all = loc_dict['select_all']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], time_units=time_units, include_table=incl_tabe, select_bar_color=sel_bar_color, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, hist_data=data, locations=loc, user=request.user, preset_name=name)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, select_all=sel_all, time_units=time_units, include_table=incl_tabe, select_bar_color=sel_bar_color, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, hist_data=data, locations=loc, user=request.user, preset_name=name)
         Preset.save()
     elif graph_type['graphType'] == 'Line Graph':
         sel_dict = inner_dict[1]
@@ -553,8 +576,10 @@ def saveChoices(request, name):
 
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
+        loc = locationInserter(loc)
+        sel_all = loc_dict['select_all']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], selection=selection, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, line_color=sel_line_color, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, select_all=sel_all, selection=selection, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, line_color=sel_line_color, locations=loc, preset_name=name, user=request.user)
         Preset.save()
     elif graph_type['graphType'] == 'Pie Chart':
         sel_dict = inner_dict[1]
@@ -566,8 +591,10 @@ def saveChoices(request, name):
 
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
+        loc = locationInserter(loc)
+        sel_all = loc_dict['select_all']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], selection=selection, include_table=incl_table, data_units=data_units, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, select_all=sel_all,selection=selection, include_table=incl_table, data_units=data_units, locations=loc, preset_name=name, user=request.user)
         Preset.save()
     elif graph_type['graphType'] == 'Scatter Plot':
         sel_dict = inner_dict[1]
@@ -582,8 +609,10 @@ def saveChoices(request, name):
 
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
+        loc = locationInserter(loc)
+        sel_all = loc_dict['select_all']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], selection=selection, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, dot_color=sel_dot_color, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], title=custom_title, selection=selection, select_all=sel_all, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, dot_color=sel_dot_color, locations=loc, preset_name=name, user=request.user)
         Preset.save()
     elif graph_type['graphType'] == 'Individual Statistic':
         sel_dict = inner_dict[1]
@@ -598,8 +627,10 @@ def saveChoices(request, name):
 
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
+        loc = locationInserter(loc)
+        sel_all = loc_dict['select_all']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], selection=selection, count_options=count_options, label_color=label_color, statistic_font_color=statistic_font_color, statistic_font_size=statistic_font_size, label_font_size=label_font_size, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, selection=selection, count_options=count_options, label_color=label_color, statistic_font_color=statistic_font_color, statistic_font_size=statistic_font_size, label_font_size=label_font_size, select_all=sel_all, locations=loc, preset_name=name, user=request.user)
         Preset.save()
 
 
@@ -613,19 +644,14 @@ def reportsView(request):
 def viewPresets(request):
     if request.user.is_authenticated:
         presets = ReportPresets.objects.filter(user=request.user)
-        pres_names = []
-
-        for preset in presets:
-            pres_names.append(preset.preset_name)
-
-        return render(request, 'pages/viewPresets.html', {'pres_names': pres_names})
+        return render(request, 'pages/viewPresets.html', {'presets': presets})
     else: 
         return redirect('login')
 
 def individualPresetOptions(request, name):
     if request.user.is_authenticated:
         preset = ReportPresets.objects.get(pk=name)
-        print(preset.selection)
+        #print(preset.selection)
 
         return render(request, 'pages/individualPresetOptions.html', {'name': name, 'preset':preset})
     else: 
@@ -644,11 +670,23 @@ def createReportFromPreset(request, name):
     if request.user.is_authenticated:
         if request.method == 'POST':
             form = TimeFrame(request.POST)
-            from_time = request.POST.get('from_time')
-            to_time = request.POST.get('to_time')
-            # Generate report here
 
-            return render(request, 'pages/presetReportGenerated.html', {'name': name, 'form': form})
+            if form.is_valid():
+                from_time = request.POST.get('from_time')
+                to_time = request.POST.get('to_time')
+
+                from_time = datetime.strptime(from_time, '%m/%d/%Y')
+                to_time = datetime.strptime(to_time, '%m/%d/%Y')
+
+                from_time = from_time.strftime('%m-%d-%Y')
+                to_time = to_time.strftime('%m-%d-%Y')
+
+                # Generate report here
+                return render(request, 'pages/presetReportGenerated.html', {'preset_name': name,
+                                                                            'from_time': from_time, 'to_time': to_time,
+                                                                            'form': form})
+            else:
+                return render(request, 'pages/createReportFromPreset.html', {'form': form})
         else:
             form = TimeFrame()
             return render(request, 'pages/createReportFromPreset.html', {'name': name, 'form':form})

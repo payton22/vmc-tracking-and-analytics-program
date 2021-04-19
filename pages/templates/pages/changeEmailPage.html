@@ -20,13 +20,24 @@
         {{ form.current_password }}
         <br>
         <label for={{ form.email_addr.id_for_label }}>New email for account {{ email }}:</label>
+        <div class="input-group">
         {{ form.email_addr }}
+        <div class="input-group-append">
+                <span class="input-group-text" id='UnrAppend'>@unr.edu</span>
+        </div>
+        </div>
         <label for={{ form.email_confirm.id_for_label }}>Confirm new email for account {{ email }}</label>
+        <div class="input-group">
         {{ form.email_confirm}}
+        <div class="input-group-append">
+                <span class="input-group-text" id="UnrAppend2">@unr.edu</span>
+        </div>
+        </div>
         <div class="registrationFormAlert" id="divCheckEmailMatch"> </div>
         <br>
         <button type="submit" id='emailSubmit' class="btn btn-lg nav-bg" value='OK'>Submit</button>
         <a href="{% url 'otherAccountOptions' email %}" type="back" class="btn btn-lg nav-bg">Back</a>
+        {{ form.testemailfield }}
     </div>
 </form>
 

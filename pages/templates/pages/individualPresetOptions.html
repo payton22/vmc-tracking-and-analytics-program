@@ -206,45 +206,7 @@
         <div class="row ">
                 <a type='button' href ="{% url 'viewPresets' %}" class="btn btn-lg nav-bg admin-btn-width"> Back </a>
         </div>
-        <br>
-        <div class="row flex-column">
-            <a type="button" class="btn btn-lg nav-bg admin-btn-width" href="{% url 'createReportFromPreset' name %}">Create Report with this Preset</a>
-        </div>
-        <br>
-        <div class="row flex-column">
-            <!-- Button trigger modal -->
-            <button type="button" id="" class="btn btn-lg delete-bg" data-toggle="modal" data-target="#confirmation">
-                Delete this preset
-            </button>
-
-
-        </div>
     </div>
     </div>
 
-    <!-- Extra div closers, do not remove or else modal will not display properly -->
-    </div>
-    </div>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="confirmation" tabindex="-1" role="dialog" aria-labelledby="confirmDelete" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmDelete">Confirm Delete Preset</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete this preset?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary BGroup" data-dismiss="modal">No</button>
-                    <a type="button" href="{% url 'deletePreset' name %} " class="btn btn-primary BGroup">Yes</a>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock content %}

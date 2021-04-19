@@ -1,0 +1,2 @@
+def get_query(from_time, to_time, substr):
+    return "SELECT demographics.nevada_prepaid, count(demographics.nevada_prepaid) FROM visits LEFT JOIN demographics ON visits.student_id = demographics.student_id WHERE (location = \'" + substr + "\') and check_in_date >= \'" + from_time + "\' AND check_in_date <= \'" + to_time + "\' and demographics.nevada_prepaid is not null GROUP BY demographics.nevada_prepaid;"
