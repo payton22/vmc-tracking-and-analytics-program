@@ -10,6 +10,7 @@ choices_dict = {}
 urlpatterns = [
     path('', auth_views.LoginView.as_view(), name='login'),
     path('survey/', surveyPageView, name='surveyPage'),
+    path('manualpage/', manualPageView, name='manualPage'),
     path('home/', homePageView, name="homePage"),
     path('import/', importPageView, name='importPage'),
     path('import/gpa', importGPAView, name='importGPA'),
