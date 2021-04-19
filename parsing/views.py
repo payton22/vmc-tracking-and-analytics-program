@@ -91,7 +91,8 @@ def parse_gpa(request):
             conn.execute(student.get_insert_statement());
         conn.commit();
         conn.close();
-        return HttpResponse(ret_str)
+        messages.success(request, "Document Successfully Uploaded." )
+        return redirect('importPage')
     else:
         return HttpResponse("ERROR, please go to the import page and upload a file.")
 
@@ -230,5 +231,6 @@ def parse_manual(request):
         conn.commit();
         conn.close();
     #return HttpResponse(input_dict);
+    messages.success(request, "Manual Data Successfully Uploaded." )
     return redirect('importPage')
 
