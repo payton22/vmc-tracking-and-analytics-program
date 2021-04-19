@@ -83,9 +83,47 @@ class ReportPresets(models.Model):
                          ('Lines', 'Lines'),
                          ('Dots and Lines', 'Dots and Lines')]
 
+    GPA_COMPARISON = [('Average end term Semester GPA', 'Average end term Semester GPA'),
+                      ('Average end term Cumulative GPA', 'Average end term Cumulative GPA'),
+                      ('Average end term Attempted Credits', 'Average end term Attempted Credits'),
+                      ('Average end term Earned Credits', 'Average end term Earned Credits'),
+                      (
+                      'Average end term Cumulative Completed Credits', 'Average end term Cumulative Completed Credits')]
+
+    DEMO = [
+        ('Benefit Chapter', 'Benefit Chapter'),
+        ('Residential Distance from Campus', 'Residential Distance from Campus'),
+        ('Employment', 'Employment'),
+        ('Weekly Hours Worked', 'Weekly Hours Worked'),
+        ('Number of Dependents', 'Number of Dependents'),
+        ('Marital Status', 'Marital Status'),
+        ('Gender Identity', 'Gender Identity'),
+        ('Parent Education', 'Parent Education'),
+        ('Break in University Attendance', 'Break in University Attendance'),
+        ('Pell Grant', 'Pell Grant'),
+        ('Needs Based Grants/Scholarships', 'Needs Based Grants/Scholarships'),
+        ('Merits Based Grants/Scholarships', 'Merits Based Grants/Scholarships'),
+        ('Federal Work Study', 'Federal Work Study'),
+        ('Military Grants', 'Military Grants'),
+        ('Millennium Scholarship', 'Millennium Scholarship'),
+        ('Nevada Pre-Paid', 'Nevada Pre-Paid'),
+        ('Best Method of Contact', 'Best Method of Contact'),
+        ('Classification', 'Classification'),
+        ('Major', 'Major'),
+        ('Services', 'Services')
+    ]
+
+    TIME_VS_COMPARISONS = [('Count visits over time', 'Count visits over time'),
+                           ('Compare GPA against demographics', 'Compare GPA against demographics')]
+
     # Required for all report types
     graph_type = models.CharField(max_length=50)
     title = models.CharField(choices=YES_NO, max_length=20)
+
+    # Required for Bar Graphs and Individual Statistics
+    report_type = models.CharField(choices=TIME_VS_COMPARISONS, null=True, max_length=120)
+    category = models.CharField(choices=DEMO, null=True, max_length=120)
+    gpa_to_compare = models.CharField(choices=GPA_COMPARISON, null=True, max_length=120)
 
     # Required for all report types except Histogram
     selection = models.CharField(choices=DEMOGRAPHICS, max_length=50, null=True)
@@ -100,6 +138,8 @@ class ReportPresets(models.Model):
     locations = models.CharField(max_length=500, null=True)
     select_all = models.BooleanField(null=True)
     include_table = models.CharField(choices=YES_NO, max_length=50, null=True)
+    use_custom_event_name = models.CharField(choices=YES_NO, null=True, max_length=50)
+    custom_event_name = models.CharField(max_length=100, null=True)
 
     # Required for Bar Graph and Histogram
     select_bar_color = models.CharField(choices=COLOR_CHOICES, max_length=50, null=True)

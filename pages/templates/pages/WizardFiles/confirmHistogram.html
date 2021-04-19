@@ -10,56 +10,80 @@
     {{ wizard.form }}
 {% endif %}
     <h5>Confirmation: </h5>
-        <div class="row">
-            <div class="col-6">
-                <p>Report Type: {{ all_data.graphType }}</p>
+         <div class="row">
+                <div class="col-6">
+                    <p>Graph type: {{ all_data.graphType }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Time units: {{ all_data.time_units }}</p>
+                </div>
             </div>
-            <div class="col-6">
-                <p>Time Units: {{ all_data.time_period }}</p>
+            {% if all_data.title != '' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Use Custom Title: Yes</p>
+                </div>
+                <div class="col-6">
+                    <p>Title: {{ all_data.title }}</p>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-               <p>From date: {{ all_data.from_time }}</p>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom title: No</p>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Include table: {{ all_data.include_table }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Bar color: {{ all_data.select_bar_color }}</p>
+                </div>
             </div>
-            <div class="col-6">
-                  <p>To date: {{ all_data.to_time }}</p>
+            {% if all_data.autoscale == 'No' %}
+            <div class="row">
+                <div class="col-6">
+                     <p>Max count: {{ all_data.max_count }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Increment by: {{ all_data.increment_by }}</p>
+
+                </div>
             </div>
-        </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Autoscale: {{ all_data.autoscale }}</p>
+                </div>
+            </div>
+            <div class="row">
+            </div>
+            {% if all_data.use_custom_event_name == 'Yes' %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ all_data.use_custom_event_name }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p>Custom event name: {{ all_data.custom_event_name }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ all_data.use_custom_event_name }}</p>
+                    </div>
+                </div>
+            {% endif %}
         <div class="row">
             <div class="col-6">
                 <p>Attendance tracking location(s):
        {% for location in all_data.attendance_data %}
            {{ location }} {% if not forloop.last %},{% endif %} {% endfor %} </p>
             </div>
-            <div class="col-6">
-                  <p>Max count: {{ all_data.max_count }}</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                 <p>Bar Color: {{ all_data.bar_color }}</p>
-            </div>
-            <div class="col-6">
-                 <p>Autoscale count: {{ all_data.autoscale }}</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                 <p>Increment by: {{ all_data.increment_by }}</p>
-            </div>
-            <div class="col-6">
-                <p>Attendance demographic data to include(s):
-       {% for category in all_data.data %}
-           {{ category }} {% if not forloop.last %},{% endif %} {% endfor %} </p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p>Include table?: {{ all_data.include_table }}</p>
-            </div>
         </div>
 
-    <h4>If this is correct, click "submit."</h4>
-    <h4>If this is incorrect, return to a previous page to correct the information.</h4>
+
+
 {% endblock wizform %}

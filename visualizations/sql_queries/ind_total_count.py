@@ -4,6 +4,11 @@ def get_query(group_by, from_time, to_time, substr):
         return "select " + group_by + ", count(" + group_by + ") from visits where (location = \'" + substr + "\') " \
                 "and check_in_date >= \'" + from_time + "\' and check_in_date <= \'" + to_time + "\' group by " + \
                 group_by + ";"
+    elif group_by == 'end_term_term_gpa' or group_by == 'end_term_earned_credits' or group_by == 'end_term_cumulative_gpa' or group_by == 'end_term_attempted_credits' or group_by == 'end_term_credit_completion':
+        return "select IFNULL(gpa." + group_by + ", ''), count(gpa." + group_by + ") from visits LEFT JOIN gpa ON visits.student_id = gpa.student_id " \
+                                                                                                    "where (location = \'" + substr + "\') " \
+                                                                                                                                      "and check_in_date >= \'" + from_time + "\' and check_in_date <= \'" + to_time + "\' group by gpa." + \
+               group_by + ";"
     # Else, a table join with demographics + visits is needed
     else:
         return "select IFNULL(demographics." + group_by + ", ''), count(demographics." + group_by + ") from visits LEFT JOIN demographics ON visits.student_id = demographics.student_id " \

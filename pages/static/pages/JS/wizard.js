@@ -133,9 +133,9 @@ $('input[name=HistogramDetails-autoscale]').change(function (){
 
 
 
-$('input[name=CustomizeLineGraph-autoscale]').change(function (){
-    var max_ct = document.getElementById('line_max');
-    var inc_by = document.getElementById('line_increment');
+$('input[name=CustomizeScatterPlot-autoscale]').change(function (){
+    var max_ct = document.getElementById('scatter_max');
+    var inc_by = document.getElementById('scatter_increment');
 
     if(this.value == 'Yes'){
         max_ct.disabled = true;

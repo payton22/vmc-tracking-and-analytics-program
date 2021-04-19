@@ -11,49 +11,74 @@
 {% endif %}
     <h5>Confirmation: </h5>
         <div class="row">
-            <div class="col-6">
-                <p>Report Type: {{ all_data.graphType }}</p>
+                <div class="col-6">
+                    <p>Graph type: {{ all_data.graphType }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Include table: {{ all_data.include_table }}</p>
+                </div>
             </div>
-            <div class="col-6">
-                <p>Count total of category: {{ all_data.selection }}</p>
+            {% if all_data.title == '' %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Custom title: No</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Custom title: {{ all_data.custom_title }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p>Title: {{ all_data.title }}</p>
+                    </div>
+                </div>
+            {% endif %}
+            {% if preset.report_type == 'Compare GPA against demographics' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Category: {{ all_data.category }}</p>
+                </div>
+                <div class="col-6">
+                    <p>GPA to compare: {{ all_data.gpa_to_compare }}</p>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-               <p>From date: {{ all_data.from_time }}</p>
+                {% elif preset.report_type == 'Count visits over time' %}
+                <div class="row">
+                <div class="col-6">
+                    <p>Selection: {{ all_data.selection }}</p>
+                </div>
+                </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Autoscale: {{ preset.autoscale }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Dot/Line color: {{ all_data.select_dot_color }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Display graph as: {{ all_data.display_as }}</p>
+                </div>
             </div>
-            <div class="col-6">
-                  <p>To date: {{ all_data.to_time }}</p>
+
+            {% if all_data.autoscale == 'No' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Max count: {{ all_data.max_count }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Increment by: {{ all_data.increment_by }}</p>
+                </div>
             </div>
-        </div>
+            {% endif %}
         <div class="row">
             <div class="col-6">
                 <p>Attendance tracking location(s):
        {% for location in all_data.attendance_data %}
            {{ location }} {% if not forloop.last %},{% endif %} {% endfor %} </p>
             </div>
-            <div class="col-6">
-                 <p>Data Units: {{ all_data.Data_units }}</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p>Include table? {{ all_data.include_table }}</p>
-            </div>
-            <div class="col-6">
-                <p>Max count: {{ all_data.max_count }}</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p>Autoscale? {{ all_data.autoscale }}</p>
-            </div>
-            <div class="col-6">
-                <p>Increment by? {{ all_data.increment_by }}</p>
-            </div>
+
         </div>
 
-
-    <h4>If this is correct, click "submit."</h4>
-    <h4>If this is incorrect, return to a previous page to correct the information.</h4>
 {% endblock wizform %}

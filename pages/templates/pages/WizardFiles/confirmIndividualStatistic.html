@@ -10,21 +10,67 @@
     {{ wizard.form }}
 {% endif %}
     <h5>Confirmation: </h5>
-        <div class="row">
-            <div class="col-6">
-                <p>Report Type: {{ all_data.graphType }}</p>
+         <div class="row">
+                <div class="col-6">
+                    <p>Graph type: {{ all_data.graphType }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Selection: {{ all_data.selection }}</p>
+                </div>
             </div>
-            <div class="col-6">
-                <p>Count total of category: {{ all_data.selection }}</p>
+            {% if all_data.title == '' %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Custom title: No</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Custom title: {{ all_data.custom_title }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p>Title: {{ all_data.title }}</p>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Count options: {{ all_data.count_options }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Header font color: {{ all_data.header_font_color }}</p>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-               <p>From date: {{ all_data.from_time }}</p>
+            <div class="row">
+                <div class="col-6">
+                    <p>Statistic font color: {{ all_data.statistic_font_color }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Statistic font size: {{ all_data.statistic_font_size }}</p>
+                </div>
             </div>
-            <div class="col-6">
-                  <p>To date: {{ all_data.to_time }}</p>
+            <div class="row">
+                <div class="col-6">
+                    <p>Header font size: {{ all_data.header_font_size }}</p>
+                </div>
             </div>
+            {% if all_data.use_custom_event_name == 'Yes' %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ all_data.use_custom_event_name }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p>Custom event name: {{ all_data.custom_event_name }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ all_data.use_custom_event_name }}</p>
+                    </div>
+                </div>
+            {% endif %}
         </div>
         <div class="row">
             <div class="col-6">
@@ -32,28 +78,8 @@
        {% for location in all_data.attendance_data %}
            {{ location }} {% if not forloop.last %},{% endif %} {% endfor %} </p>
             </div>
-            <div class="col-6">
-                 <p>Data Units: {{ all_data.count_options }}</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p>Label font color: {{ all_data.label_font_color }}</p>
-            </div>
-            <div class="col-6">
-                <p>Statistic font color: {{ all_data.statistic_font_color }}</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <p>Label font size: {{ all_data.label_font_size }}</p>
-            </div>
-            <div class="col-6">
-                <p>Statistic font size: {{ all_data.statistic_font_size }}</p>
-            </div>
+
         </div>
 
 
-    <h4>If this is correct, click "submit."</h4>
-    <h4>If this is incorrect, return to a previous page to correct the information.</h4>
 {% endblock wizform %}

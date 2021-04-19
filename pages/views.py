@@ -11,6 +11,7 @@ from formtools.wizard.views import SessionWizardView
 from .forms import *
 from visualizations.models import ReportPresets
 from datetime import datetime
+from urllib.parse import quote
 
 FORMS = [('SelectReportType', SelectReportType),
          ('BarGraphAxes', BarGraphAxes),
@@ -475,7 +476,7 @@ class ReportWizardBase(SessionWizardView):
         preset_storage = {'form_data': [form.cleaned_data for form in form_list]}
         # If the user wants to save their report presets (except for date)
         if self.request.POST.get('save'):
-            return render(self.request, 'pages/wizardFiles/savePreset.html',
+            return render(self.request, 'pages/WizardFiles/savePreset.html',
                           data) #'selections': self.choices_dict, 'form':form})
         #elif self.request.POST.get('')
         # If the user does not want to save their report presets
@@ -528,6 +529,9 @@ def saveChoices(request, name):
         sel_dict = inner_dict[1]
         selection = sel_dict['selection']
         incl_table = sel_dict['include_table']
+        report_type = sel_dict['report_type']
+        category = sel_dict['category']
+        gpa_to_compare = sel_dict['gpa_to_compare']
         customization = inner_dict[3]
         sel_bar_color = customization['select_bar_color']
         autoscale = customization['autoscale']
@@ -539,8 +543,15 @@ def saveChoices(request, name):
         loc = loc_dict['attendance_data']
         loc = locationInserter(loc)
         sel_all = loc_dict['select_all']
+        use_custom_event_name = loc_dict['use_custom_event_name']
+        custom_event_name = loc_dict['custom_event_name']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, select_all=sel_all, selection=selection, include_table=incl_table, select_bar_color=sel_bar_color, multiple_bars=mult_bars, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, locations=loc, user=request.user, preset_name=name)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], report_type=report_type, category=category,
+                               gpa_to_compare=gpa_to_compare, title=cust_title, select_all=sel_all, selection=selection,
+                               include_table=incl_table, select_bar_color=sel_bar_color, multiple_bars=mult_bars,
+                               autoscale=autoscale, max_count=max_ct, increment_by=inc_by, locations=loc, user=request.user,
+                               use_custom_event_name=use_custom_event_name, custom_event_name=custom_event_name,
+                               preset_name=name)
         Preset.save()
     elif graph_type['graphType'] == 'Histogram':
         sel_dict = inner_dict[1]
@@ -551,14 +562,19 @@ def saveChoices(request, name):
         autoscale = customization['autoscale']
         max_ct = customization['max_count']
         inc_by = customization['increment_by']
-        data = customization['data']
 
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
         loc = locationInserter(loc)
         sel_all = loc_dict['select_all']
+        use_custom_event_name = loc_dict['use_custom_event_name']
+        custom_event_name = loc_dict['custom_event_name']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, select_all=sel_all, time_units=time_units, include_table=incl_tabe, select_bar_color=sel_bar_color, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, hist_data=data, locations=loc, user=request.user, preset_name=name)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, select_all=sel_all,
+                               time_units=time_units, include_table=incl_tabe, select_bar_color=sel_bar_color,
+                               autoscale=autoscale, max_count=max_ct, increment_by=inc_by, locations=loc,
+                               user=request.user, preset_name=name, use_custom_event_name=use_custom_event_name,
+                               custom_event_name=custom_event_name)
         Preset.save()
     elif graph_type['graphType'] == 'Line Graph':
         sel_dict = inner_dict[1]
@@ -574,8 +590,14 @@ def saveChoices(request, name):
         loc = loc_dict['attendance_data']
         loc = locationInserter(loc)
         sel_all = loc_dict['select_all']
+        use_custom_event_name = loc_dict['use_custom_event_name']
+        custom_event_name = loc_dict['custom_event_name']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, select_all=sel_all, selection=selection, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, line_color=sel_line_color, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, select_all=sel_all,
+                               selection=selection, include_table=incl_table, autoscale=autoscale, max_count=max_ct,
+                               increment_by=inc_by, line_color=sel_line_color, locations=loc, preset_name=name,
+                               user=request.user, use_custom_event_name=use_custom_event_name,
+                               custom_event_name=custom_event_name)
         Preset.save()
     elif graph_type['graphType'] == 'Pie Chart':
         sel_dict = inner_dict[1]
@@ -589,13 +611,22 @@ def saveChoices(request, name):
         loc = loc_dict['attendance_data']
         loc = locationInserter(loc)
         sel_all = loc_dict['select_all']
+        use_custom_event_name = loc_dict['use_custom_event_name']
+        custom_event_name = loc_dict['custom_event_name']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, select_all=sel_all,selection=selection, include_table=incl_table, data_units=data_units, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, select_all=sel_all,
+                               selection=selection, include_table=incl_table, data_units=data_units, locations=loc,
+                               preset_name=name, user=request.user, use_custom_event_name=use_custom_event_name,
+                               custom_event_name=custom_event_name)
         Preset.save()
-    elif graph_type['graphType'] == 'Scatter Plot':
+    elif graph_type['graphType'] == 'Line and/or Scatter':
         sel_dict = inner_dict[1]
         selection = sel_dict['selection']
         incl_table = sel_dict['include_table']
+
+        report_type = sel_dict['report_type']
+        category = sel_dict['category']
+        gpa_to_compare = sel_dict['gpa_to_compare']
 
         customization = inner_dict[3]
         autoscale = customization['autoscale']
@@ -607,8 +638,15 @@ def saveChoices(request, name):
         loc = loc_dict['attendance_data']
         loc = locationInserter(loc)
         sel_all = loc_dict['select_all']
+        use_custom_event_name = loc_dict['use_custom_event_name']
+        custom_event_name = loc_dict['custom_event_name']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], title=custom_title, selection=selection, select_all=sel_all, include_table=incl_table, autoscale=autoscale, max_count=max_ct, increment_by=inc_by, dot_color=sel_dot_color, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], report_type=report_type, category=category,
+                               gpa_to_compare=gpa_to_compare, title=cust_title, selection=selection,
+                               select_all=sel_all, include_table=incl_table, autoscale=autoscale, max_count=max_ct,
+                               increment_by=inc_by, dot_color=sel_dot_color, locations=loc, preset_name=name,
+                               user=request.user, use_custom_event_name=use_custom_event_name,
+                               custom_event_name=custom_event_name)
         Preset.save()
     elif graph_type['graphType'] == 'Individual Statistic':
         sel_dict = inner_dict[1]
@@ -616,17 +654,24 @@ def saveChoices(request, name):
         count_options = sel_dict['count_options']
 
         customization = inner_dict[3]
-        label_color = customization['label_font_color']
+        label_color = customization['header_font_color']
         statistic_font_color = customization['statistic_font_color']
         statistic_font_size = customization['statistic_font_size']
-        label_font_size = customization['label_font_size']
+        label_font_size = customization['header_font_size']
 
         loc_dict = inner_dict[4]
         loc = loc_dict['attendance_data']
         loc = locationInserter(loc)
         sel_all = loc_dict['select_all']
+        use_custom_event_name = loc_dict['use_custom_event_name']
+        custom_event_name = loc_dict['custom_event_name']
 
-        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, selection=selection, count_options=count_options, label_color=label_color, statistic_font_color=statistic_font_color, statistic_font_size=statistic_font_size, label_font_size=label_font_size, select_all=sel_all, locations=loc, preset_name=name, user=request.user)
+        Preset = ReportPresets(graph_type=graph_type['graphType'], title=cust_title, selection=selection,
+                               count_options=count_options, header_font_color=label_color,
+                               statistic_font_color=statistic_font_color, statistic_font_size=statistic_font_size,
+                               header_font_size=label_font_size, select_all=sel_all, locations=loc, preset_name=name,
+                               user=request.user, use_custom_event_name=use_custom_event_name,
+                               custom_event_name=custom_event_name)
         Preset.save()
 
 
@@ -676,6 +721,9 @@ def createReportFromPreset(request, name):
 
                 from_time = from_time.strftime('%m-%d-%Y')
                 to_time = to_time.strftime('%m-%d-%Y')
+
+                name = quote(name)
+                print('url encoded name:', name)
 
                 # Generate report here
                 return render(request, 'pages/presetReportGenerated.html', {'preset_name': name,

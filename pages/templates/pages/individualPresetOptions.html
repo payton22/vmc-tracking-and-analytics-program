@@ -13,9 +13,25 @@
                     <p>Graph Type: {{ preset.graph_type }}</p>
                 </div>
                 <div class="col-6">
-                    <p>Selection: {{ preset.selection }}</p>
+                    <p>Report type: {{ preset.report_type }}</p>
                 </div>
             </div>
+            {% if preset.title != '' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Use Custom Title: Yes</p>
+                </div>
+                <div class="col-6">
+                    <p>Title: {{ preset.title }}</p>
+                </div>
+            </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom title: No</p>
+                    </div>
+                </div>
+            {% endif %}
             <div class="row">
                 <div class="col-6">
                     <p>Include table: {{ preset.include_table }}</p>
@@ -24,22 +40,56 @@
                     <p>Bar color: {{ preset.select_bar_color }}</p>
                 </div>
             </div>
+            {% if preset.report_type == 'Compare GPA against demographics' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Category: {{ preset.category }}</p>
+                </div>
+                <div class="col-6">
+                    <p>GPA to compare: {{ preset.gpa_to_compare }}</p>
+                </div>
+            </div>
+                {% elif preset.report_type == 'Count visits over time' %}
+                <div class="row">
+                <div class="col-6">
+                    <p>Selection: {{ preset.selection }}</p>
+                </div>
+                </div>
+            {% endif %}
             <div class="row">
                 <div class="col-6">
                     <p>Autoscale: {{ preset.autoscale }}</p>
                 </div>
                 <div class="col-6">
-                    <p>Max count: {{ preset.max_count }}</p>
+                     <p>Locations to track: {{ preset.locations }}</p>
                 </div>
             </div>
+            {% if preset.autoscale == 'No' %}
             <div class="row">
+                <div class="col-6">
+                    <p>Max count: {{ preset.max_count }}</p>
+                </div>
                 <div class="col-6">
                     <p>Increment by: {{ preset.increment_by }}</p>
                 </div>
-                <div class="col-6">
-                    <p>Locations to track: {{ preset.locations }}</p>
-                </div>
             </div>
+            {% endif %}
+            {% if preset.use_custom_event_name == 'Yes' %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ preset.use_custom_event_name }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p>Custom event name: {{ preset.custom_event_name }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ preset.use_custom_event_name }}</p>
+                    </div>
+                </div>
+            {% endif %}
         {% elif preset.graph_type == 'Histogram' %}
             <div class="row">
                 <div class="col-6">
@@ -49,6 +99,22 @@
                     <p>Time units: {{ preset.time_units }}</p>
                 </div>
             </div>
+            {% if preset.title != '' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Use Custom Title: Yes</p>
+                </div>
+                <div class="col-6">
+                    <p>Title: {{ preset.title }}</p>
+                </div>
+            </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom title: No</p>
+                    </div>
+                </div>
+            {% endif %}
             <div class="row">
                 <div class="col-6">
                     <p>Include table: {{ preset.include_table }}</p>
@@ -57,20 +123,20 @@
                     <p>Bar color: {{ preset.select_bar_color }}</p>
                 </div>
             </div>
+            {% if preset.autoscale == 'No' %}
+            <div class="row">
+                <div class="col-6">
+                     <p>Max count: {{ preset.max_count }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Increment by: {{ preset.increment_by }}</p>
+
+                </div>
+            </div>
+            {% endif %}
             <div class="row">
                 <div class="col-6">
                     <p>Autoscale: {{ preset.autoscale }}</p>
-                </div>
-                <div class="col-6">
-                    <p>Max count: {{ preset.max_count }}</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <p>Increment by: {{ preset.increment_by }}</p>
-                </div>
-                <div class="col-6">
-                    <p>Data to include: {{ preset.hist_data }}</p>
                 </div>
             </div>
             <div class="row">
@@ -78,41 +144,89 @@
                     <p>Locations to track: {{ preset.locations }}</p>
                 </div>
             </div>
-        {% elif preset.graph_type == 'Line Graph' %}
+            {% if preset.use_custom_event_name == 'Yes' %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ preset.use_custom_event_name }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p>Custom event name: {{ preset.custom_event_name }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ preset.use_custom_event_name }}</p>
+                    </div>
+                </div>
+            {% endif %}
+        {% elif preset.graph_type == 'Line and/or Scatter' %}
             <div class="row">
                 <div class="col-6">
                     <p>Graph type: {{ preset.graph_type }}</p>
                 </div>
                 <div class="col-6">
-                    <p>Selection: {{ preset.selection }}</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
                     <p>Include table: {{ preset.include_table }}</p>
                 </div>
+            </div>
+            {% if preset.title == '' %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Custom title: No</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Custom title: {{ preset.custom_title }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p>Title: {{ preset.title }}</p>
+                    </div>
+                </div>
+            {% endif %}
+            {% if preset.report_type == 'Compare GPA against demographics' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Category: {{ preset.category }}</p>
+                </div>
+                <div class="col-6">
+                    <p>GPA to compare: {{ preset.gpa_to_compare }}</p>
+                </div>
+            </div>
+                {% elif preset.report_type == 'Count visits over time' %}
+                <div class="row">
+                <div class="col-6">
+                    <p>Selection: {{ preset.selection }}</p>
+                </div>
+                </div>
+            {% endif %}
+            <div class="row">
                 <div class="col-6">
                     <p>Autoscale: {{ preset.autoscale }}</p>
                 </div>
-
+                <div class="col-6">
+                    <p>Dot/Line color: {{ preset.dot_color }}</p>
+                </div>
+                <div class="col-6">
+                    <p>Display graph as: {{ preset.display_options }}</p>
+                </div>
             </div>
             <div class="row">
-             <div class="col-6">
+                <div class="col-6">
+                    <p>Locations to track: {{ preset.locations }}</p>
+                </div>
+            </div>
+            {% if preset.autoscale == 'No' %}
+            <div class="row">
+                <div class="col-6">
                     <p>Max count: {{ preset.max_count }}</p>
                 </div>
                 <div class="col-6">
                     <p>Increment by: {{ preset.increment_by }}</p>
                 </div>
-
             </div>
-            <div class="row">
-                <div class="col-6">
-                    <p>Line color: {{ preset.line_color }}</p>
-                </div>
-                <div class="col-6">
-                    <p>Locations to track: {{ preset.locations }}</p>
-                </div>
-            </div>
+            {% endif %}
         {% elif preset.graph_type == 'Pie Chart' %}
             <div class="row">
                 <div class="col-6">
@@ -121,7 +235,24 @@
                 <div class="col-6">
                     <p>Selection: {{ preset.selection }}</p>
                 </div>
+
             </div>
+            {% if preset.title != '' %}
+            <div class="row">
+                <div class="col-6">
+                    <p>Use Custom Title: Yes</p>
+                </div>
+                <div class="col-6">
+                    <p>Title: {{ preset.title }}</p>
+                </div>
+            </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom title: No</p>
+                    </div>
+                </div>
+            {% endif %}
             <div class="row">
                 <div class="col-6">
                     <p>Include table: {{ preset.include_table }}</p>
@@ -135,39 +266,22 @@
                     <p>Locations to track: {{ preset.locations }}</p>
                 </div>
             </div>
-        {% elif preset.graph_type == 'Scatter Plot' %}
-            <div class="row">
-                <div class="col-6">
-                    <p>Graph type: {{ preset.graph_type }}</p>
+            {% if preset.use_custom_event_name == 'Yes' %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ preset.use_custom_event_name }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p>Custom event name: {{ preset.custom_event_name }}</p>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <p>Selection: {{ preset.selection }}</p>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ preset.use_custom_event_name }}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <p>Include table: {{ preset.include_table }}</p>
-                </div>
-                <div class="col-6">
-                    <p>Autoscale: {{ preset.autoscale }}</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <p>Max count: {{ preset.max_count }}</p>
-                </div>
-                <div class="col-6">
-                    <p>Increment by: {{ preset.increment_by }}</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <p>Dot color: {{ preset.sel_dot_color }}</p>
-                </div>
-                <div class="col-6">
-                    <p>Locations to track: {{ preset.locations }}</p>
-                </div>
-            </div>
+            {% endif %}
         {% elif preset.graph_type == 'Individual Statistic' %}
             <div class="row">
                 <div class="col-6">
@@ -177,12 +291,28 @@
                     <p>Selection: {{ preset.selection }}</p>
                 </div>
             </div>
+            {% if preset.title == '' %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Custom title: No</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Custom title: {{ preset.custom_title }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p>Title: {{ preset.title }}</p>
+                    </div>
+                </div>
+            {% endif %}
             <div class="row">
                 <div class="col-6">
                     <p>Count options: {{ preset.count_options }}</p>
                 </div>
                 <div class="col-6">
-                    <p>Label color: {{ preset.label_color }}</p>
+                    <p>Header font color: {{ preset.header_font_color }}</p>
                 </div>
             </div>
             <div class="row">
@@ -195,12 +325,28 @@
             </div>
             <div class="row">
                 <div class="col-6">
-                    <p>Label font size: {{ preset.label_font_size }}</p>
+                    <p>Header font size: {{ preset.header_font_size }}</p>
                 </div>
                 <div class="col-6">
                     <p>Locations to track: {{ preset.locations }}</p>
                 </div>
             </div>
+            {% if preset.use_custom_event_name == 'Yes' %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ preset.use_custom_event_name }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p>Custom event name: {{ preset.custom_event_name }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-6">
+                        <p>Use custom event name: {{ preset.use_custom_event_name }}</p>
+                    </div>
+                </div>
+            {% endif %}
         {% endif %}
     <div id="IndividualAccountOptions" class="h-50">
         <div class="row ">

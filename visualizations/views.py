@@ -12,6 +12,7 @@ from visualizations.models import ReportPresets
 from datetime import datetime
 from pages.views import TimeFrame
 from django.views.static import serve
+from urllib.parse import unquote
 import sqlite3
 
 import dash
@@ -350,9 +351,9 @@ class BarGraph(State):
 
             values = [x_list, y_list]
 
-            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
+            table = go.Figure(data=[go.Table(header=dict(values=header, align='left'), cells=dict(values=values, align='left'))],
                               layout=Layout(title=title))
-            table.update_layout(height=(200 + len(x_list) * 23))
+            table.update_layout(height=(220 + len(x_list) * 25))
 
             new_x_list = []
 
@@ -583,9 +584,9 @@ class BarGraph(State):
             flattened_y_list.append(round(running_total, 2))
 
             values = [flattened_x_list, flattened_y_list]
-            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
+            table = go.Figure(data=[go.Table(header=dict(values=header, align='left'), cells=dict(values=values, align='left'))],
                               layout=Layout(title=title))
-            table.update_layout(height=(200 + len(flattened_x_list) * 25))
+            table.update_layout(height=(220 + len(flattened_x_list) * 25))
 
             new_x_list = []
 
@@ -807,9 +808,9 @@ class Histogram(State):
 
             x_list.append('<b>Grand Total</b>')
             y_list.append(total)
-            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
+            table = go.Figure(data=[go.Table(header=dict(values=header, align='left'), cells=dict(values=values, align='left'))],
                               layout=Layout(title=title))
-            table.update_layout(height=(200 + len(x_list) * 23))
+            table.update_layout(height=(220 + len(x_list) * 23))
 
             new_x_list = []
 
@@ -856,7 +857,12 @@ class PieChart(State):
         self.title = self.selection
         self.include_table = self.selection_dict['include_table']
 
-        self.query_dictionary = {'Benefit Chapter': 'benefit_chapter',
+        self.query_dictionary = {'End Term Semester GPA': 'end_term_term_gpa',
+                                 'End Term Cumulative GPA': 'end_term_cumulative_gpa',
+                                 'End Term Attempted Credits': 'end_term_attempted_credits', 'End Term Earned Credits':
+                                     'end_term_earned_credits',
+                                 'End Term Cumulative Completed Credits': 'end_term_credit_completion',
+                                'Benefit Chapter': 'benefit_chapter',
                                  'Residential Distance from Campus': 'currently_live', 'Employment': 'employment',
                                  'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
                                  'Marital Status': 'marital_status', 'Gender Identity': 'gender',
@@ -1013,18 +1019,22 @@ class PieChart(State):
 
             x_list.append('<b>Grand Total</b>')
             y_list.append(total)
-            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
+            table = go.Figure(data=[go.Table(header=dict(values=header, align='left'), cells=dict(values=values, align='left'))],
                               layout=Layout(title=title))
 
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '80vh', 'width': '80vw'}),
                                             ], style={'height': '40vh', 'width': '70vw'})
-            table.update_layout(height=(200 + len(x_list) * 23))
+            table.update_layout(height=(220 + len(x_list) * 23))
 
             new_x_list = []
 
-            for str in x_list:
-                temp_new_string = str.replace('<b>', '')
+            for i, stri in enumerate(x_list):
+                if isinstance(stri, int) or isinstance(stri, float):
+                    replaced_str = str(stri)
+                    x_list[i] = replaced_str
+                    stri = replaced_str
+                temp_new_string = stri.replace('<b>', '')
                 new_string = temp_new_string.replace('</b>', '')
                 new_x_list.append(new_string)
 
@@ -1092,7 +1102,12 @@ class IndividualStatistic(State):
         elif self.selection == 'Break in University Attendance':
             self.group_by = 'break_in_attendance'
 
-        self.query_dictionary = {'Benefit Chapter': 'benefit_chapter',
+        self.query_dictionary = {'End Term Semester GPA': 'end_term_term_gpa',
+                                 'End Term Cumulative GPA': 'end_term_cumulative_gpa',
+                                 'End Term Attempted Credits': 'end_term_attempted_credits', 'End Term Earned Credits':
+                                     'end_term_earned_credits',
+                                 'End Term Cumulative Completed Credits': 'end_term_credit_completion',
+                                'Benefit Chapter': 'benefit_chapter',
                                  'Residential Distance from Campus': 'currently_live', 'Employment': 'employment',
                                  'Weekly Hours Worked': 'work_hours', 'Number of Dependents': 'dependents',
                                  'Marital Status': 'marital_status', 'Gender Identity': 'gender',
@@ -1299,21 +1314,25 @@ class IndividualStatistic(State):
         y_list.append(total)
 
         layout = Layout(title=title)
-        table = go.Figure(data=[go.Table(header=dict(values=header, height=int(self.header_font_size) * 3,
+        table = go.Figure(data=[go.Table(header=dict(values=header, align='left', height=int(self.header_font_size) * 3,
                                                      font=dict(color=self.header_font_color,
                                                                size=int(self.header_font_size))),
-                                         cells=dict(values=values, height=int(self.statistic_font_size) * 3,
+                                         cells=dict(values=values, align='left', height=int(self.statistic_font_size) * 3,
                                                     font=dict(color=self.statistic_font_color,
                                                               size=int(self.statistic_font_size))))],
                           layout=Layout(title=title))
 
-        table.update_layout(height=(200 + len(x_list) * 23))
+        table.update_layout(height=(220 + len(x_list) * 27))
 
         new_x_list = []
 
         if validDates:
-            for str in x_list:
-                temp_new_string = str.replace('<b>', '')
+            for i, stri in enumerate(x_list):
+                if isinstance(stri, int) or isinstance(stri, float):
+                    replaced_str = str(stri)
+                    x_list[i] = replaced_str
+                    stri = replaced_str
+                temp_new_string = stri.replace('<b>', '')
                 new_string = temp_new_string.replace('</b>', '')
                 new_x_list.append(new_string)
 
@@ -1321,8 +1340,8 @@ class IndividualStatistic(State):
 
         genTableFile(header, values)
 
-        app.layout = html.Div(children=[dcc.Graph(id='table', figure=table, style={'height': '70vh'})
-                                        ], style={'height': '80vh', 'width': '70vw'})
+        app.layout = html.Div(children=[dcc.Graph(id='table', figure=table, style={'height': '110vh'})
+                                        ], style={'height': '110vh', 'width': '70vw'})
 
         # graph = [Bar(x=x_axis,y=y_axis)]
         # layout = Layout(title='Length of Visits',xaxis=dict(title='Length (min)'),yaxis=dict(title='# of Visits'))
@@ -1557,9 +1576,9 @@ class ScatterPlot(State):
                 x_list.append('<b>Total Average<b>')
                 total /= total_values
                 y_list.append(round(total, 2))
-            table = go.Figure(data=[go.Table(header=dict(values=header), cells=dict(values=values))],
+            table = go.Figure(data=[go.Table(header=dict(values=header, align='left'), cells=dict(values=values, align='left'))],
                               layout=Layout(title=title))
-            table.update_layout(height=(200 + len(x_list) * 23))
+            table.update_layout(height=(220 + len(x_list) * 23))
 
             app.layout = html.Div(children=[dcc.Graph(id='table', figure=table)
                 , dcc.Graph(id='figure', figure=fig, style={'height': '80vh', 'width': '80vw'}),
@@ -1567,8 +1586,12 @@ class ScatterPlot(State):
 
             new_x_list = []
 
-            for str in x_list:
-                temp_new_string = str.replace('<b>', '')
+            for i, stri in enumerate(x_list):
+                if isinstance(stri, int) or isinstance(stri, float):
+                    replaced_str = str(stri)
+                    x_list[i] = replaced_str
+                    stri = replaced_str
+                temp_new_string = stri.replace('<b>', '')
                 new_string = temp_new_string.replace('</b>', '')
                 new_x_list.append(new_string)
 
@@ -1643,7 +1666,9 @@ def getBarGraphPreset(presetModel, from_time, to_time):
     report_data['form_data'] = []
     inner_list = report_data['form_data']
     inner_list.append({'graphType': 'Bar Graph', 'title': presetModel.title})
-    inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
+    inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table,
+                       'report_type': presetModel.report_type, 'category': presetModel.category,
+                       'gpa_to_compare': presetModel.gpa_to_compare})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     if presetModel.autoscale == 'Yes':
         inner_list.append({'select_bar_color': presetModel.select_bar_color, 'autoscale': presetModel.autoscale,
@@ -1654,7 +1679,9 @@ def getBarGraphPreset(presetModel, from_time, to_time):
                            'show_multiple_bars_by_location': presetModel.multiple_bars,
                            'max_count': presetModel.max_count, 'increment_by': presetModel.increment_by})
 
-    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
+    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all,
+                       'use_custom_event_name': presetModel.use_custom_event_name,
+                       'custom_event_name': presetModel.custom_event_name})
 
     return report_data
 
@@ -1676,7 +1703,9 @@ def getHistogramPreset(presetModel, from_time, to_time):
         inner_list.append({'select_bar_color': presetModel.select_bar_color, 'autoscale': presetModel.autoscale,
                            'max_count': presetModel.max_count, 'increment_by': presetModel.increment_by})
 
-    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
+    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all,
+                       'use_custom_event_name': presetModel.use_custom_event_name,
+                       'custom_event_name': presetModel.custom_event_name})
 
     return report_data
 
@@ -1688,7 +1717,9 @@ def getLineScatterPreset(presetModel, from_time, to_time):
     report_data['form_data'] = []
     inner_list = report_data['form_data']
     inner_list.append({'graphType': 'Line and/or Scatter', 'title': presetModel.title})
-    inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
+    inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table,
+                       'report_type': presetModel.report_type, 'category': presetModel.category,
+                       'gpa_to_compare': presetModel.gpa_to_compare})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     if presetModel.autoscale == 'Yes':
         inner_list.append({'autoscale': presetModel.autoscale, 'max_count': None,
@@ -1699,7 +1730,9 @@ def getLineScatterPreset(presetModel, from_time, to_time):
                            'increment_by': presetModel.increment_by, 'select_dot_color': presetModel.dot_color,
                            'display_as': presetModel.display_options})
 
-    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
+    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all,
+                       'use_custom_event_name': presetModel.use_custom_event_name,
+                       'custom_event_name': presetModel.custom_event_name})
 
     return report_data
 
@@ -1714,7 +1747,9 @@ def getPieChartPreset(presetModel, from_time, to_time):
     inner_list.append({'selection': presetModel.selection, 'include_table': presetModel.include_table})
     inner_list.append({'from_time': from_time, 'to_time': to_time})
     inner_list.append({'Data_units': presetModel.data_units})
-    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
+    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all,
+                       'use_custom_event_name': presetModel.use_custom_event_name,
+                       'custom_event_name': presetModel.custom_event_name})
 
     return report_data
 
@@ -1733,12 +1768,15 @@ def getIndividualStatisticPreset(presetModel, from_time, to_time):
                        'header_font_size': presetModel.header_font_size,
                        'statistic_font_size': presetModel.statistic_font_size})
 
-    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all})
+    inner_list.append({'attendance_data': presetModel.locations.split(','), 'select_all': presetModel.select_all,
+                       'use_custom_event_name': presetModel.use_custom_event_name,
+                       'custom_event_name': presetModel.custom_event_name})
 
     return report_data
 
 
 def presetReport(request, preset_name, from_time, to_time):
+    preset_name = unquote(preset_name)
     preset = ReportPresets.objects.get(pk=preset_name)
     if preset.graph_type == 'Bar Graph':
         data_dict = getBarGraphPreset(preset, from_time, to_time)
