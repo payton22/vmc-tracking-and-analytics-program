@@ -64,7 +64,7 @@ def gen_service():
     return random.choice(services)
 
 def gen_location():
-    locations = ['Veteran Services_VMC', 'Veteran Services_Fitzgerald', 'Event']
+    locations = ['Veteran Services_VMC', 'Veteran Services_Fitzgerald', 'Veteran_Services Event']
     return random.choice(locations)
 
 def gen_time(date):

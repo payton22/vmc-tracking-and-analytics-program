@@ -33,7 +33,7 @@
                             </a>
                         </td>
                         <td class="act_table">
-                            <button type="button" id="" class="btn btn-lg delete-bg" data-toggle="modal" data-target="#confirmation{{ preset.preset_name }}">
+                            <button type="button" id="" class="btn btn-lg delete-bg" data-toggle="modal" data-target="#confirmation{{ forloop.counter0 }}">
                                 Delete this preset
                             </button>
                         </td>
@@ -63,7 +63,7 @@
 
      <!-- Modal -->
     {% for preset in presets %}
-    <div class="modal fade" id="confirmation{{ preset.preset_name }}" tabindex="-1" role="dialog" aria-labelledby="confirmDelete" aria-hidden="true">
+    <div class="modal fade" id="confirmation{{ forloop.counter0 }}" tabindex="-1" role="dialog" aria-labelledby="confirmDelete" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">

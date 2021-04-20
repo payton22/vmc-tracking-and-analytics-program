@@ -281,9 +281,9 @@ class BarGraph(State):
         print('Conn results_rotated:', conn_results_rotated)
 
         if conn_results_rotated:
-            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+            if 'Veteran Services Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
                 conn_results_rotated[0] = list(conn_results_rotated[0])
-                i = conn_results_rotated[0].index('Event')
+                i = conn_results_rotated[0].index('Veteran Services Event')
                 custom_name = self.custom_event_name
                 conn_results_rotated[0][i] = custom_name
                 conn_results_rotated[0] = tuple(conn_results_rotated[0])
@@ -461,10 +461,11 @@ class BarGraph(State):
                 conn_results.append(d)
             # Rotates 2D array to work w/ plotly
             conn_results_rotated = list(zip(*conn_results[::-1]))
+            print('Conn results rotated 1:', conn_results_rotated)
             if conn_results_rotated:
-                if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                if 'Veteran Services Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
                     conn_results_rotated[0] = list(conn_results_rotated[0])
-                    i = conn_results_rotated[0].index('Event')
+                    i = conn_results_rotated[0].index('Veteran Services Event')
                     custom_name = self.custom_event_name
                     conn_results_rotated[0][i] = custom_name
                     conn_results_rotated[0] = tuple(conn_results_rotated[0])
@@ -506,7 +507,7 @@ class BarGraph(State):
 
         data_list = []
         for i, location in enumerate(self.location_list):
-            if location == 'Event' and self.use_custom_event_name == 'Yes':
+            if location == 'Veteran Services Event' and self.use_custom_event_name == 'Yes':
                 data_list.append(go.Bar(name=self.custom_event_name, x=x_axis[i], y=y_axis[i]))
             else:
                 data_list.append(go.Bar(name=location, x=x_axis[i], y=y_axis[i]))
@@ -568,10 +569,11 @@ class BarGraph(State):
             # Last visited 3/6/2021
             flattened_x_list = [value for loc in x_list for value in loc]
 
-            if conn_results_rotated[0]:
-                if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
-                    i = flattened_x_list.index('Event')
-                    flattened_x_list[i] = self.custom_event_name
+            if conn_results_rotated:
+                if conn_results_rotated[0]:
+                    if 'Veteran Services Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+                        i = flattened_x_list.index('Veteran Services Event')
+                        flattened_x_list[i] = self.custom_event_name
 
             flattened_y_list = [value for loc in y_list for value in loc]
             # End of reference -----------------------------------------------------------------------------
@@ -966,9 +968,9 @@ class PieChart(State):
         conn_results_rotated = list(zip(*conn_results[::-1]));
 
         if conn_results_rotated:
-            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+            if 'Veteran Services Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
                 conn_results_rotated[0] = list(conn_results_rotated[0])
-                i = conn_results_rotated[0].index('Event')
+                i = conn_results_rotated[0].index('Veteran Services Event')
                 custom_name = self.custom_event_name
                 conn_results_rotated[0][i] = custom_name
                 conn_results_rotated[0] = tuple(conn_results_rotated[0])
@@ -1272,9 +1274,9 @@ class IndividualStatistic(State):
         conn_results_rotated = list(zip(*conn_results[::-1]))
 
         if conn_results_rotated:
-            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+            if 'Veteran Services Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
                 conn_results_rotated[0] = list(conn_results_rotated[0])
-                i = conn_results_rotated[0].index('Event')
+                i = conn_results_rotated[0].index('Veteran Services Event')
                 custom_name = self.custom_event_name
                 conn_results_rotated[0][i] = custom_name
                 conn_results_rotated[0] = tuple(conn_results_rotated[0])
@@ -1508,9 +1510,9 @@ class ScatterPlot(State):
         conn_results_rotated = list(zip(*conn_results[::-1]))
 
         if conn_results_rotated:
-            if 'Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
+            if 'Veteran Services Event' in conn_results_rotated[0] and self.use_custom_event_name == 'Yes':
                 conn_results_rotated[0] = list(conn_results_rotated[0])
-                i = conn_results_rotated[0].index('Event')
+                i = conn_results_rotated[0].index('Veteran Services Event')
                 custom_name = self.custom_event_name
                 conn_results_rotated[0][i] = custom_name
                 conn_results_rotated[0] = tuple(conn_results_rotated[0])

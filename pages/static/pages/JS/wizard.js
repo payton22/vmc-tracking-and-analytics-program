@@ -203,7 +203,7 @@ $('#id_AttendanceDataForm-select_all').click(function() {
     $('input:checkbox[name=AttendanceDataForm-attendance_data]:checked').each(function() {
         checked_vals.push($(this).val());
     });
-    if(checked_vals.includes('Event')){
+    if(checked_vals.includes('Veteran Services Event')){
         use_cust_name_0.disabled = false;
         use_cust_name_1.disabled = false;
         if(use_cust_name_0.checked){
