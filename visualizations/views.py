@@ -432,7 +432,7 @@ class BarGraph(State):
 
     def generateGroupedBars(self):
 
-        # Connect to the database 
+        # Connect to the database
         conn = sqlite3.connect('vmc_tap.db');
         conn_results = []
 
