@@ -52,7 +52,7 @@
                     <p>GPA to compare: {{ all_data.gpa_to_compare }}</p>
                 </div>
             </div>
-                {% elif preset.report_type == 'Count visits over time' %}
+                {% elif all_data.report_type == 'Count visits over time' %}
                 <div class="row">
                 <div class="col-6">
                     <p>Selection: {{ all_data.selection }}</p>

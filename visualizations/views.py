@@ -598,7 +598,16 @@ class BarGraph(State):
                     new_string = temp_new_string.replace('</b>', '')
                     new_x_list.append(new_string)
 
-            values = [new_x_list, flattened_y_list]
+            new_y_list = []
+            for value in flattened_y_list:
+                if isinstance(value, str):
+                    temp_new_string = value.replace('<b>', '')
+                    new_string = temp_new_string.replace('</b>', '')
+                    new_y_list.append(new_string)
+                else:
+                    new_y_list.append(value)
+
+            values = [new_x_list, new_y_list]
 
             genTableFile(header, values)
 
@@ -1873,5 +1882,7 @@ def downloadFile(request):
     response['Content-Disposition'] = 'attachment; filename="%s"' % 'table.csv'
 
     os.remove(path)
+
+    print('Generating table file at:', path)
 
     return response
