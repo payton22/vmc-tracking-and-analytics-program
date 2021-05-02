@@ -186,9 +186,12 @@ $('#id_AttendanceDataForm-attendance_data').change(function() {
     var use_cust_name_1 = document.getElementById('use_cust_name_1');
     var cust_name = document.getElementById('cust_name');
     var checked_vals = [];
+    // Referenced on https://stackoverflow.com/questions/35305970/javascript-how-can-i-get-all-value-of-selected-checked-checkboxes-push-to-an-a
+    // Last visited 3/22/2021
     $('input:checkbox[name=AttendanceDataForm-attendance_data]:checked').each(function() {
         checked_vals.push($(this).val());
     });
+    // -- End of reference --------------------------------------
     // If the user checks "Event" in the location checkboxes for tracking visit data
     if(checked_vals.includes('Veteran Services Event')){
         use_cust_name_0.disabled = false;
@@ -238,9 +241,12 @@ $('#id_AttendanceDataForm-select_all').click(function() {
     var cust_name = document.getElementById('cust_name');
     var checked_vals = [];
     // When the user checks "Select All" it automatically checks all locations
+    // Referenced on https://stackoverflow.com/questions/35305970/javascript-how-can-i-get-all-value-of-selected-checked-checkboxes-push-to-an-a
+    // Last visited 3/22/2021
     $('input:checkbox[name=AttendanceDataForm-attendance_data]:checked').each(function() {
         checked_vals.push($(this).val());
     });
+    // -- End of reference --------------------------------------
     // When the user clicks "Select All," the "Event" box is automatically checked
     // Check if the user wants to use a custom event name
     if(checked_vals.includes('Veteran Services Event')){
@@ -264,7 +270,11 @@ $('#id_AttendanceDataForm-select_all').click(function() {
 
 
 });
-// If the user unchecks "Select All", then uncheck all of the individual locations
+// If the user unchecks any of the locations, automatically uncheck "Select All" if not already unchecked
+// Referenced on https://stackoverflow.com/questions/17785010/jquery-uncheck-other-checkbox-on-one-checked
+// Last visited on 2/17/2021
 $('.Locations').click(function() {
     $('#id_AttendanceDataForm-select_all').prop('checked', false);
+
 });
+// --------- End of reference -------------------------------------------------------

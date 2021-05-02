@@ -461,6 +461,7 @@ class IndividualStatisticDetails(forms.Form):
     statistic_font_size = forms.ChoiceField(choices=FONT_CHOICES)
 
 
+# Form for the user entering the name of the preset that they want to save
 class ReportPresetName(forms.Form):
     attributes = {'id': 'preset_input', 'name': 'preset_input', 'class': 'form-control'}
 
@@ -469,6 +470,9 @@ class ReportPresetName(forms.Form):
     def check_entry(self):
         name = self.data['enter_preset_name']
         if ReportPresets.objects.filter(pk=name).exists():
+            # Form validation
+            # If the preset with the same name already exists, show an error message and prompt the user for the
+            # name again
             self.add_error('enter_preset_name',
                            'This preset with the name ' + name + ' already exists. Please choose a different name.')
             return False
