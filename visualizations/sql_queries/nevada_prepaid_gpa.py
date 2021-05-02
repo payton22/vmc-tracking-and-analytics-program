@@ -1,3 +1,4 @@
+# Returns the SQL query for nevada prepaid tuition vs. gpa based on user-provided location, from date, and to dat
 def get_query(type, from_time, to_time, substr):
     return "SELECT demographics.nevada_prepaid, round(avg(gpa." + type + "), 2) " \
            "FROM " \

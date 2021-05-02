@@ -1,3 +1,4 @@
+# Returns the SQL query for the gpa vs. stem major based on user-provided location, from date, and to date
 def get_query(type, from_time, to_time, substr):
     return "SELECT demographics.is_stem, round(avg(gpa." + type + "), 2) " \
            "FROM " \

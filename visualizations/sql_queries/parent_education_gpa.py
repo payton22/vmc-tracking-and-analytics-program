@@ -1,3 +1,4 @@
+# Returns the SQL query for parent education vs. gpa based on user-provided location, from date, and to date
 def get_query(type, from_time, to_time, substr):
     return "SELECT demographics.parent_education, round(avg(gpa." + type + "), 2) " \
            "FROM " \

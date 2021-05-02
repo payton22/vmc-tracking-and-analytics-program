@@ -1,3 +1,4 @@
+# Returns the SQL query for break in attendance vs. gpa by date based on user-provided location, from date, and to date
 def get_query(type, from_time, to_time, substr):
     return "SELECT demographics.break_in_attendance, round(avg(gpa." + type + "), 2) " \
            "FROM " \

@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+# Provides the url paths for each page and view in the visualizations (now known as 'Reports') app
 urlpatterns = [
     path('', views.plotly, name='plotly'),
     path('exampleGraph/', views.exampleGraph, name='exampleGraph'),

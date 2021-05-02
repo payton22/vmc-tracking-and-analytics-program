@@ -1,7 +1,5 @@
 from django.db import models
 
-
-
 # Database tables for saving user report preferences
 # Visit period is not included (the user will generally select
 # new dates for the same graph preferences)

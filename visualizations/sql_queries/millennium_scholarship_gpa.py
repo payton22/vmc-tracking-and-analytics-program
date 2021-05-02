@@ -1,3 +1,4 @@
+# Returns the SQL query for millennium scholarship vs. gpa based on user-provided location, from date, and to date
 def get_query(type, from_time, to_time, substr):
     return "SELECT demographics.millennium_scholarship, round(avg(gpa." + type + "), 2) " \
            "FROM " \
