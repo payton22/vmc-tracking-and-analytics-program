@@ -7,317 +7,6 @@ $(document).ready(function() {
     $('.timepicker').mdtimepicker();
 
 
-
-
-    /* When the user selects a graph type from the dropdown menu,
-    clear a graph selection (if one is already selected) and call the appropriate
-    function to insert the HTML code for the specific graph */
-    $( "#GraphType" ).change(function() {
-        if($('#GraphType').val=="Disabled")
-            showNothing();
-        else if($('#GraphType').val() == "Histogram") {
-            showNothing();
-            showHistogram();
-        }
-        else if($('#GraphType').val() == "X and Y Plot") {
-            showNothing();
-            show2DXY();
-        }
-        else if($('#GraphType').val() == "3D (X, Y, Z) Plot") {
-            showNothing();
-            show3DPlot();
-        }
-        else if($('#GraphType').val() == "Pie Chart") {
-            showNothing()
-            showPieChart();
-        }
-        else if($('#GraphType').val() == "Scatter Plot") {
-            showNothing()
-            showScatterPlot();
-
-        }
-        else if($('#GraphType').val() == "Bar Graph") {
-            showNothing();
-            showBarGraph();
-        }
-        else if($('#GraphType').val() == "Individual Statistic") {
-            showNothing();
-            showIndStat();
-        }
-
-
-
-
-
-
-});
-    // Clear the HTML code for the Graph type
-    function showNothing(){
-        $('#GraphContainer').empty();
-
-    }
-    // Histogram HTML code
-    function showHistogram() {
-        var data = "<div class=\"graphOptions container border w-50 bg-dark\" id=\"Graph\"> </div> \
-        <div class=\"row form-group\"> \
-            <div class=\"col-6 auto\"> \
-                <select name=\"Histogram\" id=\"Histogram\" class=\"col-sm text-center\"> \
-                    <option value=\"disabled\" disable selected value>--- Statistic ---</option> \
-                    \<option value = \"Age\">Age</option> \
-                    \<option value = \"Distance From Campus\">Distance From Campus</option> \
-                    \<option valule = \"Specific Visit Date\">Specific Visit Date</options>\
-                    \<option value = \"G.P.A.\">G.P.A.</options>\
-                </select> \
-            </div> \
-            \<div class=\"col-6-auto\">\
-                \<div class='form-group'>\
-                \<input type='frequency' class='form-control' id='freqDist' aria-describedby='freq' placeholder='Frequency Divisions'>\
-                \</div> \
-            </div>\
-        </div>\
-        <div class='row form-group'> \
-          <button onClick='DropDownSelect('GraphType');'>Get Histogram</button> \
-        </div>";
-       $('#GraphContainer').append(data); // Insert it into the graph container in "VisualizationsPage.html"
-}
-
-    function show2DXY(){
-        var data = "<div class=\"graphOptions container border w-50 bg-dark\" id=\"Graph\"> </div> \
-        \<div class=\"row form-group\"> \
-           \<div class='col-6 auto'> \
-           \    <select name='X-Axis' id='X-Value' class='col-sm text-center'>\
-           \        <option value='disabledX' disable selected value>--- X-Axis ---</option>\
-           \        <option value='Months'>Months</option> \
-           \        <option value='Days in Month'>Days in Month</option>\
-           \        <option value='Days in week'>Days in week</option>\
-           \        <option value='Single Day'>Single Day</option>\
-           \        <option value='Year'>Year</option> \
-           \    </select>\
-           \</div>\
-           \ <div class='col-6 auto'>\
-           <select name='Y-Axis' id='Y-Value' class='col-sm text-center'> \
-            <option value='disabledY' disable selected value>--- Y-Axis ---</option> \
-                    <option value = 'All visitors'>All Visitors</option> \
-                    <option value = 'Graduate Students'>Graduate Students</option> \
-                    <option valule = 'Undergraduate Students'>Undergraduate Students</option>\
-                    <option value = 'Ethnicity'>Ethnicity</option>\
-                    <option value = 'Age'>Age</options>\
-                    <option value = 'Gender'>Gender</option>\
-                    <option value = 'Benefit Chapter'>Benefit Chapter</option>\
-                </select> \
-           </div> \
-        </div>\
-        <div class='row form-group justify-content-center'> \
-          <button onClick='DropDownSelect('GraphType');'>Get Graph</button>\
-        </div>";
-        $('#GraphContainer').append(data); // Insert it into the graph container in "VisualizationsPage.html"
-    }
-
-    function show3DPlot(){
-        var data = "<div class=\"graphOptions container border w-50 bg-dark\" id=\"Graph\"> </div> \
-        \<div class=\"row form-group\"> \
-           \<div class='col-4 auto'> \
-           \    <select name='X-Axis' id='X-Value3D' class='col-sm text-center'>\
-           \        <option value='disabledX' disable selected value>--- X-Axis ---</option>\
-           \        <option value = 'All visitors'>All Visitors</option> \
-                    <option value = 'Graduate Students'>Graduate Students</option> \
-                    <option valule = 'Undergraduate Students'>Undergraduate Students</option>\
-                    <option value = 'Ethnicity'>Ethnicity</option>\
-                    <option value = 'Age'>Age</options>\
-                    <option value = 'Gender'>Gender</option>\
-                    <option value = 'Benefit Chapter'>Benefit Chapter</option>\
-           \        <option value='Months'>Months</option> \
-           \        <option value='Days in Month'>Days in Month</option>\
-           \        <option value='Days in week'>Days in week</option>\
-           \        <option value='Single Day'>Single Day</option>\
-           \        <option value='Year'>Year</option> \
-           \    </select>\
-           \</div>\
-           \ <div class='col-4 auto'>\
-           <select name='Y-Axis' id='Y-Value3D' class='col-sm text-center'> \
-            <option value='disabledY' disable selected value>--- Y-Axis ---</option> \
-                    <option value = 'All visitors'>All Visitors</option> \
-                    <option value = 'Graduate Students'>Graduate Students</option> \
-                    <option valule = 'Undergraduate Students'>Undergraduate Students</option>\
-                    <option value = 'Ethnicity'>Ethnicity</option>\
-                    <option value = 'Age'>Age</options>\
-                    <option value = 'Gender'>Gender</option>\
-                    <option value = 'Benefit Chapter'>Benefit Chapter</option>\
-           \        <option value='Months'>Months</option> \
-           \        <option value='Days in Month'>Days in Month</option>\
-           \        <option value='Days in week'>Days in week</option>\
-           \        <option value='Single Day'>Single Day</option>\
-           \        <option value='Year'>Year</option> \
-                </select> \
-           </div> \
-           \ <div class='col-4 auto'>\
-           <select name='Z-Axis' id='Z-Value3D' class='col-sm text-center'> \
-            <option value='disabledZ' disable selected value>--- Z-Axis ---</option> \
-                    <option value = 'All visitors'>All Visitors</option> \
-                    <option value = 'Graduate Students'>Graduate Students</option> \
-                    <option valule = 'Undergraduate Students'>Undergraduate Students</option>\
-                    <option value = 'Ethnicity'>Ethnicity</option>\
-                    <option value = 'Age'>Age</options>\
-                    <option value = 'Gender'>Gender</option>\
-                    <option value = 'Benefit Chapter'>Benefit Chapter</option>\
-           \        <option value = 'Months'>Months</option> \
-           \        <option value='Days in Month'>Days in Month</option>\
-           \        <option value='Days in week'>Days in week</option>\
-           \        <option value='Single Day'>Single Day</option>\
-           \        <option value='Year'>Year</option> \
-            \    </select> \
-           </div> \
-        </div>\
-        <div class='row form-group justify-content-center'> \
-          <button onClick='DropDownSelect('GraphType');'>Get 3D Graph</button>\
-        </div>";
-        $('#GraphContainer').append(data); // Insert it into the graph container in "VisualizationsPage.html"
-
-    }
-
-    // Add HTML code for pie chart
-    function showPieChart() {
-        var data = "<div class=\"graphOptions container border w-50 bg-dark\" id=\"Graph\"> </div> \
-        <div class=\"row form-group\"> \
-            <div class=\"col-6 auto\"> \
-                <select name=\"PieChart\" id=\"PieChart\" class=\"col-sm text-center\"> \
-                    <option value=\"disabled\" disable selected value>---Statistic---</option> \
-                    \<option value = \"Academic Career\">Academic Career</option> \
-                    \<option value = \"Ethnicity\">Ethnicity</options>\
-                    \<option value = \"Age\">Age</options>\
-                    \<option value = \"Gender\">Gender</options>\
-                    \<option value = \"Benefit Chapter\">Benefit Chapter</options> \
-                </select> \
-            </div> \
-        </div>\
-        <div class='PlaceHolder' id='PlaceHolderRow'> </div>";
-        $('#GraphContainer').append(data); // Insert it into the graph container in "VisualizationsPage.html"
-
-        $("#PieChart").change(function () {
-            $('#PlaceHolderRow').empty();
-            if ($('#PieChart').val != "disabled") {
-              var data="<div class=\"row form-group\" id='PieListTime'> \
-                    <div class=\"col-6 auto\"> \
-                        <select name=\"PieTime\" id=\"PieTime\" class=\"col-sm text-center\"> \
-                            <option value=\"disabled\" disable selected value>Visit Period</option> \
-                            \<option value = 'Total'>Total</option>\
-                            \<option value = \"Year\">Year</option> \
-                            \<option value = \"Month\">Month</options>\
-                            \<option value = \"Week\">Week</options>\
-                            \<option value = \"Day\">Day</options>\
-                            \<option value = \"Hour\">Hour</options> \
-                        </select> \
-                    </div> \
-                </div>\
-            <div class='row form-group'> \
-                <button onClick='DropDownSelect('GraphType');'>Get Pie Chart</button> \
-            </div>";
-                $('#PlaceHolderRow').append(data); // Insert it into the graph container in "VisualizationsPage.html"
-            }
-        });
-    }
-
-    function showScatterPlot() {
-        var data = "<div class=\"graphOptions container border w-50 bg-dark\" id=\"Graph\"> </div> \
-        \<div class=\"row form-group\"> \
-           \<div class='col-6 auto'> \
-           \    <select name='X-Axis' id='X-Value' class='col-sm text-center'>\
-           \        <option value='disabledX' disable selected value>--- X-Axis ---</option>\
-           \        <option value='Months'>Months</option> \
-           \        <option value='Days in Month'>Days in Month</option>\
-           \        <option value='Days in week'>Days in week</option>\
-           \        <option value='Single Day'>Single Day</option>\
-           \        <option value='Year'>Year</option> \
-           \        <option value = 'All visitors'>All Visitors</option> \
-                    <option value = 'Graduate Students'>Graduate Students</option> \
-                    <option valule = 'Undergraduate Students'>Undergraduate Students</option>\
-                    <option value = 'Ethnicity'>Ethnicity</option>\
-                    <option value = 'Age'>Age</options>\
-                    <option value = 'Gender'>Gender</option>\
-                    <option value = 'Benefit Chapter'>Benefit Chapter</option>\
-           \    </select>\
-           \</div>\
-           \ <div class='col-6 auto'>\
-           <select name='Y-Axis' id='Y-Value' class='col-sm text-center'> \
-            <option value='disabledY' disable selected value>--- Y-Axis ---</option> \
-                    <option value = 'All visitors'>All Visitors</option> \
-                    <option value = 'Graduate Students'>Graduate Students</option> \
-                    <option valule = 'Undergraduate Students'>Undergraduate Students</option>\
-                    <option value = 'Ethnicity'>Ethnicity</option>\
-                    <option value = 'Age'>Age</options>\
-                    <option value = 'Gender'>Gender</option>\
-                    <option value = 'Benefit Chapter'>Benefit Chapter</option>\
-                    <option value='disabledX' disable selected value>--- X-Axis ---</option>\
-           \        <option value='Months'>Months</option> \
-           \        <option value='Days in Month'>Days in Month</option>\
-           \        <option value='Days in week'>Days in week</option>\
-           \        <option value='Single Day'>Single Day</option>\
-           \        <option value='Year'>Year</option> \
-                </select> \
-           </div> \
-        </div>\
-        <div class='row form-group justify-content-center'> \
-          <button onClick='DropDownSelect('GraphType');'>Get Graph</button>\
-        </div>";
-        $('#GraphContainer').append(data); // Insert it into the graph container in "VisualizationsPage.html"
-    }
-        // If the user selects 'Bar Graph'
-        function showBarGraph() {
-
-        var data = "<div class=\"graphOptions container border w-50 bg-dark\" id=\"Graph\"> </div> \
-            <div class=\"row form-group\"> \
-                <div class=\"col-6 auto\"> \
-                    <select name=\"Bar Graph\" id=\"Bar Graph\" class=\"col-sm text-center\"> \
-                        \<option value=\"disabled\" disable selected value>--- Statistic ---</option> \
-                        \<option value = \"Academic Career\">Academic Career</option> \
-                        \<option value = \"Ethnicity\">Ethnicity</options>\
-                        \<option value = \"Age\">Age</options>\
-                        \<option value = \"Gender\">Gender</options>\
-                        \<option value = \"Benefit Chapter\">Benefit Chapter</options> \
-                    </select> \
-                </div> \
-                \<div class='col-6 auto'>\
-                    <select name='Y-Axis' id='Y-Value' class='col-sm text-center'> \
-                        <option value='disabledY' disable selected value>--- Y-Axis ---</option> \
-                        <option value = 'All students'>All Visitors</option> \
-                        <option value = 'G.P.A.'>G.P.A.</option> \
-                        <option valule = 'Number of Undergraduate Students'>Undergraduate Students</option>\
-                        <option valule = 'Number of Graduate Students'>Graduate Students</option> \
-                        <option value='Number of Visits'>Number of Visits</option>\
-                    </select> \
-                </div> \
-           </div>\
-           <div class='row form-group justify-content-center'> \
-                <button onClick='DropDownSelect('GraphType');'>Get Bar Graph</button> \
-            </div>";
-        $('#GraphContainer').append(data); // Insert it into the graph container in "VisualizationsPage.html"
-
-        }
-
-        // Function for showing individual statistic (e.g. average G.P.A, average age)
-        function showIndStat()
-        {
-             var data = "<div class=\"graphOptions container border w-50 bg-dark\" id=\"Graph\"> </div> \
-        \<div class=\"row form-group\"> \
-           \<div class='col-4 auto'> \
-           \    <select name='Statistic' id='Statistic' class='col-sm text-center'>\
-           \        <option value='disabledX' disable selected value>--- Statistic ---</option>\
-           \        <option value = 'Average # Daily visitors'>All Visitors</option> \
-                    <option value = 'Average # Graduate Students'>Graduate Students</option> \
-                    <option valule='Average # Undergraduate Students'>Undergraduate Students</option>\
-                    <option value = 'Average G.P.A'>Ethnicity</option>\
-           \    </select>\
-           \</div>\
-        </div>\
-        <div class='row form-group justify-content-center'> \
-          <button onClick='DropDownSelect('GraphType');'>Get Individual Statistic</button>\
-        </div>";
-        $('#GraphContainer').append(data); // Insert it into the graph container in "VisualizationsPage.
-        }
-
-
-
-
     // JQuery event handler for checking if email addresses match
     $("#NewEmail1, #NewEmail2").keyup(checkEmailMatch);
     // JQuery event handler for checking if passwords match
@@ -354,6 +43,8 @@ $(document).ready(function() {
             submitToggle(); // Start submit button as disabled
             emailSubmitToggle();
 
+            // Emails do not match
+            // Disable the submit button and inform the user
             if(email != confirmEmail) {
                 emailMatch = false;
                 emailChangeMatch = false;
@@ -362,6 +53,9 @@ $(document).ready(function() {
                 submitToggle();
                 $('#divCheckEmailMatch').html(("Email does not match.").fontcolor("red"));
             }
+            // Emails match and are not left blank
+                // Enable the submit button and inform the user that they successfully entered
+                // the email address in correctly
             else if(email != ""){
                 emailMatch = true;
                 emailChangeMatch = true;
@@ -380,11 +74,14 @@ $(document).ready(function() {
             var confirmPassword = $('#NewPass2').val();
             passMatch = false;
             passwordSubmitToggle();
+            // If the passwords do not match, display the error message and disable the submit button
             if (password != confirmPassword) {
                 passMatch = false;
                 passwordSubmitToggle();
                 $("#divCheckPasswordMatch").html(("Passwords do not match.").fontcolor("red"));
             }
+            // If the password match but are not in the acceptable format, disabled the submit button
+            // and display the erorr message
             else {
                 if((password.length < 5 || password.length > 12) || !(containsLowerCase(password) && containsUpperCase(password))
                     || !(containsSymbol(password) || containsNumber(password))) {
@@ -393,6 +90,8 @@ $(document).ready(function() {
                    passMatch = false;
                    passwordSubmitToggle();
                 }
+                // Password is valid, make sure the submit button is enabled and inform the user
+                // that the password is valid
                 else {
                      $("#divCheckPasswordMatch").html(("Password is valid.").fontcolor('green'));
                     passMatch = true;
@@ -418,6 +117,7 @@ $(document).ready(function() {
                 submitToggle();
                 $("#divCheckPasswordMatch").html(("Passwords do not match.").fontcolor("red"));
             }
+            // Password length must be between 5-12 characters
             else {
                 if((password.length < 5 || password.length > 12) || !(containsLowerCase(password) && containsUpperCase(password))
                     || !(containsSymbol(password) || containsNumber(password))) {
@@ -425,18 +125,21 @@ $(document).ready(function() {
                        "contain at least one symbol or number, one uppercase letter, and one lowercase letter").fontcolor('red'));
                    passMatch = false;
                    checkIfEverythingIsValid();
+                   // Disable the submit button until password length is accepted
                    submitToggle();
                 }
+                // Password is valid
                 else {
                      $("#divCheckPasswordMatch").html(("Password is valid.").fontcolor('green'));
                     passMatch = true;
+                    // Make sure everything else is valid too (in addition to the password)
                     checkIfEverythingIsValid();
                     submitToggle();
 
                 }
             }
         }
-
+        // Validator to ensure that all form fields are filled out by the user
         function nonEmptyFields() {
             var firstName = $('#firstName').val();
             var lastName = $('#lastName').val();
@@ -499,32 +202,35 @@ $(document).ready(function() {
                 document.getElementById('emailSubmit').disabled = !emailChangeMatch;
         }
 
-        // This is for changing the password. We only want to toggle "submit" when user changes
-        // their password
-        /*function newPassSubmitToggle(){
-            document.getElementById('newPassSubmit').disabled = !passMatch;
-        }*/
+        // ----- Partially referenced from https://stackoverflow.com/questions/19605150/regex-for-password-must-contain-at-least-eight-characters-at-least-one-number-a
+        // Last accessed 11/29/2020
+        // Regular expressions used for password checking
 
-        function containsSymbol(str){
+        // Make sure password contains a symbol
+        function containsSymbol(password){
             regExp = new RegExp("[-!$%^&*()_+|~=`{}\\[\\]:\";'<>?,.\\/]")
-            return regExp.test(str);
+            return regExp.test(password);
         }
-
-        function containsNumber(str){
+        // Make sure that the password contains at least 1 number
+        function containsNumber(password){
             const regExp = new RegExp("[0-9]+");
-            return regExp.test(str);
+            return regExp.test(password);
         }
 
-        function containsUpperCase(str){
+        // Make sure that the password contains at least 1 uppercase letter
+        function containsUpperCase(password){
             const regExp = new RegExp("[A-Z]");
-            return regExp.test(str);
+            return regExp.test(password);
         }
 
-        function containsLowerCase(str){
+        // Make sure that the password contains at least 1 lowercase letter
+        function containsLowerCase(password){
             const regExp = new RegExp('[a-z]');
-            return regExp.test(str);
+            return regExp.test(password);
         }
+        // --------- End of reference ------------------------------------------------
 
+        // JQuery datepicker functions
         $(function () {
                 $("#datepicker1").datepicker({
                 format: 'DD/MM/YYYY',
@@ -538,7 +244,3 @@ $(document).ready(function() {
             });
 
             });
-
-
-
-
